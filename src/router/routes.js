@@ -1,0 +1,40 @@
+import authRoutes from "src/modules/auth/routes/routes";
+import students from "src/modules/students/routes/routes";
+import reports from "src/modules/reports/routes/routes";
+import staff from "src/modules/staff/routes/routes";
+import transactions from "src/modules/transactions/routes/routes";
+import notes from "src/modules/notes/routes/routes";
+import courses from "src/modules/courses/routes/routes";
+import profile from "src/modules/profiles/routes/routes";
+import bookStock from "src/modules/bookStock/routes/routes";
+const routes = [
+  {
+    path: "/",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/IndexPage.vue") },
+      ...students,
+      ...reports,
+      ...staff,
+      ...transactions,
+      ...notes,
+      ...courses,
+      ...profile,
+      ...bookStock,
+    ],
+  },
+
+  {
+    path: "/login",
+    component: () => import("../modules/auth/pages/logIn.vue"),
+    ...authRoutes,
+  },
+  // Always leave this as last one,
+  // but you can also remove it
+  {
+    path: "/:catchAll(.*)*",
+    component: () => import("pages/ErrorNotFound.vue"),
+  },
+];
+
+export default routes;

@@ -1,0 +1,154 @@
+.auth-page {
+  background-color: #F5F7FA;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .login-card {
+    background-color: #ffffff;
+    padding: 3.25rem;
+    width: 100%;
+    max-width: 37.875rem;
+    border-radius: 1rem;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.08);
+
+    .field-label {
+      font-size: 16px;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 8px;
+      color: #000000;
+    }
+
+    .action-btn-container {
+      // margin-top: 24px;
+      background-color: #2F5D6A;
+      color: #ffffff;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+
+      .q-btn {
+        padding: 14px 0px;
+        border-radius: 8px;
+        text-transform: none;
+      }
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      background-color: #F9FAFB;
+      // -webkit-box-shadow: 0 0 0px 1005px white inset ;
+    }
+
+    .q-field--outlined .q-field__control {
+      border-radius: 4px;
+      padding: 0 12px;
+      height: 52px;
+      background-color: #F9FAFB;
+      border: 1px solid #E5E9F0 !important;
+      align-items: anchor-center;
+      margin-bottom: 23px;
+
+      svg {
+        margin-top: 10px;
+      }
+    }
+
+    .card-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 30px;
+      color: #111928;
+      margin: 0 0 24px 0;
+
+    }
+
+    .error-alert {
+      background-color: #FDE8E8;
+      border-radius: 8px;
+      padding: 16px 16px;
+      margin-top: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      text-align: center;
+      justify-content: space-between;
+      align-items: center;
+
+      .error-message {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #C81E1E;
+        font-size: 14px;
+        font-weight: 400;
+
+        .error-heading {
+          font-weight: 600;
+        }
+      }
+    }
+
+    .q-field--error .q-field__control {
+      background-color: #FDE8E8 !important;
+      border-color: #F05252 !important;
+
+      &:before {
+        border-color: #F05252 !important;
+      }
+    }
+  }
+
+  .company-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+
+    .logo-wrapper {
+      width: 100%;
+      max-width: 606px;
+
+      svg {
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+
+  /*end desgin form*/
+}
+
+.email-field,
+.password-field {
+  .q-anchor--skip {
+    i {
+      display: none;
+    }
+  }
+
+  // .q-field__control {
+  //   color: #f39325;
+  // }
+}
+
+
+/*start custom media */
+@media (max-width: 576px) {
+  .auth-page {
+    padding: 1rem;
+
+    .login-card {
+      padding: 1.5rem;
+      width: 100%;
+
+      .card-title {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+/*start custom media */
