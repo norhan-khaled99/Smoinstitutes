@@ -29,8 +29,24 @@
 
   .notes-list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 1.25rem;
+  }
+
+  /* Ensure responsive two-column layout on medium+ screens */
+  .notes-list > .col-sm-12,
+  .notes-list > .col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 768px) {
+    .notes-list > .col-md-6 {
+      flex: 0 0 calc(50% - 0.625rem);
+      max-width: calc(50% - 0.625rem);
+      box-sizing: border-box;
+    }
   }
 
   .note-card {

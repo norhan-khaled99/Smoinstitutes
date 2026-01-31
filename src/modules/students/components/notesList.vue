@@ -8,28 +8,29 @@
       </q-btn>
     </div>
 
-    <div class="notes-list">
+    <div class="notes-list row">
       <div
         v-for="note in notes"
         :key="note.id"
-        class="note-card"
-        :class="note.type.toLowerCase()"
+        class="col-md-6 col-sm-12 col-12"
       >
-        <div class="note-status-border"></div>
-        <div class="note-content">
-          <div class="note-header items-center row no-wrap">
-            <q-icon
-              :name="getIcon(note.type)"
-              :class="note.type.toLowerCase() + '-icon'"
-              size="20px"
-              class="q-mr-sm"
-            />
-            <span class="note-type-label">{{ note.type }} Note</span>
-          </div>
-          <p class="note-description q-mt-sm">{{ note.description }}</p>
-          <div class="note-footer text-caption q-mt-sm">
-            Added on {{ note.date }} <span class="bullet">•</span> by
-            {{ note.author }}
+        <div class="note-card" :class="note.type.toLowerCase()">
+          <div class="note-status-border"></div>
+          <div class="note-content">
+            <div class="note-header items-center row no-wrap">
+              <q-icon
+                :name="getIcon(note.type)"
+                :class="note.type.toLowerCase() + '-icon'"
+                size="20px"
+                class="q-mr-sm"
+              />
+              <span class="note-type-label">{{ note.type }} Note</span>
+            </div>
+            <p class="note-description q-mt-sm">{{ note.description }}</p>
+            <div class="note-footer text-caption q-mt-sm">
+              Added on {{ note.date }} <span class="bullet">•</span> by
+              {{ note.author }}
+            </div>
           </div>
         </div>
       </div>

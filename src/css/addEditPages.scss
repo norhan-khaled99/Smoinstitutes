@@ -278,7 +278,7 @@
 /* ==================== Student Overview Styles ==================== */
 .overview-container {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr auto;
   gap: 1.5rem;
 
   .details-section {
@@ -291,32 +291,32 @@
     .profile-card {
       background-color: white;
       border-radius: 0.5rem;
-      padding: 1.5rem;
+      padding:1.5rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
 
-      // position: sticky;
-      // top: 1rem;
+
 
       .profile-image {
-        width: 100%;
-        height: 100%;
+        width: 18.75rem;
+        height: 18.75rem;
         border-radius: 0.5rem;
-        overflow: hidden;
-        margin-bottom: 1rem;
+        // margin: 0 auto 1re
         text-align: center;
 
         img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          display: block;
         }
       }
 
       .student-name {
-        margin: 0 0 0.25rem 1.5rem;
+        // margin: 0 0 0.25rem 1.5rem;
+        margin-bottom: 2px;
         font-size: 24px;
         font-weight: 500;
         color: #1F2933;
@@ -324,7 +324,7 @@
       }
 
       .student-id {
-        margin: 0 0 1.5rem 1.5rem;
+        // margin: 0 0 1.5rem 1.5rem;
         font-size: 0.875rem;
         color: #6b7280;
         text-align: start;
@@ -450,7 +450,7 @@
       font-weight: 500;
       color: #4b5563;
       padding-bottom: 20px;
-      
+
 
       border-bottom: 1px solid #f0f2f5;
 
