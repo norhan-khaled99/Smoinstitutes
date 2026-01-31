@@ -1,0 +1,153 @@
+.custom-popup {
+  border-radius: 12px;
+  background-color: #fff;
+  width: 30rem !important;
+
+  .q-card-section {
+    padding: 24px;
+  }
+
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .popup-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1f2933;
+      margin: 0;
+    }
+
+    .close-btn {
+      color: #9ca3af;
+      margin-top: -8px;
+      margin-right: -8px;
+    }
+  }
+
+  .popup-subtitle {
+    font-size: 14px;
+    color: #4b5563;
+    // margin-bottom: 24px;
+  }
+
+  .popup-divider {
+    height: 1px;
+    background-color: #f3f4f6;
+    margin: 1rem 0;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+
+      span {
+        color: #dc2626;
+      }
+    }
+
+    .form-group-label {
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .form-group-value {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1f2933;
+    }
+
+    .custom-input,
+    .custom-select {
+      .q-field__control {
+        background-color: #f9fafb;
+        border: 1px solid #e5e9f0;
+        border-radius: 8px;
+
+        &:before {
+          border: 1px solid #e5e7eb;
+        }
+
+        &:hover:before {
+          border-color: #d1d5db;
+        }
+      }
+
+      &.q-field--focused .q-field__control:after {
+        border-color: #2f5d6a;
+      }
+    }
+  }
+
+  .popup-badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: inline-block;
+
+    &.stock-out {
+      border: 1px solid #C81E1E;
+      color: #c81e1e;
+      background-color: #FDE8E8;
+    }
+
+    &.stock-in {
+      border: 1px solid #4CAF50;
+      color: #4CAF50;
+      background-color: #E8F5E9;
+    }
+    &.warning-badge{
+      background-color: #FEF3C7;
+      color: #B45309;
+      border: 1px solid #B45309;
+    }
+  }
+
+  .popup-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 32px;
+
+    .q-btn {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-transform: none;
+      font-weight: 400;
+      font-size: 14px;
+      box-shadow: none;
+    }
+
+    .btn-cancel {
+      background-color: #f9fafb;
+      color: #4b5563;
+      border: 1px solid #e5e7eb;
+
+      max-width: 99px;
+    }
+
+    .btn-save-add {
+      background-color: #fff;
+      color: #374151;
+      border: 1px solid #2f5d6a;
+      padding: 10px 16px;
+    }
+
+    .btn-save-close {
+      background-color: #2f5d6a;
+      color: #fff;
+      padding: 10px 26px;
+      max-width: 142px;
+    }
+  }
+}

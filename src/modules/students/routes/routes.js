@@ -25,14 +25,14 @@ export default [
         },
       },
       {
-       path: "edit/:id",
-       name: "editStudent",
-       component: () => import("../pages/addEditStudents.vue"),
-       meta: {
-         mainTitel: "Students",
-         pageTitel: "Edit Student",
-         name: "Edit Student",
-       },
+        path: "edit/:id",
+        name: "editStudent",
+        component: () => import("../pages/addEditStudents.vue"),
+        meta: {
+          mainTitel: "Students",
+          pageTitel: "Edit Student",
+          name: "Edit Student",
+        },
       },
       {
         path: "details/:id",
@@ -40,7 +40,8 @@ export default [
         component: () => import("../pages/viewStudent.vue"),
         meta: {
           mainTitel: "Students",
-          pageTitel: "Student Details",
+          pageTitel: "View Student",
+          titleOfSubTitel: "Students Lists",
           name: "Student Details",
         }
       }

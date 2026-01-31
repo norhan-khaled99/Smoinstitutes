@@ -35,7 +35,6 @@
       font-size: 14px;
       color: #1a1a1a;
     }
-
   }
 }
 
@@ -43,39 +42,41 @@
   //margin: 1rem;
   padding: 0;
 
+  .add-btn-header {
+    background-color: #2f5d6a;
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    text-transform: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+
+    &:hover {
+      background-color: #264952;
+    }
+
+    svg {
+      margin-right: 0.5rem;
+    }
+  }
+
   .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0rem 1.5rem 0rem 1.5rem;
+    margin: 0;
     // background-color: #F5F7FA;
 
     .page-title {
       margin: 0;
       font-size: 1.5rem;
       font-weight: 600;
-      color: #2F5D6A;
-    }
-
-    .add-btn-header {
-      background-color: #2F5D6A;
-      color: white;
-      padding: 0.625rem 1.25rem;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 400;
-      text-transform: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      &:hover {
-        background-color: #264952;
-      }
-
-      svg {
-        margin-right: 0.5rem;
-      }
+      color: #2f5d6a;
     }
   }
 
@@ -96,6 +97,7 @@
     padding: 0;
     flex-wrap: wrap;
     background-color: transparent;
+    flex: 1;
 
     .search_table {
       min-width: 200px;
@@ -144,13 +146,13 @@
     }
 
     .clear-filters-btn {
-      color: #4C8696;
+      color: #4c8696;
       text-transform: none;
       font-weight: 500;
       padding: 8px 12px;
       margin-bottom: 0;
-      background-color: #F3F4F6;
-      border: 1px solid #E5E9F0;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e9f0;
       border-radius: 8px;
       font-size: 14px;
       height: fit-content;
@@ -310,8 +312,14 @@
 
   .table_content {
     padding: 1rem;
-  }
 
+    .image {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      margin-left: 1rem;
+    }
+  }
 
   .q-table__container {
     border-radius: 8px;
@@ -328,7 +336,7 @@
       color: #374151;
       font-size: 14px;
       font-weight: 600;
-      background-color: #F1F5F9;
+      background-color: #f1f5f9;
     }
 
     .actions {
@@ -337,7 +345,7 @@
       align-items: center;
 
       .action-menu-btn {
-        color: #4B5563;
+        color: #4b5563;
         font-size: 13px;
       }
 
@@ -383,7 +391,7 @@
     position: relative;
 
     .done-btn {
-      background-color: #2F5D6A !important;
+      background-color: #2f5d6a !important;
     }
 
     button {
@@ -440,8 +448,8 @@
 
         .reset-button {
           background-color: $white;
-          border: 1px solid #2F5D6A;
-          color: #2F5D6A;
+          border: 1px solid #2f5d6a;
+          color: #2f5d6a;
         }
 
         .apply {
@@ -476,7 +484,10 @@
   .q-table__top {
     padding: 1rem;
 
-
+    .q-table__control {
+      flex: 1;
+      width: 100%;
+    }
 
     .search_table {
       width: 299px;
@@ -504,13 +515,13 @@
     }
 
     .q-field--focused {
-      border: 1px solid #2F5D6A !important;
+      border: 1px solid #2f5d6a !important;
     }
 
     // button add
     .add-btn {
       padding: 8px 24px;
-      background-color: #2F5D6A;
+      background-color: #2f5d6a;
       color: $white;
       border-radius: 8px;
 
@@ -527,68 +538,75 @@
   }
 }
 
-
-
-.container_table .table_content {
-  .image {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    margin-left: 1rem;
-  }
-
-  .url-link {
-    text-decoration: underline;
-    color: #1a1a1a;
-    cursor: pointer;
-  }
-
-  .q-mb-none {
-    display: inline-block;
-    padding: 2px 0px;
-    border-radius: 8px;
-  }
-
-  .state {
-    padding: 6px 10px;
-    font-size: 12px;
-    border-radius: 8px;
-    font-weight: 500;
-    border: 1px solid;
-    min-width: 85px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-  }
-
-  .state.new-status {
-    color: #1565C0;
-    background: #E3F2FD;
-    border-color: #1565C0;
-  }
-
-  .state.waiting-status {
-    color: #B45309;
-    background: #FEF3C7;
-    border-color: #B45309;
-  }
-
-  .state.active-status {
-    color: #4CAF50;
-    background: #E8F5E9;
-    border-color: #4CAF50;
-  }
-
-  .state.idle-status {
-    color: #4B5563;
-    background: #F3F4F6;
-    border-color: #4B5563;
-  }
+.q-mb-none {
+  display: inline-block;
+  padding: 2px 0px;
+  border-radius: 8px;
 }
 
+.state {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  border: 1px solid;
+  min-width: 85px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
 
+.state.new-status,
+.state.finished-status,
+.state.info-status {
+  color: #1565c0;
+  background: #e3f2fd;
+  border-color: #1565c0;
+}
+
+.state.waiting-status,
+.state.warning-status,
+.state.pending-status {
+  color: #b45309;
+  background: #fef3c7;
+  border-color: #b45309;
+}
+
+.state.important-status,
+.state.stock-out {
+  color: #c81e1e;
+  background: #fde8e8;
+  border-color: #c81e1e;
+}
+
+.state.active-status,
+.state.stock-in {
+  color: #4caf50;
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.state.idle-status {
+  color: #4b5563;
+  background: #f3f4f6;
+  border-color: #4b5563;
+}
+
+.positive-balance {
+  color: #15803d;
+  font-weight: 500;
+}
+
+.negative-balance {
+  color: #c81e1e;
+  font-weight: 500;
+}
+
+.bold-text {
+  font-weight: 600;
+  color: #1f2937;
+}
 
 //
 
@@ -604,21 +622,6 @@
     display: none;
   }
 
-  .count-item {
-    width: 30%;
-
-    p {
-      margin-bottom: 0;
-      color: $black;
-      font-family: Roboto;
-      font-size: 0.875rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1.5rem;
-      letter-spacing: 0.1px;
-    }
-  }
-
   .pagination-wrapper {
     width: 100%;
     padding: 1rem 0;
@@ -630,7 +633,7 @@
     .pagination-text {
       p {
         margin: 0;
-        color: #7D889D;
+        color: #7d889d;
         font-size: 0.875rem;
         font-weight: 400;
       }
@@ -642,11 +645,11 @@
       gap: 0.5rem;
 
       .pagination-btn {
-        width: 2rem;
-        height: 2rem;
-        min-width: 2rem;
+        width: 1.875rem;
+        height: 1.875rem;
+        min-width: 1.875rem;
         border-radius: 0.5rem;
-        color: #4C8696;
+        color: #4c8696;
         padding: 0;
         border: 1px solid #e2e2ea;
         background-color: $white;
@@ -669,18 +672,18 @@
         .q-pagination__content {
           display: flex;
           align-items: center;
-          gap: 0.25rem;
+          justify-content: space-between;
+          gap: 4px !important;
 
           .q-btn {
-            min-width: 2rem;
-            width: 2rem;
-            height: 2rem;
+            min-width: 1.875rem;
+            width: 1.875rem;
+            height: 1.875rem;
             border-radius: 0.5rem;
             color: $black;
             background-color: $white;
             font-weight: 500;
             font-size: 0.875rem;
-            margin: 0;
             padding: 0;
             border: 1px solid #e2e2ea;
 
@@ -693,10 +696,10 @@
             }
 
             &.q-btn--standard {
-              background-color: #2F5D6A !important;
+              background-color: #2f5d6a !important;
               color: $white !important;
               font-weight: 700;
-              border-color: #2F5D6A;
+              border-color: #2f5d6a;
 
               .block {
                 color: $white !important;
@@ -725,7 +728,7 @@
       }
 
       .rows-per-page-select {
-        width: 4.5rem;
+        width: 3.5rem;
 
         .q-field__control {
           height: 2rem;
@@ -890,7 +893,7 @@
             background-color: $white;
             font-weight: 500;
             font-size: 0.875rem;
-            margin: 0;
+            margin-left: 0.25rem;
 
             &::before {
               display: none;
@@ -901,10 +904,10 @@
             }
 
             &.q-btn--standard {
-              background-color: #4C8696 !important;
+              background-color: #4c8696 !important;
               color: #ffffff !important;
               font-weight: 500;
-              border-color: #4C8696;
+              border-color: #4c8696;
 
               .block {
                 color: #ffffff !important;
@@ -935,7 +938,7 @@
 .q-checkbox__inner--truthy .q-checkbox__bg,
 .q-checkbox__inner--indet .q-checkbox__bg {
   border-radius: 5px;
-  color: #2F5D6A;
+  color: #2f5d6a;
 }
 
 @media (max-width: 768px) {

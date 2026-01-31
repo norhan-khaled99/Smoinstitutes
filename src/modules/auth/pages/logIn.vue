@@ -48,6 +48,7 @@
         <div v-if="hasError" class="error-alert">
           <div class="error-message">
             <svg
+              class="error-icon"
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -88,9 +89,7 @@
           <label class="field-label">Username</label>
           <q-input
             v-model="form.Email"
-            bg-color="white"
             class="email-field"
-            :rules="rules.validEmail"
             outlined
             placeholder="Enter Your username"
             :error="hasError"
@@ -101,10 +100,8 @@
           <label class="field-label">Password</label>
           <q-input
             v-model="form.Password"
-            bg-color="white"
             :type="isPwd ? 'password' : 'text'"
             class="password-field"
-            :rules="rules.required"
             outlined
             placeholder="Enter Your Password"
             :error="hasError"
@@ -137,8 +134,8 @@
                   v-else
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
-                  height="25"
-                  viewBox="0 0 24 25"
+                  height="24"
+                  viewBox="0 0 24 24"
                   fill="none"
                 >
                   <path
@@ -218,7 +215,12 @@ export default {
     };
     // // fun of login
     const login = () => {
-      hasError.value = true;
+      if (!form.value.Email || !form.value.Password) {
+        hasError.value = true;
+      } else {
+        hasError.value = false;
+        // Proceed with login logic
+      }
     };
     /** end login integration**/
     return {

@@ -38,16 +38,18 @@
 
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-      background-color: #F9FAFB;
-      // -webkit-box-shadow: 0 0 0px 1005px white inset ;
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px #F9FAFB inset !important;
+      -webkit-text-fill-color: #000000 !important;
+      transition: background-color 5000s ease-in-out 0s;
     }
 
     .q-field--outlined .q-field__control {
       border-radius: 4px;
       padding: 0 12px;
       height: 52px;
-      background-color: #F9FAFB;
+      background-color: #F9FAFB !important;
       border: 1px solid #E5E9F0 !important;
       align-items: anchor-center;
       margin-bottom: 23px;
@@ -58,7 +60,7 @@
     }
 
     .card-title {
-      text-align: center;
+      text-align: start;
       font-weight: 700;
       font-size: 30px;
       color: #111928;
@@ -69,7 +71,7 @@
     .error-alert {
       background-color: #FDE8E8;
       border-radius: 8px;
-      padding: 16px 16px;
+      padding: 16px 17.5px;
       margin-top: 24px;
       margin-bottom: 24px;
       display: flex;
@@ -88,6 +90,7 @@
         .error-heading {
           font-weight: 600;
         }
+       
       }
     }
 
@@ -129,9 +132,11 @@
     }
   }
 
-  // .q-field__control {
-  //   color: #f39325;
-  // }
+  .q-field__control {
+    color: #2F5D6A;
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e9f0;
+  }
 }
 
 

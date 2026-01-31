@@ -1,0 +1,226 @@
+.student-notes-container {
+  padding: 1rem 1.5rem;
+  background: white;
+  border-radius: 8px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+
+    .title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2f5d6a;
+      margin: 0;
+    }
+
+    .add-note-btn {
+      background-color: #2f5d6a;
+      color: white;
+      border-radius: 8px;
+      text-transform: none;
+      font-weight: 400;
+      height: 40px;
+    }
+  }
+
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .note-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 1.25rem 1.5rem;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      border-color: #d1d5db;
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .note-status-border {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    &.warning .note-status-border {
+      background-color: #f2994a;
+    }
+
+    &.important .note-status-border {
+      background-color: #c81e1e;
+    }
+
+    &.information .note-status-border {
+      background-color: #1565c0;
+    }
+
+    .note-content {
+      padding-left: 0.5rem;
+    }
+
+    .note-type-label {
+      font-size: 1rem;
+      color: #1f2933;
+    }
+
+    .note-description {
+      color: #6b7280;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-top: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .note-footer {
+      color: #6b7280;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .bullet {
+        font-size: 10px;
+        opacity: 0.6;
+      }
+    }
+
+    // Icon Colors
+    .warning-icon {
+      color: #f97316;
+    }
+
+    .important-icon {
+      color: #dc2626;
+    }
+
+    .information-icon {
+      color: #2563eb;
+    }
+  }
+}
+
+// Transaction List Styles
+.transaction-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.type-income {
+  color: #15803d;
+
+  .transaction-dot {
+    background-color: #22c55e;
+  }
+}
+
+.type-expense {
+  color: #1d4ed8;
+
+  .transaction-dot {
+    background-color: #3b82f6;
+  }
+}
+
+.type-service {
+  color: #c2410c;
+
+  .transaction-dot {
+    background-color: #f97316;
+  }
+}
+
+.type-funds-transfer {
+  color: #374151;
+
+  .transaction-dot {
+    background-color: #6b7280;
+  }
+}
+
+.type-course-registration {
+  color: #312e81;
+
+  .transaction-dot {
+    background-color: #4338ca;
+  }
+}
+
+// Student View Page Header
+.student-header-section {
+  .student-data {
+    padding-left: 0.5rem;
+    align-items: flex-start;
+
+    .student-name {
+      font-size: 24px;
+      font-weight: 500;
+      color: #2f5d6a;
+      margin: 0 10px 4px 0px;
+    }
+
+    .student-id {
+      font-size: 14px;
+      color: #4b5563;
+      margin: 0;
+    }
+  }
+
+  .edit-profile-btn {
+    background-color: #38606b !important;
+    color: white !important;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 500;
+
+    .q-icon {
+      font-size: 18px;
+      margin-right: 4px;
+    }
+  }
+
+  .more-dropdown {
+    border: 1px solid #e5e7eb;
+    background-color: white !important;
+    color: #1f2937 !important;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #f9fafb !important;
+    }
+
+    .q-btn-dropdown__arrow {
+      color: #6b7280;
+    }
+  }
+
+  .cancel-btn {
+    color: #6b7280;
+    font-weight: 500;
+    margin-right: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: #f3f4f6;
+    }
+  }
+}

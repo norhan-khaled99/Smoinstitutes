@@ -64,7 +64,7 @@
       </svg>
     </q-item-section>
 
-    <q-item-section>
+    <q-item-section v-if="!mini">
       <q-item-label>{{ title }}</q-item-label>
     </q-item-section>
   </q-item>
@@ -101,6 +101,10 @@ export default defineComponent({
       default: "",
     },
     iconFive: {
+      type: String,
+      default: "",
+    },
+    iconSix: {
       type: String,
       default: "",
     },
@@ -151,6 +155,10 @@ export default defineComponent({
     opacitySix: {
       type: String,
       default: "",
+    },
+    mini: {
+      type: Boolean,
+      default: false,
     },
     stroke: {
       type: String,
