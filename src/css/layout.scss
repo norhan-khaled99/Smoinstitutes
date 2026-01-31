@@ -35,9 +35,10 @@ body {
     }
 
     .user-profile-header {
-      svg{
+      svg {
         margin-right: 8px;
       }
+
       .user-name {
         font-size: 15px;
         color: #1f2937;
@@ -104,17 +105,28 @@ body {
     }
 
     .drawer-footer {
+      width: 100%;
       margin-top: auto;
       padding-bottom: 24px;
-      position: fixed;
-      bottom: 0;
     }
 
     .logout-item {
-      min-height: 48px;
+      min-height: 44px;
+
+      &:hover {
+        background-color: #E6B4B4 !important;
+
+        .logout-text {
+          color: #C63030 !important;
+        }
+
+        .q-item__section--avatar svg path {
+          stroke: #C63030 !important;
+        }
+      }
 
       .logout-text {
-        color: #d1d5db;
+        color: #D1D5DB;
         font-size: 16px;
         font-weight: 400;
         margin-left: -8px;

@@ -21,41 +21,6 @@
     @sortApi="fireSortCall"
     @callApi="fireCall"
   >
-    <template v-slot:body-cell-type="props">
-      <q-td :props="props">
-        <div
-          class="row no-wrap items-center"
-          :class="'type-' + props.row.typeClass"
-        >
-          <div class="transaction-dot"></div>
-          <span class="text-weight-medium">{{ props.row.type }}</span>
-        </div>
-      </q-td>
-    </template>
-
-    <template v-slot:body-cell-voucherNumber="props">
-      <q-td :props="props">
-        <span class="text-grey-8">{{ props.row.voucherNumber }}</span>
-      </q-td>
-    </template>
-
-    <template v-slot:body-cell-course="props">
-      <q-td :props="props">
-        <span class="text-grey-8">{{ props.row.course }}</span>
-      </q-td>
-    </template>
-
-    <template v-slot:body-cell-amount="props">
-      <q-td :props="props">
-        <span class="text-grey-8">{{ props.row.amount }}</span>
-      </q-td>
-    </template>
-
-    <template v-slot:body-cell-date="props">
-      <q-td :props="props">
-        <span class="text-grey-8">{{ props.row.date }}</span>
-      </q-td>
-    </template>
   </tableComp>
 </template>
 

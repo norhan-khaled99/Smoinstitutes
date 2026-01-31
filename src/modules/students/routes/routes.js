@@ -19,8 +19,8 @@ export default [
         component: () => import("../pages/addEditStudents.vue"),
         meta: {
           mainTitel: "Students",
-          pageTitel: "Student",
-          titleOfSubTitel: "Add New Student",
+          pageTitel: "Add New Student",
+          titleOfSubTitel: "Student",
           name: "Add Student",
         },
       },

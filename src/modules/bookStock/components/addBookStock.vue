@@ -18,7 +18,8 @@
         <div class="form-group">
           <label>Level <span>*</span></label>
           <q-select v-model="form.level" :options="levelOptions" option-label="name" option-value="id" outlined dense
-            emit-value map-options placeholder="Select Level" class="custom-select" />
+            emit-value map-options :label="form.level == undefined || form.level == '' ? 'Select Level' : ''
+              " class="custom-select" />
         </div>
 
         <div class="form-group">

@@ -107,6 +107,21 @@
         background-color: white;
         border-radius: 0.5rem;
       }
+
+      .q-field--dense .q-field__control,
+      .q-field--dense .q-field__marginal {
+        border-radius: 8px;
+      }
+    }
+
+    .q-field__control {
+      &::after {
+        display: none;
+      }
+
+      &::before {
+        display: none;
+      }
     }
 
     .filter-search {
@@ -119,6 +134,18 @@
       flex-wrap: wrap;
       align-items: flex-end;
       flex: 1 1 auto;
+
+      .q-field__control {
+        border-radius: 0.5rem;
+
+        &::after {
+          display: none;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
 
       .filter-item-wrapper {
         display: flex;
@@ -499,7 +526,7 @@
       }
 
       label {
-        border-radius: 0.25rem;
+        border-radius: 0.5rem;
         border: 1px solid #e2e2ea;
 
         .q-field__control {
@@ -515,7 +542,8 @@
     }
 
     .q-field--focused {
-      border: 1px solid #2f5d6a !important;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e2ea !important;
     }
 
     // button add

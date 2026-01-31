@@ -14,18 +14,17 @@
         <template v-if="isEditing">
           <q-btn
             flat
-            label="Cancel"
-            no-caps
-            class="cancel-btn"
-            @click="cancelEdit"
-          />
-          <q-btn
-            unelevated
-            icon="save"
             label="Save Changes"
             no-caps
             class="edit-profile-btn"
             @click="saveEdit"
+          />
+          <q-btn
+            flat
+            label="Cancel"
+            no-caps
+            class="cancel-btn"
+            @click="cancelEdit"
           />
         </template>
         <template v-else>
@@ -39,7 +38,7 @@
           />
         </template>
 
-        <q-btn-dropdown unelevated label="More" no-caps class="more-dropdown">
+        <q-btn-dropdown flat label="More" no-caps class="more-dropdown"  v-if="!isEditing">
           <q-list>
             <q-item clickable v-close-popup>
               <q-item-section>
@@ -115,15 +114,9 @@ const toggleEdit = () => {
   isEditing.value = true;
 };
 
-const cancelEdit = () => {
-  if (overviewRef.value) {
-    overviewRef.value.revertChanges();
-  }
-  isEditing.value = false;
-};
+
 
 const saveEdit = () => {
-  // Logic to save data will go here (e.g., API call)
   isEditing.value = false;
 };
 </script>

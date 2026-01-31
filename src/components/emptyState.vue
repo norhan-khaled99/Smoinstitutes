@@ -15,7 +15,7 @@
       <q-btn
         v-if="showButton"
         class="empty-state-btn"
-        unelevated
+        flat
         no-caps
         @click="$emit('action-click')"
       >

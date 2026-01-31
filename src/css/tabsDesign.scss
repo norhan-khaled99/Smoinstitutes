@@ -1,33 +1,35 @@
 .student-tabs {
-  padding: 0 1rem;
+
+  // padding: 0 1rem;
   background-color: #ffffff;
 
   .q-tabs__content {
     justify-content: flex-start;
+    // padding: 1rem 0rem;
   }
 
   .q-tab {
-    // padding: 0 1rem;
+    // padding: 10px 16px;
     min-height: 48px;
     color: #6B7280;
     font-weight: 400;
     text-transform: none;
     font-size: 14px;
-    transition: color 0.2s ease;
+    // transition: color 0.2s ease;
 
     &.q-tab--active {
-      color: #2F5D6A;
+      color: #4C8696;
 
       .q-tab__indicator {
         height: 2px;
-        background: #2F5D6A !important;
-        bottom: 0;
+        background: #4C8696 !important;
+        // bottom: 0;
       }
     }
 
-    &:hover:not(.q-tab--active) {
-      color: #374151;
-    }
+    // &:hover:not(.q-tab--active) {
+    //   color: #374151;
+    // }
 
     .q-tab__label {
       font-weight: 400;

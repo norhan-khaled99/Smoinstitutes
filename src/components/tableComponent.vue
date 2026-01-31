@@ -3,7 +3,7 @@
     <!-- Page Header -->
     <div class="page-header" v-if="pageTitle">
       <p class="page-title">{{ pageTitle }}</p>
-      <q-btn class="add-btn-header" @click="addNew" v-if="showAdd">
+      <q-btn class="add-btn-header" flat @click="addNew" v-if="showAdd">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="18"
@@ -115,7 +115,10 @@
             </template>
             <!--end -->
             <template v-slot:top-left>
-              <div class="filter-container">
+              <div
+                class="filter-container row items-center wrap full-width justify-between"
+                style="gap: 10px"
+              >
                 <div class="search_table" v-if="searchInput">
                   <q-input
                     outlined
@@ -151,8 +154,15 @@
                     </template>
                   </q-input>
                 </div>
-                <div class="filter-bar" v-if="showFilters">
-                  <div class="filter-dropdowns">
+                <div
+                  class="filter-bar row items-center wrap"
+                  style="gap: 10px"
+                  v-if="showFilters"
+                >
+                  <div
+                    class="filter-dropdowns row items-center wrap"
+                    style="gap: 10px"
+                  >
                     <!-- Department Filter -->
                     <!-- Years Filter -->
                     <div class="filter-item-wrapper" v-if="showYearFilter">
@@ -865,6 +875,7 @@
                   </q-btn-dropdown>
 
                   <q-btn
+                    flat
                     class="add-btn-header"
                     @click="addNew"
                     v-if="showAddButton"
@@ -911,6 +922,7 @@
                     :src="props.row.serviceImage"
                     :ratio="1"
                   />
+                  <span class="">{{ props.row.name }}</span>
                 </div>
               </q-td>
             </template>
@@ -1100,6 +1112,18 @@
                 </q-btn>
               </q-td>
             </template>
+            <!-- Empty State -->
+            <template v-slot:no-data>
+              <div class="full-width row flex-center q-pa-md">
+                <empty-state
+                  :title="emptyStateTitle"
+                  :description="emptyStateDescription"
+                  :buttonLabel="emptyStateButtonLabel"
+                  :showButton="showEmptyStateButton"
+                  @action-click="addNew"
+                />
+              </div>
+            </template>
           </q-table>
         </div>
       </div>
@@ -1108,9 +1132,13 @@
 </template>
 <script>
 import { ref, onMounted, computed } from "vue";
+import emptyState from "./emptyState.vue";
 
 export default {
   name: "tableComp",
+  components: {
+    emptyState,
+  },
   props: {
     searchInput: {
       type: Boolean,
@@ -1320,6 +1348,22 @@ export default {
     Notes: {
       type: Boolean,
       default: false,
+    },
+    emptyStateTitle: {
+      type: String,
+      default: "No students found",
+    },
+    emptyStateDescription: {
+      type: String,
+      default: "Adjust your filters or add new students to get started.",
+    },
+    emptyStateButtonLabel: {
+      type: String,
+      default: "Add Student",
+    },
+    showEmptyStateButton: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, { emit }) {
