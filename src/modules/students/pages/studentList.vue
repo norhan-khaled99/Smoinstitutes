@@ -26,6 +26,9 @@
       @getPagFun="getPagFun"
       @sortApi="fireSortCall"
       @callApi="fireCall"
+      emptyStateTitle="No students found"
+      emptyStateDescription="Adjust your filters or add new students to get started."
+      emptyStateButtonLabel="Add Student"
     />
   </div>
 </template>
@@ -42,7 +45,7 @@ const $q = useQuasar();
 
 const columns = [
   {
-    name: "studentName",
+    name: "image",
     label: "Student Name",
     field: (row) => row.studentName,
     align: "left",
@@ -111,6 +114,7 @@ const yearOptions = ref([
 const tableRows = ref([
   {
     id: 1,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
     studentName: "Yara Abdullah Ahmed Ali",
     studentId: 251221,
     mobile: "+971523064607",
@@ -120,6 +124,7 @@ const tableRows = ref([
   },
   {
     id: 2,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
     studentName: "Moaz Essam Hammoud Musleh",
     studentId: 251220,
     mobile: "+971557134005",
@@ -129,6 +134,8 @@ const tableRows = ref([
   },
   {
     id: 3,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Ali Saleh Mohammed Muthana",
     studentId: 251219,
     mobile: "+971556072983",
@@ -138,6 +145,8 @@ const tableRows = ref([
   },
   {
     id: 4,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Abdullah Saleh Mobarek Hussien Alharthy",
     studentId: 251218,
     mobile: "+971553088206",
@@ -147,6 +156,8 @@ const tableRows = ref([
   },
   {
     id: 5,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Youssef Mohammed Yaslam Mohammed",
     studentId: 251217,
     mobile: "+971553296324",
@@ -156,6 +167,8 @@ const tableRows = ref([
   },
   {
     id: 6,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Amani Ahmed Mohammed Ali",
     studentId: 251216,
     mobile: "+971559533707",
@@ -165,6 +178,8 @@ const tableRows = ref([
   },
   {
     id: 7,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Yassin Gamal Mohshen Hussien",
     studentId: 251215,
     mobile: "+971503603570",
@@ -174,6 +189,8 @@ const tableRows = ref([
   },
   {
     id: 8,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Hussien Maged Hussien Abdulrahman",
     studentId: 251214,
     mobile: "+971553296324",
@@ -183,6 +200,8 @@ const tableRows = ref([
   },
   {
     id: 9,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Qassem Abdulghani Mohammed Motlaq",
     studentId: 251213,
     mobile: "+971502469158",
@@ -192,6 +211,8 @@ const tableRows = ref([
   },
   {
     id: 10,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+
     studentName: "Ahmed Mohamed Hassan",
     studentId: 251212,
     mobile: "+971501234567",
@@ -219,12 +240,11 @@ const openDialogDeleteEvent = (row) => {
 const DetailsEvent = (row) => {
   console.log("Details event:", row);
   router.push({ name: "studentDetails", params: { id: row.id } });
-  // Add navigation or modal logic here
 };
 const addEvent = () => {
   console.log("Add event");
   router.push({ name: "addStudent" });
-  // Add navigation or modal logic here
+  // Add navigation or modal logic her
 };
 
 const EditEvent = (row) => {

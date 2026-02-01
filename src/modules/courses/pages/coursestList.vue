@@ -21,6 +21,9 @@
     @searchEvent="onSearch"
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
+    emptyStateTitle="No courses found"
+    emptyStateDescription="Get started by adding a new course."
+    emptyStateButtonLabel="Add Course"
   />
 
   <addEditCoursePopup

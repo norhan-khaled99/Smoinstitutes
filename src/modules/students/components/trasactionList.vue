@@ -20,6 +20,10 @@
     @getPagFun="getPagFun"
     @sortApi="fireSortCall"
     @callApi="fireCall"
+    emptyStateTitle="No transactions found"
+    emptyStateDescription="Get started by adding a new payment."
+    emptyStateButtonLabel="Add Payment"
+    @addNew="onAddNewTransaction"
   >
   </tableComp>
 </template>
@@ -146,6 +150,10 @@ const addDropdownOptions = ref([
 
 const handleAddPayment = (option) => {
   console.log("Add Payment:", option);
+};
+
+const onAddNewTransaction = () => {
+  console.log("Add New Transaction (Empty State) clicked");
 };
 
 const onSearchEvent = (searchValue) => {

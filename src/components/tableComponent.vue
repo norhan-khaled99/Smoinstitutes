@@ -116,8 +116,7 @@
             <!--end -->
             <template v-slot:top-left>
               <div
-                class="filter-container row items-center wrap full-width justify-between"
-                style="gap: 10px"
+                class="filter-container row  wrap  justify-between"
               >
                 <div class="search_table" v-if="searchInput">
                   <q-input
@@ -156,12 +155,10 @@
                 </div>
                 <div
                   class="filter-bar row items-center wrap"
-                  style="gap: 10px"
                   v-if="showFilters"
                 >
                   <div
                     class="filter-dropdowns row items-center wrap"
-                    style="gap: 10px"
                   >
                     <!-- Department Filter -->
                     <!-- Years Filter -->
@@ -919,10 +916,12 @@
                 <div class="row items-center">
                   <q-img
                     class="image"
-                    :src="props.row.serviceImage"
+                    :src="props.row.studentImage"
                     :ratio="1"
                   />
-                  <span class="">{{ props.row.name }}</span>
+                  <span class="">{{
+                    props.row.studentName
+                  }}</span>
                 </div>
               </q-td>
             </template>

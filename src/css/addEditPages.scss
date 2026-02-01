@@ -37,31 +37,26 @@
     align-items: center;
 
     .save-btn,
-    .cancel-btn {
+    .cancel-btn,
+    .save-btn-dropdown {
       text-transform: none;
       padding: 0.5rem 1.5rem;
-      font-weight: 500;
+      font-weight: 400;
       font-size: 0.875rem;
       border-radius: 0.5rem;
       min-width: 8.75rem;
     }
-
+    .save-btn-dropdown {
+      padding: 2px 0;
+      background-color: #2f5d6a;
+      color: white;
+    }
     .save-btn {
       background-color: #2f5d6a;
       color: white;
 
       &:hover {
         background-color: #264952;
-      }
-
-      .q-btn__content {
-        position: relative;
-
-        &::after {
-          content: "▼";
-          margin-left: 0.5rem;
-          font-size: 0.625rem;
-        }
       }
     }
 
@@ -104,16 +99,25 @@
       // padding-bottom: 0.75rem;
     }
 
-    // .q-field__control {
-    //   background-color: #f9fafb;
-    //   border: 1px solid #e5e9f0 !important;
-    //   border-radius: 0.5rem !important;
-    // }
+    .documents-files {
+      .file-prepend {
+        background-color: #375363;
+        border-radius: 4px;
+        margin-right: 8px;
+        font-size: 14px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        color: white;
+        padding: 0 23px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
 
-    // .q-field--focused .q-field__control {
-    //   border-radius: 0.5rem !important;
-    //   border: 1px solid #e2e2ea !important;
-    // }
+      .q-field--outlined .q-field__control {
+        padding: 0 !important;
+      }
+    }
   }
 
   .media-upload {
@@ -138,7 +142,6 @@
       flex-direction: column;
       gap: 0.5rem;
 
-
       .upload-btn {
         border: 1px solid #e5e9f0;
         color: #1f2933;
@@ -146,18 +149,17 @@
         font-size: 14px;
         padding: 8px 21px;
         border-radius: 0.5rem;
-        max-width:fit-content;
+        max-width: fit-content;
 
         &:hover {
           background-color: #f0f0f0;
         }
-
       }
 
       .upload-hint {
         margin: 0;
         font-size: 14px;
-        color: #6B7280;
+        color: #6b7280;
       }
     }
   }
@@ -197,7 +199,6 @@
     }
   }
 }
-
 
 .q-field__control {
   background-color: #f9fafb !important;

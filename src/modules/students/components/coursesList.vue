@@ -24,6 +24,9 @@
     @getPagFun="getPagFun"
     @sortApi="fireSortCall"
     @callApi="fireCall"
+    emptyStateTitle="No courses found"
+    emptyStateDescription="Get started by assigning a course."
+    emptyStateButtonLabel="Add Course"
   />
 
   <addCourseStudentpopup v-model="showAddCoursePopup" />

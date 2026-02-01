@@ -27,6 +27,9 @@
     @getPagFun="getPagFun"
     @sortApi="fireSortCall"
     @callApi="fireCall"
+    emptyStateTitle="No books found"
+    emptyStateDescription="Get started by adding book stock."
+    emptyStateButtonLabel="Add Book"
   />
 
   <addBookStock

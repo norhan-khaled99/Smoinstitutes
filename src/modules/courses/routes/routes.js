@@ -9,7 +9,7 @@ export default [
         component: () => import("../pages/coursestList.vue"),
         meta: {
           mainTitel: "Courses",
-          pageTitel: "Courses",
+          pageTitel: "Courses Lists",
           name: "Courses",
         },
       },

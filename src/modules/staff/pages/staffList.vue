@@ -20,16 +20,22 @@
     @searchEvent="onSearch"
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
-     @updatePag="updatePag"
-      @getPagFun="getPagFun"
-      @sortApi="fireSortCall"
-      @callApi="fireCall"
+    @updatePag="updatePag"
+    @getPagFun="getPagFun"
+    @sortApi="fireSortCall"
+    @callApi="fireCall"
+    emptyStateTitle="No staff found"
+    emptyStateDescription="Get started by adding a new staff member."
+    emptyStateButtonLabel="Add Staff"
   />
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import tableComp from "src/components/tableComponent.vue";
+
+const router = useRouter();
 
 const pagination = ref({
   page: 1,
@@ -215,6 +221,7 @@ const jobTypeOptions = ref([
 ]);
 
 const addStaff = () => {
+  router.push({ name: "addStaff" });
   console.log("Add Staff clicked");
 };
 

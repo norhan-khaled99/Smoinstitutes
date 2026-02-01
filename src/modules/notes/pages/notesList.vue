@@ -27,17 +27,23 @@
     @sortApi="fireSortCall"
     @callApi="fireCall"
     @DetailsEvent="onViewDetails"
+    emptyStateTitle="No notes found"
+    emptyStateDescription="Get started by adding a new note."
+    emptyStateButtonLabel="Add Note"
   />
 
   <viewNotePopup v-model="showViewDetailsPopup" :note="selectedNote" />
+  <addNotePopup v-model="showAddPopup" @save="handleSaveNote" />
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewNotePopup from "../components/viewNotePopup.vue";
+import addNotePopup from "../../students/components/addNotePopup.vue";
 
 const showViewDetailsPopup = ref(false);
+const showAddPopup = ref(false);
 const selectedNote = ref({});
 
 const pagination = ref({
@@ -192,7 +198,11 @@ const createdByOptions = ref([
 ]);
 
 const addNote = () => {
-  console.log("Add Note clicked");
+  showAddPopup.value = true;
+};
+
+const handleSaveNote = (note) => {
+  console.log("Saved note:", note);
 };
 
 const onViewDetails = (row) => {

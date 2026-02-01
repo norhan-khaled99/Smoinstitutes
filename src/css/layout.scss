@@ -189,7 +189,7 @@ body {
     }
   }
 
-  .breadcrumbs_custom {
+  .q-breadcrumbs  {
     padding: 14px 24px;
     display: flex;
     align-items: center;
@@ -199,11 +199,14 @@ body {
     }
 
     .q-breadcrumbs__el {
+
       &.q-link {
         font-size: 14px;
         color: #6b7280 !important;
         font-weight: 500;
         text-decoration: none;
+
+
 
         &.q-router-link--exact-active {
           color: #1f2933 !important;
