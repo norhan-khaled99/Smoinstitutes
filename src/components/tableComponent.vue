@@ -116,18 +116,752 @@
             <!--end -->
             <template v-slot:top-left>
               <div
-                class="filter-container row  wrap  justify-between"
+                class="filter-container row justify-between items-center full-width"
               >
-                <div class="search_table" v-if="searchInput">
-                  <q-input
-                    outlined
-                    @keyup.enter="onSearch"
-                    v-model="searchResult"
-                    dense
-                    :placeholder="searchPlaceholder"
-                    class="search-input"
+                <div class="row filter-bar items-center">
+                  <div class="search_table" v-if="searchInput">
+                    <q-input
+                      outlined
+                      @keyup.enter="onSearch"
+                      v-model="searchResult"
+                      dense
+                      :placeholder="searchPlaceholder"
+                      class="search-input"
+                    >
+                      <template v-slot:prepend>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                        >
+                          <path
+                            d="M9.58335 17.5001C13.9556 17.5001 17.5 13.9557 17.5 9.58341C17.5 5.21116 13.9556 1.66675 9.58335 1.66675C5.2111 1.66675 1.66669 5.21116 1.66669 9.58341C1.66669 13.9557 5.2111 17.5001 9.58335 17.5001Z"
+                            stroke="#818181"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M18.3334 18.3334L16.6667 16.6667"
+                            stroke="#818181"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </template>
+                    </q-input>
+                  </div>
+                  <div
+                    class="filter-bar row items-center wrap"
+                    v-if="showFilters"
                   >
-                    <template v-slot:prepend>
+                    <div class="filter-dropdowns row items-center wrap">
+                      <!-- Department Filter -->
+                      <!-- Years Filter -->
+                      <div class="filter-item-wrapper" v-if="showYearFilter">
+                        <q-select
+                          outlined
+                          v-model="yearFilter"
+                          dense
+                          :options="yearOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="yearFilter ? '' : 'All Years'"
+                          @update:model-value="
+                            onFilterChange('year', yearFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="yearFilter">{{ scope.opt.name }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="yearFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                yearFilter = null;
+                                onFilterChange('year', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Status Filter -->
+                      <div class="filter-item-wrapper" v-if="showStatusFilter">
+                        <q-select
+                          outlined
+                          v-model="statusFilter"
+                          dense
+                          :options="statusOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="statusFilter ? '' : 'All Status'"
+                          @update:model-value="
+                            onFilterChange('status', statusFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="statusFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="statusFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                statusFilter = null;
+                                onFilterChange('status', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Balance Filter -->
+                      <div class="filter-item-wrapper" v-if="showBalanceFilter">
+                        <q-select
+                          outlined
+                          v-model="balanceFilter"
+                          dense
+                          :options="balanceOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="balanceFilter ? '' : 'Any Balance'"
+                          @update:model-value="
+                            onFilterChange('balance', balanceFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="balanceFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="balanceFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                balanceFilter = null;
+                                onFilterChange('balance', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Note Type Filter -->
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showNoteTypeFilter"
+                      >
+                        <q-select
+                          outlined
+                          v-model="noteTypeFilter"
+                          dense
+                          :options="noteTypeOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="noteTypeFilter ? '' : 'Note type'"
+                          @update:model-value="
+                            onFilterChange('noteType', noteTypeFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="noteTypeFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="noteTypeFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                noteTypeFilter = null;
+                                onFilterChange('noteType', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Created At Filter -->
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showCreatedAtFilter"
+                      >
+                        <q-select
+                          outlined
+                          v-model="createdAtFilter"
+                          dense
+                          :options="createdAtOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="createdAtFilter ? '' : 'Created at'"
+                          @update:model-value="
+                            onFilterChange('createdAt', createdAtFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="createdAtFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="createdAtFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                createdAtFilter = null;
+                                onFilterChange('createdAt', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Created By Filter -->
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showCreatedByFilter"
+                      >
+                        <q-select
+                          outlined
+                          v-model="createdByFilter"
+                          dense
+                          :options="createdByOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="createdByFilter ? '' : 'Created by'"
+                          @update:model-value="
+                            onFilterChange('createdBy', createdByFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="createdByFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="createdByFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                createdByFilter = null;
+                                onFilterChange('createdBy', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Direction Filter -->
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showDirectionFilter"
+                      >
+                        <q-select
+                          outlined
+                          v-model="directionFilter"
+                          dense
+                          :options="directionOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="directionFilter ? '' : 'Direction'"
+                          @update:model-value="
+                            onFilterChange('direction', directionFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="directionFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="directionFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                directionFilter = null;
+                                onFilterChange('direction', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Level Filter -->
+                      <div class="filter-item-wrapper" v-if="showLevelFilter">
+                        <q-select
+                          outlined
+                          v-model="levelFilter"
+                          dense
+                          :options="levelOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="levelFilter ? '' : 'Level'"
+                          @update:model-value="
+                            onFilterChange('level', levelFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="levelFilter">{{ scope.opt.name }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="levelFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                levelFilter = null;
+                                onFilterChange('level', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- By User Filter -->
+                      <div class="filter-item-wrapper" v-if="showByUserFilter">
+                        <q-select
+                          outlined
+                          v-model="byUserFilter"
+                          dense
+                          :options="byUserOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="byUserFilter ? '' : 'By user'"
+                          @update:model-value="
+                            onFilterChange('byUser', byUserFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="byUserFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="byUserFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                byUserFilter = null;
+                                onFilterChange('byUser', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Teacher Filter -->
+                      <div class="filter-item-wrapper" v-if="showTeacherFilter">
+                        <q-select
+                          outlined
+                          v-model="teacherFilter"
+                          dense
+                          :options="teacherOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="teacherFilter ? '' : 'Teacher'"
+                          @update:model-value="
+                            onFilterChange('teacher', teacherFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="teacherFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="teacherFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                teacherFilter = null;
+                                onFilterChange('teacher', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Degree Filter -->
+                      <div class="filter-item-wrapper" v-if="showDegreeFilter">
+                        <q-select
+                          outlined
+                          v-model="degreeFilter"
+                          dense
+                          :options="degreeOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="degreeFilter ? '' : 'Degree'"
+                          @update:model-value="
+                            onFilterChange('degree', degreeFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="degreeFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="degreeFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                degreeFilter = null;
+                                onFilterChange('degree', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Institution Filter -->
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showInstitutionFilter"
+                      >
+                        <q-select
+                          outlined
+                          v-model="institutionFilter"
+                          dense
+                          :options="institutionOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="
+                            institutionFilter ? '' : 'All Institution'
+                          "
+                          @update:model-value="
+                            onFilterChange('institution', institutionFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="institutionFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="institutionFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                institutionFilter = null;
+                                onFilterChange('institution', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Job Type Filter -->
+                      <div class="filter-item-wrapper" v-if="showJobTypeFilter">
+                        <q-select
+                          outlined
+                          v-model="jobTypeFilter"
+                          dense
+                          :options="jobTypeOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="jobTypeFilter ? '' : 'Job Type'"
+                          @update:model-value="
+                            onFilterChange('jobType', jobTypeFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="jobTypeFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="jobTypeFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                jobTypeFilter = null;
+                                onFilterChange('jobType', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+                      <!-- Course Filter -->
+                      <div class="filter-item-wrapper" v-if="showCourseFilter">
+                        <q-select
+                          outlined
+                          v-model="courseFilter"
+                          dense
+                          :options="courseOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="courseFilter ? '' : 'All Courses'"
+                          @update:model-value="
+                            onFilterChange('course', courseFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="courseFilter">{{
+                              scope.opt.name
+                            }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="courseFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                courseFilter = null;
+                                onFilterChange('course', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Type Filter -->
+                      <div class="filter-item-wrapper" v-if="showTypeFilter">
+                        <q-select
+                          outlined
+                          v-model="typeFilter"
+                          dense
+                          :options="typeOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="typeFilter ? '' : 'All Types'"
+                          @update:model-value="
+                            onFilterChange('type', typeFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black"
+                                >No results</q-item-section
+                              >
+                            </q-item>
+                          </template>
+                          <template v-slot:selected-item="scope">
+                            <span v-if="typeFilter">{{ scope.opt.name }}</span>
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="typeFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                typeFilter = null;
+                                onFilterChange('type', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+                    </div>
+
+                    <q-btn flat class="clear-filters-btn" @click="clearFilters">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -136,744 +870,41 @@
                         fill="none"
                       >
                         <path
-                          d="M9.58335 17.5001C13.9556 17.5001 17.5 13.9557 17.5 9.58341C17.5 5.21116 13.9556 1.66675 9.58335 1.66675C5.2111 1.66675 1.66669 5.21116 1.66669 9.58341C1.66669 13.9557 5.2111 17.5001 9.58335 17.5001Z"
-                          stroke="#818181"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M18.3334 18.3334L16.6667 16.6667"
-                          stroke="#818181"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M2.44233 9.33359C2.50206 5.19973 5.89685 1.875 10.0657 1.875C12.8228 1.875 15.2392 3.32856 16.5779 5.50601C16.7586 5.80006 16.6668 6.18499 16.3727 6.36576C16.0787 6.54654 15.6938 6.45471 15.513 6.16066C14.3939 4.34037 12.3737 3.125 10.0657 3.125C6.57877 3.125 3.75312 5.89808 3.69252 9.33181L4.02617 9.00077C4.2712 8.75765 4.66693 8.75921 4.91005 9.00424C5.15316 9.24928 5.15161 9.645 4.90657 9.88812L3.50673 11.277C3.26306 11.5188 2.87 11.5188 2.62633 11.277L1.22648 9.88812C0.98145 9.645 0.979896 9.24928 1.22301 9.00424C1.46613 8.75921 1.86185 8.75765 2.10689 9.00077L2.44233 9.33359ZM16.4887 8.72215C16.7322 8.4815 17.1239 8.4815 17.3674 8.72215L18.7726 10.111C19.0181 10.3537 19.0204 10.7494 18.7778 10.9949C18.5351 11.2404 18.1394 11.2427 17.8939 11.0001L17.5523 10.6624C17.4945 14.8003 14.0848 18.125 9.90209 18.125C7.13651 18.125 4.71153 16.6725 3.36768 14.4949C3.18641 14.2012 3.27758 13.8161 3.57132 13.6348C3.86507 13.4535 4.25015 13.5447 4.43143 13.8384C5.55469 15.6586 7.58334 16.875 9.90209 16.875C13.4073 16.875 16.2435 14.0976 16.3021 10.6641L15.9622 11.0001C15.7167 11.2427 15.321 11.2404 15.0784 10.9949C14.8357 10.7494 14.838 10.3537 15.0835 10.111L16.4887 8.72215Z"
+                          fill="#4C8696"
                         />
                       </svg>
-                    </template>
-                  </q-input>
-                </div>
-                <div
-                  class="filter-bar row items-center wrap"
-                  v-if="showFilters"
-                >
-                  <div
-                    class="filter-dropdowns row items-center wrap"
-                  >
-                    <!-- Department Filter -->
-                    <!-- Years Filter -->
-                    <div class="filter-item-wrapper" v-if="showYearFilter">
-                      <q-select
-                        outlined
-                        v-model="yearFilter"
-                        dense
-                        :options="yearOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="yearFilter ? '' : 'All Years'"
-                        @update:model-value="onFilterChange('year', yearFilter)"
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="yearFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="yearFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              yearFilter = null;
-                              onFilterChange('year', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
+                      Clear filters
+                    </q-btn>
 
-                    <!-- Status Filter -->
-                    <div class="filter-item-wrapper" v-if="showStatusFilter">
-                      <q-select
-                        outlined
-                        v-model="statusFilter"
-                        dense
-                        :options="statusOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="statusFilter ? '' : 'All Status'"
-                        @update:model-value="
-                          onFilterChange('status', statusFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="statusFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="statusFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              statusFilter = null;
-                              onFilterChange('status', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Balance Filter -->
-                    <div class="filter-item-wrapper" v-if="showBalanceFilter">
-                      <q-select
-                        outlined
-                        v-model="balanceFilter"
-                        dense
-                        :options="balanceOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="balanceFilter ? '' : 'Any Balance'"
-                        @update:model-value="
-                          onFilterChange('balance', balanceFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="balanceFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="balanceFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              balanceFilter = null;
-                              onFilterChange('balance', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Note Type Filter -->
-                    <div class="filter-item-wrapper" v-if="showNoteTypeFilter">
-                      <q-select
-                        outlined
-                        v-model="noteTypeFilter"
-                        dense
-                        :options="noteTypeOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="noteTypeFilter ? '' : 'Note type'"
-                        @update:model-value="
-                          onFilterChange('noteType', noteTypeFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="noteTypeFilter">{{
-                            scope.opt.name
-                          }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="noteTypeFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              noteTypeFilter = null;
-                              onFilterChange('noteType', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Created At Filter -->
-                    <div class="filter-item-wrapper" v-if="showCreatedAtFilter">
-                      <q-select
-                        outlined
-                        v-model="createdAtFilter"
-                        dense
-                        :options="createdAtOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="createdAtFilter ? '' : 'Created at'"
-                        @update:model-value="
-                          onFilterChange('createdAt', createdAtFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="createdAtFilter">{{
-                            scope.opt.name
-                          }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="createdAtFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              createdAtFilter = null;
-                              onFilterChange('createdAt', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Created By Filter -->
-                    <div class="filter-item-wrapper" v-if="showCreatedByFilter">
-                      <q-select
-                        outlined
-                        v-model="createdByFilter"
-                        dense
-                        :options="createdByOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="createdByFilter ? '' : 'Created by'"
-                        @update:model-value="
-                          onFilterChange('createdBy', createdByFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black">
-                              No results
-                            </q-item-section>
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="createdByFilter">{{
-                            scope.opt.name
-                          }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="createdByFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              createdByFilter = null;
-                              onFilterChange('createdBy', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Direction Filter -->
-                    <div class="filter-item-wrapper" v-if="showDirectionFilter">
-                      <q-select
-                        outlined
-                        v-model="directionFilter"
-                        dense
-                        :options="directionOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="directionFilter ? '' : 'Direction'"
-                        @update:model-value="
-                          onFilterChange('direction', directionFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="directionFilter">{{
-                            scope.opt.name
-                          }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="directionFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              directionFilter = null;
-                              onFilterChange('direction', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Level Filter -->
-                    <div class="filter-item-wrapper" v-if="showLevelFilter">
-                      <q-select
-                        outlined
-                        v-model="levelFilter"
-                        dense
-                        :options="levelOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="levelFilter ? '' : 'Level'"
-                        @update:model-value="
-                          onFilterChange('level', levelFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="levelFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="levelFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              levelFilter = null;
-                              onFilterChange('level', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- By User Filter -->
-                    <div class="filter-item-wrapper" v-if="showByUserFilter">
-                      <q-select
-                        outlined
-                        v-model="byUserFilter"
-                        dense
-                        :options="byUserOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="byUserFilter ? '' : 'By user'"
-                        @update:model-value="
-                          onFilterChange('byUser', byUserFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="byUserFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="byUserFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              byUserFilter = null;
-                              onFilterChange('byUser', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Teacher Filter -->
-                    <div class="filter-item-wrapper" v-if="showTeacherFilter">
-                      <q-select
-                        outlined
-                        v-model="teacherFilter"
-                        dense
-                        :options="teacherOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="teacherFilter ? '' : 'Teacher'"
-                        @update:model-value="
-                          onFilterChange('teacher', teacherFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="teacherFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="teacherFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              teacherFilter = null;
-                              onFilterChange('teacher', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Degree Filter -->
-                    <div class="filter-item-wrapper" v-if="showDegreeFilter">
-                      <q-select
-                        outlined
-                        v-model="degreeFilter"
-                        dense
-                        :options="degreeOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="degreeFilter ? '' : 'Degree'"
-                        @update:model-value="
-                          onFilterChange('degree', degreeFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="degreeFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="degreeFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              degreeFilter = null;
-                              onFilterChange('degree', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Institution Filter -->
-                    <div
-                      class="filter-item-wrapper"
-                      v-if="showInstitutionFilter"
+                    <q-btn-dropdown
+                      class="add-btn-header"
+                      v-if="showAddButtonDropdown"
+                      no-caps
+                      content-class="action-menu"
+                      :label="addBtnLabel"
                     >
-                      <q-select
-                        outlined
-                        v-model="institutionFilter"
-                        dense
-                        :options="institutionOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="
-                          institutionFilter ? '' : 'All Institution'
-                        "
-                        @update:model-value="
-                          onFilterChange('institution', institutionFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="institutionFilter">{{
-                            scope.opt.name
-                          }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="institutionFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              institutionFilter = null;
-                              onFilterChange('institution', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Job Type Filter -->
-                    <div class="filter-item-wrapper" v-if="showJobTypeFilter">
-                      <q-select
-                        outlined
-                        v-model="jobTypeFilter"
-                        dense
-                        :options="jobTypeOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="jobTypeFilter ? '' : 'Job Type'"
-                        @update:model-value="
-                          onFilterChange('jobType', jobTypeFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="jobTypeFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="jobTypeFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              jobTypeFilter = null;
-                              onFilterChange('jobType', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-                    <!-- Course Filter -->
-                    <div class="filter-item-wrapper" v-if="showCourseFilter">
-                      <q-select
-                        outlined
-                        v-model="courseFilter"
-                        dense
-                        :options="courseOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="courseFilter ? '' : 'All Courses'"
-                        @update:model-value="
-                          onFilterChange('course', courseFilter)
-                        "
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="courseFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="courseFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              courseFilter = null;
-                              onFilterChange('course', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <!-- Type Filter -->
-                    <div class="filter-item-wrapper" v-if="showTypeFilter">
-                      <q-select
-                        outlined
-                        v-model="typeFilter"
-                        dense
-                        :options="typeOptions"
-                        option-label="name"
-                        option-value="id"
-                        fill-input
-                        emit-value
-                        map-options
-                        use-input
-                        input-debounce="0"
-                        class="filter-select"
-                        :placeholder="typeFilter ? '' : 'All Types'"
-                        @update:model-value="onFilterChange('type', typeFilter)"
-                      >
-                        <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-black"
-                              >No results</q-item-section
-                            >
-                          </q-item>
-                        </template>
-                        <template v-slot:selected-item="scope">
-                          <span v-if="typeFilter">{{ scope.opt.name }}</span>
-                        </template>
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="typeFilter"
-                            name="cancel"
-                            class="cursor-pointer"
-                            @click.stop.prevent="
-                              typeFilter = null;
-                              onFilterChange('type', null);
-                            "
-                          />
-                        </template>
-                      </q-select>
-                    </div>
+                      <q-list>
+                        <q-item
+                          v-for="option in addDropdownOptions"
+                          :key="option.name"
+                          clickable
+                          v-close-popup
+                          @click="handleDropdownAction(option)"
+                          class="action-menu-item"
+                        >
+                          <q-item-section>{{ option.name }}</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
                   </div>
-
-                  <q-btn flat class="clear-filters-btn" @click="clearFilters">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M2.44233 9.33359C2.50206 5.19973 5.89685 1.875 10.0657 1.875C12.8228 1.875 15.2392 3.32856 16.5779 5.50601C16.7586 5.80006 16.6668 6.18499 16.3727 6.36576C16.0787 6.54654 15.6938 6.45471 15.513 6.16066C14.3939 4.34037 12.3737 3.125 10.0657 3.125C6.57877 3.125 3.75312 5.89808 3.69252 9.33181L4.02617 9.00077C4.2712 8.75765 4.66693 8.75921 4.91005 9.00424C5.15316 9.24928 5.15161 9.645 4.90657 9.88812L3.50673 11.277C3.26306 11.5188 2.87 11.5188 2.62633 11.277L1.22648 9.88812C0.98145 9.645 0.979896 9.24928 1.22301 9.00424C1.46613 8.75921 1.86185 8.75765 2.10689 9.00077L2.44233 9.33359ZM16.4887 8.72215C16.7322 8.4815 17.1239 8.4815 17.3674 8.72215L18.7726 10.111C19.0181 10.3537 19.0204 10.7494 18.7778 10.9949C18.5351 11.2404 18.1394 11.2427 17.8939 11.0001L17.5523 10.6624C17.4945 14.8003 14.0848 18.125 9.90209 18.125C7.13651 18.125 4.71153 16.6725 3.36768 14.4949C3.18641 14.2012 3.27758 13.8161 3.57132 13.6348C3.86507 13.4535 4.25015 13.5447 4.43143 13.8384C5.55469 15.6586 7.58334 16.875 9.90209 16.875C13.4073 16.875 16.2435 14.0976 16.3021 10.6641L15.9622 11.0001C15.7167 11.2427 15.321 11.2404 15.0784 10.9949C14.8357 10.7494 14.838 10.3537 15.0835 10.111L16.4887 8.72215Z"
-                        fill="#4C8696"
-                      />
-                    </svg>
-                    Clear filters
-                  </q-btn>
-
-                  <q-btn-dropdown
-                    class="add-btn-header"
-                    v-if="showAddButtonDropdown"
-                    no-caps
-                    content-class="action-menu"
-                    :label="addBtnLabel"
-                  >
-                    <q-list>
-                      <q-item
-                        v-for="option in addDropdownOptions"
-                        :key="option.name"
-                        clickable
-                        v-close-popup
-                        @click="handleDropdownAction(option)"
-                        class="action-menu-item"
-                      >
-                        <q-item-section>{{ option.name }}</q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-
+                </div>
+                <div>
                   <q-btn
                     flat
-                    class="add-btn-header"
+                    class="add-btn-header justify-end"
                     @click="addNew"
                     v-if="showAddButton"
                   >
@@ -913,15 +944,15 @@
 
             <template v-slot:body-cell-image="props">
               <q-td :props="props">
-                <div class="row items-center">
+                <div class="row items-center no-wrap">
                   <q-img
                     class="image"
                     :src="props.row.studentImage"
-                    :ratio="1"
+                    ratio="1"
                   />
-                  <span class="">{{
-                    props.row.studentName
-                  }}</span>
+                  <div class="student-name-text">
+                    {{ props.row.studentName }}
+                  </div>
                 </div>
               </q-td>
             </template>
@@ -1060,8 +1091,9 @@
                     />
                   </svg>
                   <q-menu class="action-menu">
-                    <q-list v-if="student || bookStock || Notes">
+                    <q-list>
                       <q-item
+                        v-if="student || bookStock || Notes || courses"
                         clickable
                         class="action-menu-item"
                         @click="details(props.row)"
@@ -1069,7 +1101,7 @@
                         <q-item-section>View</q-item-section>
                       </q-item>
                       <q-item
-                        v-if="student"
+                        v-if="student || staff"
                         clickable
                         class="action-menu-item"
                         @click="EditEvent(props.row)"
@@ -1336,7 +1368,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    courses: {
+      type: Boolean,
+      default: false,
+    },
     studentCourse: {
+      type: Boolean,
+      default: false,
+    },
+    staff: {
       type: Boolean,
       default: false,
     },

@@ -7,6 +7,7 @@
     :showAdd="true"
     addBtnLabel="Add Staff"
     :actions="true"
+    :staff="true"
     :showFilters="true"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search by Name, ID, or Mobile..."
@@ -24,9 +25,15 @@
     @getPagFun="getPagFun"
     @sortApi="fireSortCall"
     @callApi="fireCall"
+    @editEvent="editEvent"
     emptyStateTitle="No staff found"
     emptyStateDescription="Get started by adding a new staff member."
     emptyStateButtonLabel="Add Staff"
+  />
+  <editStaffPopup
+    v-model="showEditPopup"
+    :staffInfo="selectedStaff"
+    @save="onSaveStaff"
   />
 </template>
 
@@ -34,8 +41,12 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import tableComp from "src/components/tableComponent.vue";
+import editStaffPopup from "../components/editStaffPopup.vue";
 
 const router = useRouter();
+
+const showEditPopup = ref(false);
+const selectedStaff = ref(null);
 
 const pagination = ref({
   page: 1,
@@ -235,6 +246,24 @@ const onFilterChange = ({ type, val }) => {
 
 const clearFilters = () => {
   console.log("Clear Filters");
+};
+
+const editEvent = (row) => {
+  selectedStaff.value = row;
+  showEditPopup.value = true;
+};
+
+const onSaveStaff = (data) => {
+  console.log("Saving staff data:", data);
+  // Update the row in tableRows if needed
+  const index = tableRows.value.findIndex((r) => r.id === data.id);
+  if (index !== -1) {
+    tableRows.value[index] = {
+      ...tableRows.value[index],
+      ...data,
+      name: `${data.firstName} ${data.middleName} ${data.lastName}`.trim(),
+    };
+  }
 };
 </script>
 

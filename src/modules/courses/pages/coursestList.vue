@@ -5,6 +5,7 @@
     :tableColumns="columns"
     :tablePagination="pagination"
     :showAdd="true"
+    :courses="true"
     addBtnLabel="Add Course"
     :actions="true"
     :showFilters="true"
@@ -21,6 +22,7 @@
     @searchEvent="onSearch"
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
+    @DetailsEvent="viewCourse"
     emptyStateTitle="No courses found"
     emptyStateDescription="Get started by adding a new course."
     emptyStateButtonLabel="Add Course"
@@ -40,7 +42,9 @@
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import addEditCoursePopup from "../components/addEditCoursePopup.vue";
+import { useRouter, useRoute } from "vue-router";
 
+const router = useRouter();
 const showAddEditPopup = ref(false);
 const isEditMode = ref(false);
 const selectedCourseData = ref({});
@@ -240,6 +244,10 @@ const editCourse = (row) => {
   showAddEditPopup.value = true;
 };
 
+const viewCourse = (row) => {
+  console.log("View Course:", row);
+  router.push({ name: "viewCourse", params: { id: row.id } });
+};
 const handleSaveCourse = (courseData) => {
   console.log("Course saved:", courseData);
   // Implementation for adding/updating the course row or calling API would go here

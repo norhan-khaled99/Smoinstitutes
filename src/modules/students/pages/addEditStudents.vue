@@ -16,7 +16,7 @@
             self="top right"
             class="action-dropdown"
           >
-            <q-list style="min-width: 200px">
+            <q-list>
               <q-item clickable v-close-popup @click="saveStudent">
                 <q-item-section>Save & Close</q-item-section>
               </q-item>
@@ -84,7 +84,7 @@
               accept=".jpg, .png, .gif"
               @update:model-value="uploadPhoto"
             />
-            <q-btn flat class="upload-btn" @click="$refs.fileInput.pickFiles()">
+            <q-btn flat class="upload-btn">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="15"

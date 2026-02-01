@@ -13,6 +13,17 @@ export default [
           name: "Courses",
         },
       },
+      {
+        path: "view/:id",
+        name: "viewCourse",
+        component: () => import("../pages/viewCourses.vue"),
+        meta: {
+          mainTitel: "Courses",
+          pageTitel: "View Course",
+          titleOfSubTitel: "Courses Lists",
+          name: "View Course",
+        },
+      },
     ],
   },
 ];
