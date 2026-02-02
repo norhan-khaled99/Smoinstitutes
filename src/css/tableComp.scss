@@ -364,9 +364,16 @@
 
   .q-table__container {
     border-radius: 8px;
-    color: #000000;
+    color: #4B5563;
     box-shadow: none;
-    border: 1px solid #e2e2ea;
+    border: 1px solid #FFFFFF;
+
+    .q-table__middle,
+    .q-table__bottom {
+      border-left: 1px solid #D1D5DB;
+      border-bottom: 1px solid #D1D5DB;
+      border-right: 1px solid #D1D5DB;
+    }
 
     tbody td {
       font-size: 14px;
@@ -378,6 +385,9 @@
       font-size: 14px;
       font-weight: 600;
       background-color: #f1f5f9;
+      border-right: none;
+      border-left: none;
+      border-bottom: none;
     }
 
     .actions {
@@ -505,14 +515,20 @@
 }
 
 .positive-balance {
-  color: #15803d;
+  color: #4CAF50;
   font-weight: 500;
 }
 
 .negative-balance {
-  color: #c81e1e;
+  color: #C63030;
   font-weight: 500;
 }
+
+.zero-balance {
+  color: #6B7280;
+  font-weight: 500;
+}
+
 
 .bold-text {
   font-weight: 600;
@@ -633,7 +649,7 @@
       gap: 0.5rem;
 
       .show-label {
-        color: $black;
+        color: #7D889D;
         font-size: 0.875rem;
         font-weight: 400;
       }
@@ -641,11 +657,19 @@
       .rows-per-page-select {
         width: 3.5rem;
 
+        span {
+          color: #36394A !important;
+        }
+
         .q-field__control {
           height: 2rem;
           min-height: 2rem;
           border-radius: 0.5rem;
-          border: 1px solid #e2e2ea;
+          padding: 0 0.5rem;
+          // border: 1px solid #e2e2ea;
+          border: 1px solid #DFE1E7;
+          background-color: #ffffff !important;
+
 
           &::before,
           &::after {
@@ -662,6 +686,10 @@
 
         .q-field__append {
           padding-left: 0;
+
+          .q-select__dropdown-icon {
+            display: none;
+          }
         }
       }
     }

@@ -220,6 +220,11 @@
   border: 1px solid #e5e9f0 !important;
 }
 
+.q-item--active {
+  background-color: #f5f7fd;
+  color: #2f5d6a;
+}
+
 /* Responsive Design */
 // @media (max-width: 1024px) {
 //   .add-student-container {

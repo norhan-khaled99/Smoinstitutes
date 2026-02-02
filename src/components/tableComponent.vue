@@ -109,7 +109,25 @@
                     outlined
                     @update:model-value="update"
                     class="rows-per-page-select"
-                  />
+                  >
+                    <template v-slot:append>
+                      <svg
+                        width="9"
+                        height="5"
+                        viewBox="0 0 9 5"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M0.749999 0.749999L4.25 3.75L7.75 0.75"
+                          stroke="#36394A"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </template>
+                  </q-select>
                 </div>
               </div>
             </template>
@@ -983,15 +1001,16 @@
               <q-td :props="props">
                 <div
                   :class="{
-                    'positive-balance': props.row.balanceDisplay
-                      .toString()
-                      .includes('+'),
-                    'negative-balance': props.row.balanceDisplay
-                      .toString()
-                      .includes('-'),
+                    'positive-balance': Number(props.row.balance) > 0,
+                    'negative-balance': Number(props.row.balance) < 0,
+                    'zero-balance': Number(props.row.balance) == 0,
                   }"
                 >
-                  {{ props.row.balanceDisplay }}
+                  {{
+                    Number(props.row.balance) > 0
+                      ? "+" + props.row.balance
+                      : props.row.balance
+                  }}
                 </div>
               </q-td>
             </template>
