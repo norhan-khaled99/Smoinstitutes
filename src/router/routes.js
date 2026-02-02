@@ -7,10 +7,12 @@ import notes from "src/modules/notes/routes/routes";
 import courses from "src/modules/courses/routes/routes";
 import profile from "src/modules/profiles/routes/routes";
 import bookStock from "src/modules/bookStock/routes/routes";
+
 const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
+    meta: { requiresAuth: true }, 
     children: [
       {
         path: "",
@@ -29,11 +31,11 @@ const routes = [
 
   {
     path: "/login",
-    component: () => import("../modules/auth/pages/logIn.vue"),
+    component: () => import("src/modules/auth/pages/logIn.vue"),
+    meta: { guestOnly: true },
     ...authRoutes,
   },
-  // Always leave this as last one,
-  // but you can also remove it
+
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),

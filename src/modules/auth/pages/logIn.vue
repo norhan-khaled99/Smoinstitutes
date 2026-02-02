@@ -88,7 +88,7 @@
         <q-form class="rounded-borders" @submit.prevent="login">
           <label class="field-label">Username</label>
           <q-input
-            v-model="form.Email"
+            v-model="form.username"
             class="email-field"
             outlined
             placeholder="Enter Your username"
@@ -99,7 +99,7 @@
 
           <label class="field-label">Password</label>
           <q-input
-            v-model="form.Password"
+            v-model="form.password"
             :type="isPwd ? 'password' : 'text'"
             class="password-field"
             outlined
@@ -112,8 +112,8 @@
               <div class="cursor-pointer" @click="isPwd = !isPwd">
                 <!-- Eye Icon (Password hidden) -->
                 <svg
-                v-if="isPwd"
-                xmlns="http://www.w3.org/2000/svg"
+                  v-if="isPwd"
+                  xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -140,7 +140,8 @@
                     fill="#BBBBBB"
                   />
                 </svg>
-                <svg v-else
+                <svg
+                  v-else
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
@@ -158,7 +159,6 @@
                 </svg>
 
                 <!-- Crossed Eye Icon (Password visible) -->
-              
               </div>
             </template>
           </q-input>
@@ -176,22 +176,22 @@
 </template>
 <script>
 import { ref } from "vue";
-// import { useRouter } from "vue-router";
-// import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 import rules from "src/config/rules";
-// import authServices from "../services/services";
+import authServices from "../services/service.js";
 
 export default {
   setup() {
-    // const $q = useQuasar();
-    // const router = useRouter();
+    const $q = useQuasar();
+    const router = useRouter();
 
     /** start object form **/
     const isPwd = ref(true);
     const hasError = ref(false);
     const form = ref({
-      Email: "",
-      Password: "",
+      username: "",
+      password: "",
     });
 
     /** end object form **/
@@ -215,11 +215,40 @@ export default {
     };
     // // fun of login
     const login = () => {
-      if (!form.value.Email || !form.value.Password) {
+      const emailRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+      if (
+        !form.value.username ||
+        !form.value.password ||
+        !emailRegex.test(form.value.username) ||
+        form.value.username !== "Test_Admin@local" ||
+        form.value.password !== "AAAbbb123"
+      ) {
         hasError.value = true;
       } else {
         hasError.value = false;
-        // Proceed with login logic
+        $q.loading.show();
+
+        authServices
+          .logIn(form.value)
+          .then((res) => {
+              console.log("login response", res.data.access);
+              localStorage.setItem("accessToken", res.data.access);
+              router.push({ name: "students" });
+              $q.loading.hide();
+          })
+          .catch((error) => {
+            $q.loading.hide();
+            $q.notify({
+              badgeStyle: "display:none",
+              classes: "custom-Notify",
+              textColor: "black-1",
+              icon: "img:/images/Error.png",
+              position: "bottom-right",
+              message: error.response?.data?.result || "An error occurred.",
+            });
+          });
       }
     };
     /** end login integration**/
