@@ -93,9 +93,7 @@
               >
                 <q-menu>
                   <q-list >
-                    <q-item clickable v-close-popup>
-                      <q-item-section>Change Password</q-item-section>
-                    </q-item>
+                    
                     <q-item clickable @click="logout" v-close-popup>
                       <q-item-section>Log out</q-item-section>
                     </q-item>
