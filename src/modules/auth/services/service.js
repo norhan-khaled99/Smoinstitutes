@@ -8,6 +8,12 @@ class authServices {
     );
   }
 
+  getUserData() {
+    return axiosInstance.get(
+      "/api/v1/finance/user/balance/"
+    );
+  }
+
 
 
 }

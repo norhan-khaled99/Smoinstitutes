@@ -233,7 +233,6 @@ export default {
         authServices
           .logIn(form.value)
           .then((res) => {
-              console.log("login response", res.data.access);
               localStorage.setItem("accessToken", res.data.access);
               router.push({ name: "students" });
               $q.loading.hide();

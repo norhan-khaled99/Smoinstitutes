@@ -85,7 +85,7 @@
 
           <div class="column justify-center">
             <div class="row items-center no-wrap">
-              <span class="user-name text-weight-medium">Mohamed Essam</span>
+              <span class="user-name text-weight-medium">{{ userName}}</span>
               <q-icon
                 name="keyboard_arrow_down"
                 size="20px"
@@ -104,7 +104,7 @@
               </q-icon>
             </div>
             <div class="row items-center no-wrap user-stats">
-              <span class="q-mr-sm">•••••</span>
+              <span class="q-mr-sm">{{ userBalance }}</span>
               <span class="text-caption q-mr-xs">EGP</span>
                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -280,9 +280,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted} from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useRoute, useRouter } from "vue-router";
+import authServices from "../modules/auth/services/service.js";
+import { useQuasar } from "quasar";
 
 const linksList = [
   {
@@ -404,10 +406,36 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
     const searchText = ref("");
+    const $q = useQuasar();
     const logout = () => {
       localStorage.clear();
       router.push("/login");
     };
+
+    const userName = ref("");
+    const userBalance = ref("");
+
+    const getUserData = () => {
+        authServices
+          .getUserData()
+          .then((res) => {
+            userName.value = res.data?.data?.full_name || "";
+            userBalance.value = res.data?.data?.balance || "";
+
+              $q.loading.hide();
+          })
+          .catch((error) => {
+            $q.loading.hide();
+            $q.notify({
+              badgeStyle: "display:none",
+              classes: "custom-Notify",
+              textColor: "black-1",
+              icon: "img:/images/Error.png",
+              position: "bottom-right",
+              message: error.response?.data?.result || "An error occurred.",
+            });
+          });
+    }
 
     const pageTitel = computed(() => route.meta.pageTitel);
     const cramp = computed(() => route.meta.subTitle);
@@ -426,12 +454,19 @@ export default defineComponent({
         : pathParts.slice(0, -1).join("/") || "/";
     });
 
+    onMounted(() => {
+      getUserData();
+    });
+
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
       miniState,
       searchText,
       pageTitel,
+      userName,
+      userBalance,
+
       pageLink,
       cramp,
       parentLink,
