@@ -80,10 +80,10 @@
 
     <div class="course-info-card">
       <div class="card-header">
-        <p >Course Info</p>
+        <p>Course Info</p>
       </div>
       <q-separator color="grey-2" />
-      <div class="info-grid row  q-col-gutter-x-md q-col-gutter-y-sm">
+      <div class="info-grid row q-col-gutter-x-md q-col-gutter-y-sm">
         <div class="info-item col-12 col-sm-6 col-md-4">
           <div class="label">Teacher</div>
           <div class="value">Aseel Gamal Hammoud Musleh</div>
@@ -168,37 +168,18 @@ const columns = [
     sortable: true,
   },
   {
-    name: "mobile",
-    label: "Mobile",
-    field: (row) => row.mobile,
+    name: "score",
+    label: "Score",
+    field: (row) => row.score,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
-    name: "balance",
-    label: "Balance",
+    name: "balanceDisplay",
+    label: "Course Balance",
     field: (row) => row.balance,
     align: "left",
     sortable: true,
-  },
-  {
-    name: "status",
-    label: "Status",
-    field: (row) => row.status,
-    align: "center",
-    sortable: true,
-  },
-  {
-    name: "courses",
-    label: "Courses",
-    field: (row) => row.courses,
-    align: "center",
-    sortable: true,
-  },
-  {
-    name: "actions",
-    label: "Actions",
-    align: "center",
   },
 ];
 
@@ -226,30 +207,56 @@ const tableRows = ref([
     studentImage: "https://cdn.quasar.dev/img/avatar.png",
     studentName: "Yara Abdullah Ahmed Ali",
     studentId: 251221,
-    mobile: "+971523064607",
-    balance: -84950,
-    status: "New",
-    courses: "1 course",
+    score: 0,
+    balance: -4950,
   },
   {
     id: 2,
     studentImage: "https://cdn.quasar.dev/img/avatar.png",
     studentName: "Moaz Essam Hammoud Musleh",
     studentId: 251220,
-    mobile: "+971557134005",
+    score: 0,
     balance: 2000,
-    status: "Waiting",
-    courses: "3 courses",
   },
   {
     id: 3,
     studentImage: "https://cdn.quasar.dev/img/avatar.png",
     studentName: "Ali Saleh Mohammed Muthana",
     studentId: 251219,
-    mobile: "+971556072983",
+    score: 0,
     balance: 0,
-    status: "Active",
-    courses: "No courses",
+  },
+  {
+    id: 4,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+    studentName: "Qassem Abdulghani Mohammed Motlaq",
+    studentId: 251218,
+    score: 0,
+    balance: -5250,
+  },
+  {
+    id: 5,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+    studentName: "Eman Saleh Ben Saleh Salem",
+    studentId: 251213,
+    score: 0,
+    balance: 0,
+  },
+  {
+    id: 6,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+    studentName: "Abdullah Saleh Mobarek Hussien Alharthy",
+    studentId: 251212,
+    score: 0,
+    balance: 1500,
+  },
+  {
+    id: 7,
+    studentImage: "https://cdn.quasar.dev/img/avatar.png",
+    studentName: "Youssef Mobarek Hussien Alharthy",
+    studentId: 251231,
+    score: 0,
+    balance: 1000,
   },
 ]);
 

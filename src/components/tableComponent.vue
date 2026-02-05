@@ -39,7 +39,6 @@
           <q-table
             :columns="tableColumns"
             :rows="tableRows"
-            :loading="loading"
             v-model:pagination="pagination"
             @request="onRequest"
           >
@@ -960,6 +959,14 @@
               </div>
             </template>
 
+            <template v-slot:body-cell-accountType="props">
+              <q-td :props="props">
+                <slot name="body-cell-accountType" :row="props.row">
+                  {{ props.row.accountType }}
+                </slot>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-image="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
@@ -1015,6 +1022,20 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-score="props">
+              <q-td :props="props">
+                <slot name="body-cell-score" :row="props.row">
+                  <q-input
+                    v-model="props.row.score"
+                    dense readonly
+                    outlined
+                    class="score-input"
+                    type="number"
+                  />
+                </slot>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-noteType="props">
               <q-td :props="props">
                 <q-badge
@@ -1041,6 +1062,27 @@
                 >
                   {{ props.row.direction }}
                 </q-badge>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-type="props">
+              <q-td :props="props">
+                <div
+                  :class="props.row.typeClass"
+                  class="type-cell row items-center no-wrap"
+                >
+                  <svg
+                    width="6"
+                    height="6"
+                    viewBox="0 0 6 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="q-mr-xs"
+                  >
+                    <circle cx="3" cy="3" r="3" fill="currentColor" />
+                  </svg>
+                  {{ props.row.type }}
+                </div>
               </q-td>
             </template>
 
@@ -1112,7 +1154,9 @@
                   <q-menu class="action-menu">
                     <q-list>
                       <q-item
-                        v-if="student || bookStock || Notes || courses"
+                        v-if="
+                          student || bookStock || Notes || courses || profiles
+                        "
                         clickable
                         class="action-menu-item"
                         @click="details(props.row)"
@@ -1120,7 +1164,7 @@
                         <q-item-section>View</q-item-section>
                       </q-item>
                       <q-item
-                        v-if="student || staff"
+                        v-if="student || staff || profiles"
                         clickable
                         class="action-menu-item"
                         @click="EditEvent(props.row)"
@@ -1391,6 +1435,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    profiles: {
+      type: Boolean,
+      default: false,
+    },
     studentCourse: {
       type: Boolean,
       default: false,
@@ -1404,6 +1452,10 @@ export default {
       default: false,
     },
     Notes: {
+      type: Boolean,
+      default: false,
+    },
+    profiles: {
       type: Boolean,
       default: false,
     },
@@ -1563,8 +1615,7 @@ export default {
     const options = ref([3, 5, 10, 15, 20, 25, 30, 50]);
     const model = ref(15);
     const update = (item) => {
-      pagination.value.rowsPerPage = item;
-      emit("updatePag", item);
+      emit("getPagFun", [props.apiCall, item.page, pagination.value]);
     };
 
     const getPagination = (item) => {
