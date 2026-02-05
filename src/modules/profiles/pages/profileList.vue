@@ -17,16 +17,25 @@
       </div>
     </template>
   </table-comp>
+
+  <!-- Profile View/Edit Popup -->
+  <view-edit-profile-popup v-model="showProfilePopup" :profileInfo="selectedProfile" :initialEditMode="popupEditMode"
+    @save="handleSaveProfile" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
+import viewEditProfilePopup from "../components/viewEditProfilePopup.vue";
 import { useRouter } from "vue-router";
 
 // Mock Data
 const router = useRouter();
 const loading = ref(false);
+const showProfilePopup = ref(false);
+const selectedProfile = ref(null);
+const popupEditMode = ref(false);
+
 const pagination = ref({
   page: 1,
   rowsPerPage: 10,
@@ -268,10 +277,59 @@ const addNewProfile = () => {
   console.log("Add New Profile");
   router.push({ name: "addProfile" });
 };
+
 const viewProfile = (row) => {
   console.log("View Profile", row);
+  selectedProfile.value = {
+    id: row.id,
+    profileId: row.profileId,
+    fullName: row.studentName,
+    gender: "Male",
+    dob: "15/05/1992",
+    mainAccount: row.accountType,
+    nationalId: "1092837465",
+    email: "ahmed@example.com",
+    phone: "-",
+    mobile: row.mobile,
+    city: "Dubai",
+    address: "Villa 12, Street 45, Al Barsha 1, Dubai, UAE",
+    image: row.studentImage,
+    registrationDate: "Oct 16, 2025, 9:25 AM",
+  };
+  popupEditMode.value = false; // Open in view mode
+  showProfilePopup.value = true;
 };
+
 const editProfile = (row) => {
   console.log("Edit Profile", row);
+  selectedProfile.value = {
+    id: row.id,
+    profileId: row.profileId,
+    fullName: row.studentName,
+    gender: "Male",
+    dob: "15/05/1992",
+    mainAccount: row.accountType,
+    nationalId: "1092837465",
+    email: "ahmed@example.com",
+    phone: "-",
+    mobile: row.mobile,
+    city: "Dubai",
+    address: "Villa 12, Street 45, Al Barsha 1, Dubai, UAE",
+    image: row.studentImage,
+    registrationDate: "Oct 16, 2025, 9:25 AM",
+  };
+  popupEditMode.value = true;
+  showProfilePopup.value = true;
+};
+
+const handleSaveProfile = (profileData) => {
+  console.log("Save Profile", profileData);
+  // Update the row data in the table
+  const rowIndex = rows.value.findIndex((r) => r.id === profileData.id);
+  if (rowIndex !== -1) {
+    rows.value[rowIndex].studentName = profileData.fullName;
+    rows.value[rowIndex].mobile = profileData.mobile;
+    rows.value[rowIndex].accountType = profileData.mainAccount;
+  }
 };
 </script>

@@ -66,7 +66,7 @@ const columns = [
     sortable: true,
   },
   {
-    name: "balanceDisplay",
+    name: "balance",
     label: "Balance",
     field: (row) => row.balance,
     align: "left",
@@ -205,7 +205,7 @@ const tableRows = ref([
     studentName: "Qassem Abdulghani Mohammed Motlaq",
     studentId: 251213,
     mobile: "+971502469158",
-    balance:0,
+    balance: 0,
     status: "Waiting",
     courses: "4 courses",
   },

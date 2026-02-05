@@ -186,7 +186,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      :width="265"
+      :width="264"
       :mini="miniState"
       class="main_sidebar"
     >
@@ -529,13 +529,12 @@ export default defineComponent({
       userName,
       userBalance,
       isBalanceVisible,
-
       pageLink,
       cramp,
       parentLink,
       titleOfSubTitel,
       subTitleChildLink,
-      drawerWidth: 265,
+      drawerWidth: 264,
       logout,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;

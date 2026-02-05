@@ -26,6 +26,7 @@
     @sortApi="fireSortCall"
     @callApi="fireCall"
     @editEvent="editEvent"
+    @DetailsEvent="viewEvent"
     emptyStateTitle="No staff found"
     emptyStateDescription="Get started by adding a new staff member."
     emptyStateButtonLabel="Add Staff"
@@ -33,6 +34,7 @@
   <editStaffPopup
     v-model="showEditPopup"
     :staffInfo="selectedStaff"
+    :initialEditMode="popupEditMode"
     @save="onSaveStaff"
   />
 </template>
@@ -41,12 +43,13 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import tableComp from "src/components/tableComponent.vue";
-import editStaffPopup from "../components/editStaffPopup.vue";
+import editStaffPopup from "../components/viewEditStaffPopup.vue";
 
 const router = useRouter();
 
 const showEditPopup = ref(false);
 const selectedStaff = ref(null);
+const popupEditMode = ref(false);
 
 const pagination = ref({
   page: 1,
@@ -93,8 +96,8 @@ const columns = [
   },
   {
     name: "balanceDisplay",
-    label: "Balance Display",
-    field: (row) => row.balanceDisplay,
+    label: "Balance",
+    field: (row) => row.balance,
     align: "left",
     sortable: true,
   },
@@ -120,7 +123,7 @@ const tableRows = ref([
     mobile: "+971523084607",
     startDate: "11-01-2026",
     institution: "USA",
-    balanceDisplay: "-84950",
+    balance: "-84950",
     courses: "( 9 : 4 )",
   },
   {
@@ -130,7 +133,7 @@ const tableRows = ref([
     mobile: "+971557134005",
     startDate: "11-01-2026",
     institution: "EGY",
-    balanceDisplay: "+2000",
+    balance: "+2000",
     courses: "( 3 : 0 )",
   },
   {
@@ -140,7 +143,7 @@ const tableRows = ref([
     mobile: "+971556072983",
     startDate: "11-01-2026",
     institution: "USA",
-    balanceDisplay: "0",
+    balance: "0",
     courses: "None",
   },
   {
@@ -150,7 +153,7 @@ const tableRows = ref([
     mobile: "+971553088206",
     startDate: "11-01-2026",
     institution: "USA",
-    balanceDisplay: "-56250",
+    balance: "-56250",
     courses: "( 3 : 0 )",
   },
   {
@@ -160,7 +163,7 @@ const tableRows = ref([
     mobile: "+971553296324",
     startDate: "11-01-2026",
     institution: "EGY",
-    balanceDisplay: "0",
+    balance: "0",
     courses: "None",
   },
   {
@@ -170,7 +173,7 @@ const tableRows = ref([
     mobile: "+971559533707",
     startDate: "11-01-2026",
     institution: "USA",
-    balanceDisplay: "+6500",
+    balance: "+6500",
     courses: "( 3 : 0 )",
   },
   {
@@ -180,7 +183,7 @@ const tableRows = ref([
     mobile: "+971503603570",
     startDate: "11-01-2026",
     institution: "EGY",
-    balanceDisplay: "-56250",
+    balance: "-56250",
     courses: "None",
   },
   {
@@ -190,7 +193,7 @@ const tableRows = ref([
     mobile: "+971553296324",
     startDate: "04-01-2026",
     institution: "USA",
-    balanceDisplay: "+5000",
+    balance: "+5000",
     courses: "( 3 : 0 )",
   },
   {
@@ -200,7 +203,7 @@ const tableRows = ref([
     mobile: "+971502469158",
     startDate: "01-11-2025",
     institution: "EGY",
-    balanceDisplay: "0",
+    balance: "0",
     courses: "( 2 : 1 )",
   },
   {
@@ -210,7 +213,7 @@ const tableRows = ref([
     mobile: "+971505437621",
     startDate: "11-01-2026",
     institution: "USA",
-    balanceDisplay: "-56250",
+    balance: "-56250",
     courses: "( 1 : 0 )",
   },
 ]);
@@ -248,8 +251,15 @@ const clearFilters = () => {
   console.log("Clear Filters");
 };
 
+const viewEvent = (row) => {
+  selectedStaff.value = row;
+  popupEditMode.value = false;
+  showEditPopup.value = true;
+};
+
 const editEvent = (row) => {
   selectedStaff.value = row;
+  popupEditMode.value = true; // Open in edit mode
   showEditPopup.value = true;
 };
 
