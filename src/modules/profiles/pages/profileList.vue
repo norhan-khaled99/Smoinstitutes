@@ -1,17 +1,41 @@
 <template>
-  <table-comp :tableColumns="columns" :tableRows="rows" :tablePagination="pagination" :loading="loading"
-    pageTitle="Profiles" addBtnLabel="Add Profile" :showAddButton="true" :profiles="true" :showTypeFilter="true"
-    :typeOptions="accountTypeOptions" :showBalanceFilter="true" :balanceOptions="balanceOptions" @addNew="addNewProfile"
-    @DetailsEvent="viewProfile" @EditEvent="editProfile" :ShowActionsdropDown="true" :actions="true">
+  <table-comp
+    :tableColumns="columns"
+    :tableRows="rows"
+    :tablePagination="pagination"
+    :loading="loading"
+    pageTitle="Profiles"
+    addBtnLabel="Add Profile"
+    :showAddButton="true"
+    :profiles="true"
+    :showTypeFilter="true"
+    :typeOptions="accountTypeOptions"
+    :showBalanceFilter="true"
+    :balanceOptions="balanceOptions"
+    @addNew="addNewProfile"
+    @DetailsEvent="viewProfile"
+    @EditEvent="editProfile"
+    :ShowActionsdropDown="true"
+    :actions="true"
+  >
     <!-- Custom Account Type Slot -->
     <template #body-cell-accountType="{ row }">
       <div class="row items-center no-wrap">
-        <div class="icon-wrapper q-mr-sm flex flex-center"
-          :style="{ backgroundColor: getAccountStyle(row.accountType).bgColor }">
-          <span v-if="getAccountStyle(row.accountType).icon.startsWith('<svg')"
-            v-html="getAccountStyle(row.accountType).icon" class="flex flex-center"></span>
-          <q-icon v-else :name="getAccountStyle(row.accountType).icon" size="20px"
-            :class="getAccountStyle(row.accountType).textClass" />
+        <div
+          class="icon-wrapper q-mr-sm flex flex-center"
+          :style="{ backgroundColor: getAccountStyle(row.accountType).bgColor }"
+        >
+          <span
+            v-if="getAccountStyle(row.accountType).icon.startsWith('<svg')"
+            v-html="getAccountStyle(row.accountType).icon"
+            class="flex flex-center"
+          ></span>
+          <q-icon
+            v-else
+            :name="getAccountStyle(row.accountType).icon"
+            size="20px"
+            :class="getAccountStyle(row.accountType).textClass"
+          />
         </div>
         <span>{{ row.accountType }}</span>
       </div>
@@ -19,8 +43,12 @@
   </table-comp>
 
   <!-- Profile View/Edit Popup -->
-  <view-edit-profile-popup v-model="showProfilePopup" :profileInfo="selectedProfile" :initialEditMode="popupEditMode"
-    @save="handleSaveProfile" />
+  <view-edit-profile-popup
+    v-model="showProfilePopup"
+    :profileInfo="selectedProfile"
+    :initialEditMode="popupEditMode"
+    @save="handleSaveProfile"
+  />
 </template>
 
 <script setup>
@@ -63,21 +91,21 @@ const columns = [
     label: "Full Name",
     align: "left",
     field: (row) => row.studentName,
-    sortable: true,
+    sortable: false,
   },
   {
     name: "profileId",
     label: "Profile ID",
     align: "left",
     field: "profileId",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "accountType",
     label: "Account Type",
     align: "left",
     field: "accountType",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "mobile",
@@ -90,7 +118,7 @@ const columns = [
     label: "Balance",
     align: "left",
     field: "balance",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "actions",

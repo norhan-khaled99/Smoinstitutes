@@ -100,33 +100,6 @@
                 </div>
 
                 <div class="pagination-show">
-                  <span class="show-label">Show</span>
-                  <q-select
-                    v-model="pagination.rowsPerPage"
-                    :options="options"
-                    dense
-                    outlined
-                    @update:model-value="update"
-                    class="rows-per-page-select"
-                  >
-                    <template v-slot:append>
-                      <svg
-                        width="9"
-                        height="5"
-                        viewBox="0 0 9 5"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M0.749999 0.749999L4.25 3.75L7.75 0.75"
-                          stroke="#36394A"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </template>
-                  </q-select>
                 </div>
               </div>
             </template>
@@ -176,6 +149,28 @@
                     v-if="showFilters"
                   >
                     <div class="filter-dropdowns row items-center wrap">
+                      <slot name="custom-filters-before"></slot>
+                      <!-- Transactions Filters -->
+                      <div class="filter-item-wrapper" v-if="transactions">
+                        <q-input
+                          outlined
+                          v-model="fromNo"
+                          dense
+                          placeholder="From No."
+                          class="filter-input"
+                          @update:model-value="onFilterChange('fromNo', fromNo)"
+                        />
+                      </div>
+                      <div class="filter-item-wrapper" v-if="transactions">
+                        <q-input
+                          outlined
+                          v-model="toNo"
+                          dense
+                          placeholder="To No."
+                          class="filter-input"
+                          @update:model-value="onFilterChange('toNo', toNo)"
+                        />
+                      </div>
                       <!-- Department Filter -->
                       <!-- Years Filter -->
                       <div class="filter-item-wrapper" v-if="showYearFilter">
@@ -848,7 +843,7 @@
                           use-input
                           input-debounce="0"
                           class="filter-select"
-                          :placeholder="typeFilter ? '' : 'All Types'"
+                          :placeholder="typeFilter ? '' : typePlaceholder"
                           @update:model-value="
                             onFilterChange('type', typeFilter)
                           "
@@ -876,6 +871,8 @@
                           </template>
                         </q-select>
                       </div>
+
+                      <slot name="custom-filters"></slot>
                     </div>
 
                     <q-btn flat class="clear-filters-btn" @click="clearFilters">
@@ -895,6 +892,14 @@
                       </svg>
                       Clear filters
                     </q-btn>
+                    <div
+                      class="view-report cursor-pointer"
+                      v-if="transactions"
+                      @click="$emit('viewReport')"
+                    >
+                      View Report
+                    </div>
+                    <slot name="header-actions"></slot>
 
                     <q-btn-dropdown
                       class="add-btn-header"
@@ -1089,13 +1094,19 @@
                 <q-badge
                   class="state"
                   :class="{
-                    'important-status': props.row.noteType === 'Important',
-                    'warning-status': props.row.noteType === 'Warning',
-                    'info-status': props.row.noteType === 'Info',
+                    'important-status': props.row.note_type === 'important',
+                    'warning-status': props.row.note_type === 'warn',
+                    'info-status': props.row.note_type === 'info',
                   }"
                 >
-                  {{ props.row.noteType }}
+                  {{ props.row.note_type }}
                 </q-badge>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-note="props">
+              <q-td :props="props" class="note-cell">
+                 {{ props.row.note }}
               </q-td>
             </template>
 
@@ -1170,6 +1181,31 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-transfer="props">
+              <q-td :props="props">
+                <div class="transfer-cell">
+                  <div class="transfer-from">{{ props.row.transferFrom }}</div>
+                  <div class="transfer-to">{{ props.row.transferTo }}</div>
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-transType="props">
+              <q-td :props="props">
+                <span
+                  :class="{
+                    'transaction-reversal':
+                      props.row.transType === 'Transaction Reversal',
+                    'text-grey-8':
+                      props.row.transType !== 'Transaction Reversal',
+                  }"
+                  class="trans-type-text"
+                >
+                  {{ props.row.transType }}
+                </span>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-actions="props" v-if="actions">
               <q-td :props="props" class="actions">
                 <q-btn
@@ -1201,8 +1237,42 @@
                   </svg>
                   <q-menu class="action-menu">
                     <q-list>
+                      <slot name="action-menu-items" :row="props.row"></slot>
 
-                        <q-item
+                      <q-item
+                        v-if="transactions"
+                        clickable
+                        class="action-menu-item"
+                        @click="$emit('viewDetails', props.row)"
+                      >
+                        <q-item-section>View Details</q-item-section>
+                      </q-item>
+                      <q-item
+                        v-if="transactions"
+                        clickable
+                        class="action-menu-item"
+                        @click="EditEvent(props.row)"
+                      >
+                        <q-item-section>Edit</q-item-section>
+                      </q-item>
+                      <q-item
+                        v-if="transactions"
+                        clickable
+                        class="action-menu-item"
+                        @click="$emit('reverseTransaction', props.row)"
+                      >
+                        <q-item-section>Reverse Transaction</q-item-section>
+                      </q-item>
+                      <q-item
+                        v-if="transactions"
+                        clickable
+                        class="action-menu-item text-negative"
+                        @click="DeleteEvent(props.row)"
+                      >
+                        <q-item-section>Delete</q-item-section>
+                      </q-item>
+
+                      <q-item
                         v-if="student || staff || profiles"
                         clickable
                         class="action-menu-item"
@@ -1212,7 +1282,12 @@
                       </q-item>
                       <q-item
                         v-if="
-                          student || bookStock || Notes || courses || profiles ||staff
+                          student ||
+                          bookStock ||
+                          Notes ||
+                          courses ||
+                          profiles ||
+                          staff
                         "
                         clickable
                         class="action-menu-item"
@@ -1469,6 +1544,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    typePlaceholder: {
+      type: String,
+      default: "All Types",
+    },
     showAddButtonDropdown: {
       type: Boolean,
       default: false,
@@ -1525,6 +1604,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    transactions: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const searchResult = ref("");
@@ -1547,6 +1630,8 @@ export default {
     const jobTypeFilter = ref(null);
     const courseFilter = ref(null);
     const typeFilter = ref(null);
+    const fromNo = ref("");
+    const toNo = ref("");
 
     const onFilterSearch = (val) => {
       emit("filterSearch", val);
@@ -1574,6 +1659,8 @@ export default {
       jobTypeFilter.value = null;
       courseFilter.value = null;
       typeFilter.value = null;
+      fromNo.value = "";
+      toNo.value = "";
       emit("clearFilters");
     };
 
@@ -1730,3 +1817,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+.note-cell {
+  white-space: normal !important;
+  word-break: break-word;
+  max-width: 300px; /* اختياري */
+}
+</style>

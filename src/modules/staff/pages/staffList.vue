@@ -63,7 +63,7 @@ const columns = [
     label: "Staff ID",
     field: (row) => row.staffId,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "studentName",
@@ -99,14 +99,14 @@ const columns = [
     label: "Balance",
     field: (row) => row.balance,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "courses",
     label: "Courses (Total : Active)",
     field: (row) => row.courses,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "actions",

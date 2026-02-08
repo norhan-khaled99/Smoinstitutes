@@ -158,14 +158,14 @@ const columns = [
     label: "Student Name",
     field: (row) => row.studentName,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "studentId",
     label: "Student ID",
     field: (row) => row.studentId,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "score",
@@ -179,7 +179,7 @@ const columns = [
     label: "Course Balance",
     field: (row) => row.balance,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
 ];
 
