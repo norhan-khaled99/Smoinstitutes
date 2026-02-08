@@ -972,11 +972,11 @@
                 <div class="row items-center no-wrap">
                   <q-img
                     class="image"
-                    :src="props.row.studentImage"
+                    :src="props.row.picture_thumb"
                     ratio="1"
                   />
                   <div class="student-name-text">
-                    {{ props.row.studentName }}
+                    {{ props.row.full_name }}
                   </div>
                 </div>
               </q-td>

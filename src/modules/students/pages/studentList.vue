@@ -35,7 +35,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import tableComp from "src/components/tableComponent.vue";
-
+import StudentService from "../services/service";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
@@ -47,14 +47,14 @@ const columns = [
   {
     name: "image",
     label: "Student Name",
-    field: (row) => row.studentName,
+    field: (row) => row.full_name,
     align: "left",
     sortable: true,
   },
   {
     name: "studentId",
     label: "Student ID",
-    field: (row) => row.studentId,
+    field: (row) => row.student_id,
     align: "left",
     sortable: true,
   },
@@ -82,7 +82,7 @@ const columns = [
   {
     name: "courses",
     label: "Courses",
-    field: (row) => row.courses,
+    field: (row) => row.active_or_waiting_courses,
     align: "center",
     sortable: true,
   },
@@ -279,7 +279,14 @@ const fireCall = ([apiCall, page, paginationData]) => {
   console.log("Fire API call:", { apiCall, page, paginationData });
 };
 
+const getAllStudents = ()=>{
+  StudentService.getAllStudents().then((response) => {
+     tableRows.value = response.data.data.results;
+  }).catch((error) => {
+    console.log(error);
+  })
+}
 onMounted(() => {
-  console.log("onMounted");
+ getAllStudents();
 });
 </script>
