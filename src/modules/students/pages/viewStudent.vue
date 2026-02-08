@@ -116,7 +116,6 @@
       </q-tabs>
 
       <q-separator color="grey-2" />
-
       <q-tab-panels v-model="tab" animated class="text-left">
         <q-tab-panel name="overview">
           <overview ref="overviewRef" :is-editing="isEditing" />
