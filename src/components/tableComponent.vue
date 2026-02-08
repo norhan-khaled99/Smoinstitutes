@@ -895,9 +895,9 @@
                     <slot name="header-actions"></slot>
 
                     <q-btn-dropdown
-                      class="add-btn-header"
+                      class="add-btn-header q-ml-auto"
                       v-if="showAddButtonDropdown"
-                      no-caps
+                      no-caps flat
                       content-class="action-menu"
                       :label="addBtnLabel"
                     >
