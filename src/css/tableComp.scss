@@ -406,16 +406,14 @@
     }
 
     .actions {
-      // display: flex;
-      // justify-content: center;
-      // align-items: center;
+      display: grid-lanes;
+      justify-content: center;
+      align-items: center;
 
       .action-menu-btn {
         color: #4b5563;
         font-size: 13px;
       }
-
-
     }
   }
 

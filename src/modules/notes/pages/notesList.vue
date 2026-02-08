@@ -1,7 +1,7 @@
 <template>
   <tableComp
     pageTitle="Notes"
-    :tableRows="tableRows"
+    :tableRows="allNotes"
     :tableColumns="columns"
     :tablePagination="pagination"
     :showAdd="true"
@@ -9,20 +9,14 @@
     :showAddButton="false"
     :actions="true"
     :Notes="true"
-    :showFilters="true"
+    :showFilters="false"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search Notes..."
-    :showNoteTypeFilter="true"
-    :noteTypeOptions="noteTypeOptions"
-    :showCreatedAtFilter="true"
-    :createdAtOptions="createdAtOptions"
-    :showCreatedByFilter="true"
-    :createdByOptions="createdByOptions"
+    :showNoteTypeFilter="false"
+    :showCreatedAtFilter="false"
+    :showCreatedByFilter="false"
     @addNew="addNote"
     @searchEvent="onSearch"
-    @filterChange="onFilterChange"
-    @clearFilters="clearFilters"
-    @updatePag="updatePag"
     @getPagFun="getPagFun"
     @sortApi="fireSortCall"
     @callApi="fireCall"
@@ -32,7 +26,13 @@
     emptyStateButtonLabel="Add Note"
   />
 
-  <viewNotePopup v-model="showViewDetailsPopup" :note="selectedNote" />
+  <viewNotePopup
+    v-model="showViewDetailsPopup"
+    :note="selectedNote"
+    :person_name="selectedNote.person_name"
+    :person_type="selectedNote.person_type"
+    :person="selectedNote.person"
+  />
   <addNotePopup v-model="showAddPopup" @save="handleSaveNote" />
 </template>
 
@@ -41,14 +41,19 @@ import { onMounted, ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewNotePopup from "../components/viewNotePopup.vue";
 import addNotePopup from "../../students/components/addNotePopup.vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import services from "../services/service.js";
 
 const showViewDetailsPopup = ref(false);
 const showAddPopup = ref(false);
 const selectedNote = ref({});
+const $q = useQuasar();
+const router = useRouter();
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 10,
+  rowsPerPage: 20,
   rowsNumber: 100,
 });
 
@@ -56,14 +61,14 @@ const columns = [
   {
     name: "personName",
     label: "Person Name",
-    field: (row) => row.personName,
+    field: (row) => row.person_name,
     align: "left",
     sortable: true,
   },
   {
     name: "noteType",
     label: "Note Type",
-    field: (row) => row.noteType,
+    field: (row) => row.note_type,
     align: "left",
     sortable: true,
   },
@@ -73,19 +78,28 @@ const columns = [
     field: (row) => row.note,
     align: "left",
     sortable: false,
-    classes: "note-text-cell",
   },
   {
     name: "createdBy",
     label: "Created by",
-    field: (row) => row.createdBy,
+    field: (row) => row.created_by_name,
     align: "left",
     sortable: true,
   },
   {
     name: "lastUpdated",
     label: "Last updated",
-    field: (row) => row.lastUpdated,
+    field: (row) =>
+      row.updated_at
+        ? new Date(row.updated_at.replace(" ", "T")).toLocaleString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+        : "",
     align: "left",
     sortable: true,
   },
@@ -96,113 +110,62 @@ const columns = [
   },
 ];
 
-const tableRows = ref([
-  {
-    id: 1,
-    personName: "Yara Abdullah Ahmed Ali",
-    noteType: "Important",
-    note: "The student showed great improvement ",
-    createdBy: "Nawar_Hassan",
-    lastUpdated: "Jan 17, 2026, 7:20 AM",
-  },
-  {
-    id: 2,
-    personName: "Moaz Essam Hammoud",
-    noteType: "Warning",
-    note: "Frequent lateness observed this week....",
-    createdBy: "Nawar_Hassan",
-    lastUpdated: "Dec 28, 2025, 2:57 AM",
-  },
-  {
-    id: 3,
-    personName: "Ali Saleh Mohammed",
-    noteType: "Info",
-    note: "Student requested a change in the cou...",
-    createdBy: "Hamdi Majed",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 4,
-    personName: "Abdullah Saleh Mobarek",
-    noteType: "Info",
-    note: "Student requested a change in the cou...",
-    createdBy: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 5,
-    personName: "Youssef Mohammed Yaslam",
-    noteType: "Important",
-    note: "Tuition fees for the current month are o...",
-    createdBy: "Hamdi Majed",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 6,
-    personName: "Amani Ahmed Mohammed Ali",
-    noteType: "Warning",
-    note: "Frequent lateness observed this week....",
-    createdBy: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 7,
-    personName: "Yassin Gamal Mohshen Hussien",
-    noteType: "Important",
-    note: "Tuition fees for the current month are o...",
-    createdBy: "Hamdi Majed",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 8,
-    personName: "Hussien Maged Hussien",
-    noteType: "Warning",
-    note: "Frequent lateness observed this week....",
-    createdBy: "Laila_Mahfood",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 9,
-    personName: "Qassem Abdulghani Mohammed",
-    noteType: "Warning",
-    note: "Frequent lateness observed this week....",
-    createdBy: "Laila_Mahfood",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 10,
-    personName: "Eman Saleh Ben Saleh Salem",
-    noteType: "Info",
-    note: "Student requested a change in the cou...",
-    createdBy: "Laila_Mahfood",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-]);
+const allNotes = ref([]);
+const getAllNotes = (page = 1) => {
+  $q.loading.show();
 
-const noteTypeOptions = ref([
-  { id: 1, name: "Important" },
-  { id: 2, name: "Warning" },
-  { id: 3, name: "Info" },
-]);
-
-const createdAtOptions = ref([
-  { id: 1, name: "Last 7 days" },
-  { id: 2, name: "Last 30 days" },
-  { id: 3, name: "Last year" },
-]);
-
-const createdByOptions = ref([
-  { id: 1, name: "Nawar_Hassan" },
-  { id: 2, name: "Hamdi Majed" },
-  { id: 3, name: "Laila_Mahfood" },
-]);
+  services
+    .getAllNotes(page)
+    .then((res) => {
+      allNotes.value = res.data.results;
+      // Update pagination with API response
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = page;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
+};
 
 const addNote = () => {
   showAddPopup.value = true;
 };
 
 const handleSaveNote = (note) => {
-  console.log("Saved note:", note);
+  $q.loading.show();
+
+  services.addNotes(note).then((res) => {
+      $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: "Added Successfully",
+        });
+        getAllNotes(1);
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
 };
 
 const onViewDetails = (row) => {
@@ -211,15 +174,52 @@ const onViewDetails = (row) => {
 };
 
 const onSearch = (val) => {
-  console.log("Search:", val);
+  if (!val || val.trim() === "") {
+    // If search is empty, load all notes
+    getAllNotes(1);
+  } else {
+    // Perform search
+    performSearch(val);
+  }
 };
 
-const onFilterChange = ({ type, val }) => {
-  console.log("Filter Change:", type, val);
+const performSearch = (searchQuery) => {
+  $q.loading.show();
+
+  services
+    .searchNotes(searchQuery, 1)
+    .then((res) => {
+      allNotes.value = res.data.results;
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = 1;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
 };
 
-const clearFilters = () => {
-  console.log("Clear Filters");
+const getPagFun = ([apiCall, page, paginationData]) => {
+  getAllNotes(page);
 };
-onMounted(() => {});
+
+const fireCall = ([apiCall, page, paginationData]) => {
+  getAllNotes(page);
+};
+
+const fireSortCall = ([apiCall, sorting]) => {
+  getAllNotes(1);
+};
+
+onMounted(() => {
+  getAllNotes();
+});
 </script>
