@@ -27,7 +27,7 @@
         <div class="form-group">
           <label class="form-group-label">Level</label>
           <p class="form-group-value">
-            {{ row.level }}
+            {{ row.level_name }}
           </p>
         </div>
 
@@ -43,9 +43,9 @@
           <div class="q-mt-xs">
             <span
               class="popup-badge"
-              :class="row.direction?.toLowerCase().replace(' ', '-')"
+              :class="row.direction_label?.toLowerCase().replace(' ', '-')"
             >
-              {{ row.direction }}
+              {{ row.direction_label }}
             </span>
           </div>
         </div>
@@ -56,25 +56,24 @@
           <div class="col-6">
             <label class="form-group-label">By user</label>
             <p class="popup-subtitle">
-              {{ row.byUser }}
+              {{ row.username }}
             </p>
           </div>
           <div class="col-6">
             <label class="form-group-label">Last updated</label>
             <p class="popup-subtitle">
-              {{ row.lastUpdated }}
+               {{ formatDate(row.last_updated) }}
             </p>
           </div>
         </div>
 
-        <div class="popup-actions justify-between">
-          <q-btn label="Close" v-close-popup flat class="btn-cancel" no-caps />
+        <div class="popup-actions">
           <q-btn
-            label="Edit"
+            label="Close"
+            v-close-popup
             class="btn-save-close"
-            no-caps
             flat
-            @click="onEdit"
+            no-caps
           />
         </div>
       </q-card-section>
@@ -92,25 +91,31 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["edit"]);
+const formatDate = (date) => {
+  return date
+    ? new Date(date.replace(" ", "T")).toLocaleString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      })
+    : ""
+}
 
-const onEdit = () => {
-  emit("edit", props.row);
-  model.value = false;
-};
+
+
+
 </script>
 
 <style lang="scss" scoped>
 .popup-actions {
-  display: flex;
-  gap: 12px;
-
-  .btn-cancel {
-    min-width: 210px;
-  }
-
   .btn-save-close {
-    min-width: 210px;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 </style>
+
+
