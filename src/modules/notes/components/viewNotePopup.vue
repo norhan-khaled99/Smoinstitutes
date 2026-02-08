@@ -22,7 +22,7 @@
           </q-btn>
         </div>
         <div class="popup-subtitle">
-          Student: {{ studentName }} (ID : {{ studentId }})
+          {{ person_type }}: {{ person_name }} (ID : {{ person }})
         </div>
 
         <div class="popup-divider"></div>
@@ -37,8 +37,8 @@
         <div class="form-group">
           <label class="form-group-label">Type</label>
           <div class="q-mt-xs">
-            <span class="popup-badge" :class="getTypeClass(note.noteType)">
-              {{ note.noteType }}
+            <span class="popup-badge" :class="getTypeClass(note.note_type)">
+              {{ note.note_type }}
             </span>
           </div>
         </div>
@@ -49,13 +49,13 @@
           <div class="col-6">
             <label class="form-group-label">By user</label>
             <p class="popup-subtitle">
-              {{ note.createdBy }}
+              {{ note.created_by_name }}
             </p>
           </div>
           <div class="col-6">
             <label class="form-group-label">Last updated</label>
             <p class="popup-subtitle">
-              {{ note.lastUpdated }}
+              {{ formatDate(note.updated_at) }}
             </p>
           </div>
         </div>
@@ -82,13 +82,17 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  studentName: {
+  person_name: {
     type: String,
-    default: "Moaz Essam",
+    default: "",
   },
-  studentId: {
+  person_type: {
     type: String,
-    default: "251221",
+    default: "",
+  },
+  person: {
+    type: String,
+    default: "",
   },
 });
 
@@ -97,9 +101,24 @@ const getTypeClass = (type) => {
   const t = type.toLowerCase();
   if (t === "important") return "stock-out"; // Using same red style
   if (t === "info") return "stock-in"; // Using same green style
-  if (t === "warning") return "warning-badge";
+  if (t === "warn") return "warning-badge";
   return "";
 };
+
+const formatDate = (date) => {
+  return date
+    ? new Date(date.replace(" ", "T")).toLocaleString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      })
+    : ""
+}
+
+
 </script>
 
 <style lang="scss" scoped>
