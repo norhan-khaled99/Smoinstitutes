@@ -63,14 +63,14 @@ const columns = [
     label: "Person Name",
     field: (row) => row.person_name,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "noteType",
     label: "Note Type",
     field: (row) => row.note_type,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "note",
@@ -84,7 +84,7 @@ const columns = [
     label: "Created by",
     field: (row) => row.created_by_name,
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "lastUpdated",
@@ -101,7 +101,7 @@ const columns = [
           })
         : "",
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "actions",
