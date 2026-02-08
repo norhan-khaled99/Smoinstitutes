@@ -129,7 +129,7 @@ const tableRows = ref([
     startDate: "04-01-2026",
     status: "Finished",
     balance: "0",
-    score: "88%",
+    score: "88",
   },
   {
     id: 2,
@@ -138,7 +138,7 @@ const tableRows = ref([
     startDate: "11-01-2026",
     status: "Pending",
     balance: "+2000",
-    score: "-",
+    score: "100",
   },
   {
     id: 3,
@@ -147,7 +147,7 @@ const tableRows = ref([
     startDate: "11-01-2026",
     status: "Finished",
     balance: "0",
-    score: "92%",
+    score: "92",
   },
 ]);
 

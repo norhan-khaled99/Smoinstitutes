@@ -26,11 +26,21 @@
     @addNew="onAddNewTransaction"
   >
   </tableComp>
+
+  <TransactionPopup
+    v-model="isTransactionPopupOpen"
+    :type="currentTransactionType"
+    @save="onSaveTransaction"
+  />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
+import TransactionPopup from "./TransactionPopup.vue";
+
+const isTransactionPopupOpen = ref(false);
+const currentTransactionType = ref("Income");
 
 const columns = [
   {
@@ -144,16 +154,26 @@ const typeOptions = ref([
 ]);
 
 const addDropdownOptions = ref([
-  { name: "Payment Option 1", id: 1 },
-  { name: "Payment Option 2", id: 2 },
+  { name: "Income", id: 1 },
+  { name: "Expense", id: 2 },
+  { name: "Service", id: 3 },
+  { name: "Funds Transfer", id: 4 },
 ]);
 
 const handleAddPayment = (option) => {
-  console.log("Add Payment:", option);
+  currentTransactionType.value = option.name;
+  isTransactionPopupOpen.value = true;
+};
+
+const onSaveTransaction = (data) => {
+  console.log("Saved Transaction:", data);
+  // Implement API call or local update here
 };
 
 const onAddNewTransaction = () => {
-  console.log("Add New Transaction (Empty State) clicked");
+  // Default action for empty state if needed, or open default popup
+  currentTransactionType.value = "Income";
+  isTransactionPopupOpen.value = true;
 };
 
 const onSearchEvent = (searchValue) => {
