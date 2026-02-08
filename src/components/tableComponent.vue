@@ -171,49 +171,6 @@
                         />
                       </div>
                       <!-- Department Filter -->
-                      <!-- Years Filter -->
-                      <div class="filter-item-wrapper" v-if="showYearFilter">
-                        <q-select
-                          outlined
-                          v-model="yearFilter"
-                          dense
-                          :options="yearOptions"
-                          option-label="name"
-                          option-value="id"
-                          fill-input
-                          emit-value
-                          map-options
-                          use-input
-                          input-debounce="0"
-                          class="filter-select"
-                          :placeholder="yearFilter ? '' : 'All Years'"
-                          @update:model-value="
-                            onFilterChange('year', yearFilter)
-                          "
-                        >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="yearFilter">{{ scope.opt.name }}</span>
-                          </template>
-                          <template v-slot:append>
-                            <q-icon
-                              v-if="yearFilter"
-                              name="cancel"
-                              class="cursor-pointer"
-                              @click.stop.prevent="
-                                yearFilter = null;
-                                onFilterChange('year', null);
-                              "
-                            />
-                          </template>
-                        </q-select>
-                      </div>
 
                       <!-- Status Filter -->
                       <div class="filter-item-wrapper" v-if="showStatusFilter">
@@ -469,8 +426,7 @@
                           emit-value
                           map-options
                           class="filter-select"
-                          label="Direction"
-                          
+                          :label="directionFilter ? '' : 'Direction'"
                           @update:model-value="
                             onFilterChange('direction', directionFilter)
                           "
@@ -897,7 +853,8 @@
                     <q-btn-dropdown
                       class="add-btn-header q-ml-auto"
                       v-if="showAddButtonDropdown"
-                      no-caps flat
+                      no-caps
+                      flat
                       content-class="action-menu"
                       :label="addBtnLabel"
                     >
