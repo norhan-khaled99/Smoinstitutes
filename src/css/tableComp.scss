@@ -83,12 +83,21 @@
   .filter-container {
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
+    // align-items: flex-end;
     justify-content: space-between;
     width: 100%;
     gap: 0.5rem;
     padding: 0;
     flex-wrap: wrap;
+  }
+
+  .view-report {
+    color: #4C8696;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: auto;
+    align-self: center;
+
   }
 
   .filter-bar {
@@ -99,11 +108,11 @@
     // align-items: center;
     flex-wrap: wrap;
     background-color: transparent;
-    // flex: 1 1 auto;
+    flex: 1 1 auto;
     max-width: 100%;
 
     .search_table {
-      min-width:fit-content;
+      min-width: fit-content;
       // flex: 1 1 auto;
       // margin-right: 0.5rem;
 
@@ -137,7 +146,7 @@
       gap: 0.5rem;
       flex-wrap: wrap;
       align-items: flex-end;
-      flex: 1 1 auto;
+      // flex: 1 1 auto;
 
       .q-field__control {
         border-radius: 0.5rem;
@@ -154,8 +163,9 @@
       .filter-item-wrapper {
         display: flex;
         flex-direction: column;
-        min-width: 140px;
+        max-width: 140px;
 
+        // min-width: 140px;
         .filter-item-label {
           margin: 0 0 4px 0;
           font-size: 13px;
@@ -345,8 +355,8 @@
     padding: 1rem;
 
     .image {
-      width: 33px;
-      height: 33px;
+      width: 2.25rem;
+      height: 2.25rem;
       border-radius: 50% !important;
       margin-right: 12px;
       object-fit: cover;
@@ -390,15 +400,21 @@
       border-bottom: none;
     }
 
+
+    .transaction-reversal {
+      color: #B45309;
+    }
+
     .actions {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      // display: flex;
+      // justify-content: center;
+      // align-items: center;
 
       .action-menu-btn {
         color: #4b5563;
         font-size: 13px;
       }
+
 
     }
   }
@@ -1008,4 +1024,24 @@
       border: 1px solid #4C8696 !important;
     }
   }
+}
+
+.transfer-cell {
+  display: flex;
+  flex-direction: column;
+
+  .transfer-from {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+
+  .transfer-to {
+    color: #6b7280;
+    font-size: 0.9em;
+  }
+}
+
+.trans-type-text {
+  font-weight: 500;
 }
