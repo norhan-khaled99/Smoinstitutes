@@ -143,22 +143,34 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import coursesList from "../components/coursesList.vue";
 import transactionList from "../components/trasactionList.vue";
 import notesList from "../components/notesList.vue";
 import attendanceList from "../components/attendanceList.vue";
 import overview from "../components/overview.vue";
 
+const route = useRoute();
 const tab = ref("overview");
 const isEditing = ref(false);
 const overviewRef = ref(null);
 
 const toggleEdit = () => {
-  isEditing.value = true;
+  isEditing.value = !isEditing.value;
 };
 
 const saveEdit = () => {
   isEditing.value = false;
 };
+
+const cancelEdit = () => {
+  isEditing.value = false;
+};
+
+onMounted(() => {
+  if (route.query.edit === "true") {
+    isEditing.value = true;
+  }
+});
 </script>

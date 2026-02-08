@@ -249,7 +249,11 @@ const addEvent = () => {
 
 const EditEvent = (row) => {
   console.log("Edit event:", row);
-  // Add edit logic here
+  router.push({
+    name: "studentDetails",
+    params: { id: row.id },
+    query: { edit: "true" },
+  });
 };
 
 const onSearchEvent = (searchValue) => {
