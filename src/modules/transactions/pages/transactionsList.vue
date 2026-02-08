@@ -59,7 +59,7 @@ const columns = [
     label: "Amount",
     field: "amount",
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "transfer",
@@ -78,7 +78,7 @@ const columns = [
     label: "Date Of Process",
     field: "date",
     align: "left",
-    sortable: true,
+    sortable: false,
   },
   {
     name: "transType",
