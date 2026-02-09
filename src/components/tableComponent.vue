@@ -509,6 +509,7 @@
                           fill-input
                           emit-value
                           map-options
+                          hide-selected
                           use-input
                           input-debounce="0"
                           class="filter-select"
@@ -547,6 +548,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="
@@ -582,6 +584,7 @@
                           fill-input
                           emit-value
                           map-options
+                          hide-selected
                           use-input
                           input-debounce="0"
                           class="filter-select"
@@ -649,17 +652,15 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input
+                          use-input hide-selected
                           input-debounce="0"
                           class="filter-select"
-                          :placeholder="typeFilter ? '' : typePlaceholder"
+                           :placeholder="typeFilter ? '' : 'All Types'"
                           @update:model-value="
                             onFilterChange('account_type', typeFilter)
                           "
                         >
-                          <template v-slot:selected-item="scope">
-                            <span v-if="typeFilter">{{ scope.opt.name }}</span>
-                          </template>
+
                           <template v-slot:append>
                             <q-icon
                               v-if="typeFilter"
@@ -1353,10 +1354,6 @@ export default {
     typeOptions: {
       type: Array,
       default: () => [],
-    },
-    typePlaceholder: {
-      type: String,
-      default: "All Types",
     },
     showAddButtonDropdown: {
       type: Boolean,
