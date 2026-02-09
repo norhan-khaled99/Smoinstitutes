@@ -51,12 +51,12 @@
   </table-comp>
 
   <!-- Profile View/Edit Popup -->
-    <view-edit-profile-popup
-      v-model="showProfilePopup"
-      :profileInfo="selectedProfile"
-      :initialEditMode="popupEditMode"
-      @save="handleSaveProfile"
-    />
+  <view-edit-profile-popup
+    v-model="showProfilePopup"
+    :profileInfo="selectedProfile"
+    :initialEditMode="popupEditMode"
+    @save="handleSaveProfile"
+  />
 </template>
 
 <script setup>
@@ -155,7 +155,7 @@ const getAllProfiles = (page = 1) => {
   $q.loading.show();
 
   services
-    .getAllProfiles(page , typeOfFilter.value, valueOfFilter.value)
+    .getAllProfiles(page, typeOfFilter.value, valueOfFilter.value)
     .then((res) => {
       allProfiles.value = res.data.data.results;
 
@@ -267,8 +267,6 @@ const addNewProfile = () => {
   router.push({ name: "addProfile" });
 };
 
-
-
 const viewProfile = (row) => {
   row.gender = row.gender.toString();
   selectedProfile.value = row; // Set the selected profile data
@@ -286,7 +284,15 @@ const editProfile = (row) => {
 const handleSaveProfile = (profileData) => {
   $q.loading.show();
 
-  services.updateProfile(profileData)
+  const fd = new FormData();
+  Object.keys(profileData).forEach((key) => {
+    if (profileData[key] !== null && profileData[key] !== "") {
+      fd.append(key, profileData[key]);
+    }
+  });
+
+  services
+    .updateProfile(fd, profileData.globalid)
     .then((res) => {
       $q.notify({
         badgeStyle: "display:none",
@@ -296,6 +302,7 @@ const handleSaveProfile = (profileData) => {
         position: "bottom-right",
         message: "Profile Updated Successfully",
       });
+      getAllProfiles(1);
       $q.loading.hide();
     })
     .catch((error) => {
@@ -310,9 +317,6 @@ const handleSaveProfile = (profileData) => {
       });
     });
 };
-
-
-
 
 const getPagFun = ([apiCall, page, paginationData]) => {
   getAllProfiles(page);
@@ -346,7 +350,6 @@ const clearFilters = () => {
   getAllProfiles(1);
 };
 
-
 const onSearch = (val) => {
   if (!val || val.trim() === "") {
     // If search is empty, load all profiles
@@ -367,7 +370,7 @@ const performSearch = (searchQuery) => {
       pagination.value.rowsNumber = res.data.count || 0;
       pagination.value.page = 1;
 
-      console.log(allProfiles.value , pagination.value.rowsNumber);
+      console.log(allProfiles.value, pagination.value.rowsNumber);
       $q.loading.hide();
     })
     .catch((error) => {

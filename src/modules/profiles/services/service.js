@@ -47,9 +47,9 @@ class ProfileServices {
   }
 
 
-   updateProfile(value) {
+   updateProfile(value,id) {
     return axiosInstance.put(
-      `/api/v1/profiles/accounts/`,
+      `/api/v1/profiles/accounts/${id}/`,
       value
     );
   }

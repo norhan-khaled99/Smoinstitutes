@@ -484,19 +484,15 @@ const saveChanges = () => {
     return;
   }
 
-  const fd = new FormData();
+
 
   if (aldIamge.value != "") {
     profileData.value.picture = aldIamge.value;
   }
 
-  Object.keys(profileData.value).forEach((key) => {
-    if (profileData.value[key] !== null && profileData.value[key] !== "") {
-      fd.append(key, profileData.value[key]);
-    }
-  });
 
-  emit("save", fd);
+
+  emit("save", profileData.value);
   isOpen.value = false;
 };
 
