@@ -111,123 +111,15 @@ const yearOptions = ref([
 ]);
 
 // Static table data
-const tableRows = ref([
-  {
-    id: 1,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Yara Abdullah Ahmed Ali",
-    studentId: 251221,
-    mobile: "+971523064607",
-    balance: -84950,
-    status: "New",
-    courses: "1 course",
-  },
-  {
-    id: 2,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Moaz Essam Hammoud Musleh",
-    studentId: 251220,
-    mobile: "+971557134005",
-    balance: +2000,
-    status: "Waiting",
-    courses: "3 courses",
-  },
-  {
-    id: 3,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Ali Saleh Mohammed Muthana",
-    studentId: 251219,
-    mobile: "+971556072983",
-    balance: 0,
-    status: "Active",
-    courses: "No courses",
-  },
-  {
-    id: 4,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Abdullah Saleh Mobarek Hussien Alharthy",
-    studentId: 251218,
-    mobile: "+971553088206",
-    balance: -56250,
-    status: "New",
-    courses: "2 courses",
-  },
-  {
-    id: 5,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Youssef Mohammed Yaslam Mohammed",
-    studentId: 251217,
-    mobile: "+971553296324",
-    balance: 0,
-    status: "Idle",
-    courses: "No courses",
-  },
-  {
-    id: 6,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Amani Ahmed Mohammed Ali",
-    studentId: 251216,
-    mobile: "+971559533707",
-    balance: +6500,
-    status: "Active",
-    courses: "No courses",
-  },
-  {
-    id: 7,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Yassin Gamal Mohshen Hussien",
-    studentId: 251215,
-    mobile: "+971503603570",
-    balance: -56250,
-    status: "New",
-    courses: "3 courses",
-  },
-  {
-    id: 8,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Hussien Maged Hussien Abdulrahman",
-    studentId: 251214,
-    mobile: "+971553296324",
-    balance: +5000,
-    status: "Idle",
-    courses: "1 course",
-  },
-  {
-    id: 9,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Qassem Abdulghani Mohammed Motlaq",
-    studentId: 251213,
-    mobile: "+971502469158",
-    balance: 0,
-    status: "Waiting",
-    courses: "4 courses",
-  },
-  {
-    id: 10,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-
-    studentName: "Ahmed Mohamed Hassan",
-    studentId: 251212,
-    mobile: "+971501234567",
-    balance: +3500,
-    status: "Active",
-    courses: "2 courses",
-  },
-]);
+const tableRows = ref([]);
 
 // Pagination configuration
 const pagination = ref({
   page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 10,
+  rowsPerPage: 20,
+  rowsNumber: 100,
 });
+
 
 // Permission status
 
@@ -239,7 +131,7 @@ const openDialogDeleteEvent = (row) => {
 
 const DetailsEvent = (row) => {
   console.log("Details event:", row);
-  router.push({ name: "studentDetails", params: { id: row.id } });
+  router.push({ name: "studentDetails", params: { id: row.student_id } });
 };
 const addEvent = () => {
   console.log("Add event");
@@ -254,36 +146,73 @@ const EditEvent = (row) => {
 
 const onSearchEvent = (searchValue) => {
   console.log("Search event:", searchValue);
+  if (!searchValue || searchValue.trim() === "") {
+    // If search is empty, load all notes
+    getAllStudents(1);
+  } else {
+    // Perform search
+    performSearch(searchValue);
+  }
   // Add search logic here
 };
 
+const performSearch = (searchQuery) => {
+  $q.loading.show();
+
+  StudentService
+    .searchStudent(searchQuery, 1)
+    .then((res) => {
+      tableRows.value = res.data.results;
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = 1;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
+};
 const updatePag = (rowsPerPage) => {
   pagination.value.rowsPerPage = rowsPerPage;
   console.log("Update pagination:", rowsPerPage);
 };
 
 const getPagFun = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
-  pagination.value = { ...pagination.value, ...paginationData };
-  console.log("Get pagination:", { apiCall, page, paginationData });
+  getAllStudents(page);
 };
 
 const fireSortCall = ([apiCall, sortBy]) => {
-  console.log("Sort API call:", { apiCall, sortBy });
-  // Add sort logic here
+  getAllStudents(1)
 };
 
 const fireCall = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
-  pagination.value = { ...pagination.value, ...paginationData };
-  console.log("Fire API call:", { apiCall, page, paginationData });
+ getAllStudents(page);
 };
 
-const getAllStudents = ()=>{
-  StudentService.getAllStudents().then((response) => {
+const getAllStudents = (page = 1)=>{
+  $q.loading.show();
+  StudentService.getAllStudents(page).then((response) => {
      tableRows.value = response.data.data.results;
+     pagination.value.rowsNumber = response.data.data.count || 0;
+      pagination.value.page = page;
+      $q.loading.hide();
   }).catch((error) => {
-    console.log(error);
+    $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
   })
 }
 onMounted(() => {
