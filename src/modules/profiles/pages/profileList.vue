@@ -108,7 +108,7 @@ const getAllAccountType = () => {
 
 const columns = [
   {
-    name: "image",
+    name: "imageProfile",
     label: "Full Name",
     align: "left",
     field: (row) => row.full_name,

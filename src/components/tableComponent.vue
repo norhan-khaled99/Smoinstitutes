@@ -927,6 +927,22 @@
                 <div class="row items-center no-wrap">
                   <q-img
                     class="image"
+                    :src="props.row.picture_thumb"
+                    ratio="1"
+                  />
+                  <div class="student-name-text">
+                    {{ props.row.full_name }}
+                  </div>
+                </div>
+              </q-td>
+            </template>
+
+
+            <template v-slot:body-cell-imageProfile="props">
+              <q-td :props="props">
+                <div class="row items-center no-wrap">
+                  <q-img
+                    class="image"
                     :src="props.row.picture"
                     ratio="1"
                   />
