@@ -52,7 +52,9 @@
         color: #dc2626;
       }
     }
-
+    .transaction-label {
+      color: #2f5d6a;
+    }
     .form-group-label {
       color: #6b7280;
       font-size: 13px;
@@ -95,21 +97,21 @@
     display: inline-block;
 
     &.stock-out {
-      border: 1px solid #C81E1E;
+      border: 1px solid #c81e1e;
       color: #c81e1e;
-      background-color: #FDE8E8;
+      background-color: #fde8e8;
     }
 
     &.stock-in {
-      border: 1px solid #4CAF50;
-      color: #4CAF50;
-      background-color: #E8F5E9;
+      border: 1px solid #4caf50;
+      color: #4caf50;
+      background-color: #e8f5e9;
     }
 
     &.warning-badge {
-      background-color: #FEF3C7;
-      color: #B45309;
-      border: 1px solid #B45309;
+      background-color: #fef3c7;
+      color: #b45309;
+      border: 1px solid #b45309;
     }
   }
 
@@ -150,6 +152,14 @@
       padding: 10px 26px;
       max-width: 142px;
     }
+    .btn-close {
+      background-color: #2f5d6a;
+      color: #fff;
+      border: 1px solid #2f5d6a;
+      padding: 10px 16px;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
   }
 }
 
@@ -171,7 +181,7 @@
 
     .sidebar-separator {
       margin: 1rem 0;
-      color: #3A6F7E;
+      color: #3a6f7e;
     }
 
     .profile-section {
@@ -190,7 +200,7 @@
 
     .change-photo-btn {
       background-color: white;
-      color: #4B5563;
+      color: #4b5563;
       border-radius: 8px;
       // padding: 8px 18px;
       font-size: 14px;
@@ -214,7 +224,6 @@
       margin-bottom: 8px;
       color: rgba(255, 255, 255, 0.8);
       transition: all 0.3s ease;
-
 
       &.active {
         background-color: #5c8a95;
@@ -249,7 +258,6 @@
   }
 
   .main-content {
-
     background-color: white;
 
     .header {
@@ -280,7 +288,7 @@
       margin-top: -16px; // Replaces q-col-gutter-y-md
       width: calc(100% + 24px);
 
-      >div {
+      > div {
         padding-left: 24px; // Replaces q-col-gutter-x-lg
         padding-top: 16px; // Replaces q-col-gutter-y-md
       }
@@ -289,7 +297,7 @@
     .field-label {
       font-size: 13px;
       font-weight: 500;
-      color: #1F2933 ;
+      color: #1f2933;
       margin-bottom: 8px;
 
       .required {
@@ -298,20 +306,20 @@
       }
     }
 
-     .field-label-view {
+    .field-label-view {
       font-size: 13px;
       font-weight: 500;
-      color: #6B7280;
+      color: #6b7280;
       margin-bottom: 8px;
 
       .required {
-       display: none;
+        display: none;
       }
     }
-    .field-value{
+    .field-value {
       font-size: 16px;
       font-weight: 500;
-      color: #1F2933;
+      color: #1f2933;
       margin-bottom: 8px;
     }
 
@@ -359,8 +367,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-
-
       }
 
       .file-name {
@@ -397,7 +403,7 @@
       }
 
       .cancel-btn {
-        color: #4B5563;
+        color: #4b5563;
         background-color: #f8fafc;
         border: 1px solid #edf2f7;
         padding: 8px 32px;

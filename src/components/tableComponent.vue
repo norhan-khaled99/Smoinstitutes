@@ -1370,14 +1370,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    showYearFilter: {
-      type: Boolean,
-      default: false,
-    },
-    yearOptions: {
-      type: Array,
-      default: () => [],
-    },
     showStatusFilter: {
       type: Boolean,
       default: false,
@@ -1565,7 +1557,6 @@ export default {
     const sorting = ref("");
     const searchFilter = ref("");
     const departmentFilter = ref(null);
-    const yearFilter = ref(null);
     const statusFilter = ref(null);
     const balanceFilter = ref(null);
     const noteTypeFilter = ref(null);
@@ -1594,7 +1585,6 @@ export default {
     const clearFilters = () => {
       searchFilter.value = "";
       departmentFilter.value = null;
-      yearFilter.value = null;
       statusFilter.value = null;
       balanceFilter.value = null;
       noteTypeFilter.value = null;
@@ -1740,7 +1730,6 @@ export default {
       EditEvent,
       searchFilter,
       departmentFilter,
-      yearFilter,
       statusFilter,
       balanceFilter,
       noteTypeFilter,
