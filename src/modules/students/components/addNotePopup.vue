@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="popup-header">
           <p class="popup-title">Add Note to Student</p>
-          <q-btn flat dense v-close-popup class="close-btn">
+          <q-btn flat dense v-close-popup @click="resetForm()" class="close-btn">
             <svg
               width="13"
               height="12"
@@ -86,7 +86,7 @@
           </div>
 
           <div class="popup-actions justify-end">
-            <q-btn label="Cancel" v-close-popup flat class="btn-cancel" />
+            <q-btn label="Cancel" v-close-popup @click="resetForm()" flat class="btn-cancel" />
             <q-btn
               label="Save & Add Another"
               class="btn-save-add"
@@ -154,6 +154,13 @@ const saveNote = async (closeModal = false) => {
     form.value.noteType = "info";
     model.value = false;
   }
+};
+
+
+const resetForm = () => {
+  form.value.person = "";
+  form.value.noteText = "";
+  form.value.noteType = "info";
 };
 
 const personLoading = ref(false);

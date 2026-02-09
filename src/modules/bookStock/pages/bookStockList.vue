@@ -1,11 +1,11 @@
 <template>
   <tableComp
     pageTitle="Books Stock"
-    :tableRows="tableRows"
+    :tableRows="allBookStock"
     :tableColumns="columns"
     :tablePagination="pagination"
     :showAdd="true"
-    addBtnLabel="Add Book"
+    addBtnLabel="Add Book Stock"
     :actions="true"
     :showFilters="true"
     :ShowActionsdropDown="true"
@@ -19,7 +19,6 @@
     @addNew="addBook"
     :bookStock="true"
     @DetailsEvent="onViewDetails"
-    @EditEvent="onEditStock"
     @searchEvent="onSearch"
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
@@ -38,11 +37,7 @@
     @save="handleSaveBook"
   />
 
-  <bookStockDetailsPopup
-    v-model="showDetailsPopup"
-    :row="selectedRow"
-    @edit="onEditStock"
-  />
+  <bookStockDetailsPopup v-model="showDetailsPopup" :row="selectedRow" />
 </template>
 
 <script setup>
@@ -50,14 +45,19 @@ import { onMounted, ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import addBookStock from "../components/addBookStock.vue";
 import bookStockDetailsPopup from "../components/bookStockDetailsPopup.vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import services from "../services/service.js";
 
 const showAddBookPopup = ref(false);
 const showDetailsPopup = ref(false);
 const selectedRow = ref({});
+const $q = useQuasar();
+const router = useRouter();
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 10,
+  rowsPerPage: 20,
   rowsNumber: 100,
 });
 
@@ -65,14 +65,14 @@ const columns = [
   {
     name: "level",
     label: "Level",
-    field: (row) => row.level,
+    field: (row) => row.level_name,
     align: "left",
     sortable: false,
   },
   {
     name: "direction",
     label: "Direction",
-    field: (row) => row.direction,
+    field: (row) => row.direction_label,
     align: "left",
     sortable: false,
   },
@@ -86,14 +86,24 @@ const columns = [
   {
     name: "byUser",
     label: "By user",
-    field: (row) => row.byUser,
+    field: (row) => row.username,
     align: "left",
     sortable: false,
   },
   {
     name: "lastUpdated",
     label: "Last updated",
-    field: (row) => row.lastUpdated,
+    field: (row) =>
+      row.last_updated
+        ? new Date(row.last_updated.replace(" ", "T")).toLocaleString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+        : "",
     align: "left",
     sortable: false,
   },
@@ -104,104 +114,78 @@ const columns = [
   },
 ];
 
-const tableRows = ref([
-  {
-    id: 1,
-    level: "Access A",
-    direction: "Stock Out",
-    quantity: 2,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 2,
-    level: "Access A",
-    direction: "Stock Out",
-    quantity: 1,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 3,
-    level: "Intro B",
-    direction: "Stock In",
-    quantity: 1,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 4,
-    level: "Intro B",
-    direction: "Stock In",
-    quantity: 2,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 5,
-    level: "Intro B",
-    direction: "Stock Out",
-    quantity: 3,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 6,
-    level: "Access A",
-    direction: "Stock In",
-    quantity: 4,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 7,
-    level: "P2A",
-    direction: "Stock Out",
-    quantity: 11,
-    byUser: "Nawar_Hassan",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 8,
-    level: "Access A",
-    direction: "Stock Out",
-    quantity: 8,
-    byUser: "Laila_Mahfood",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 9,
-    level: "Access A",
-    direction: "Stock In",
-    quantity: 1,
-    byUser: "Laila_Mahfood",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-  {
-    id: 10,
-    level: "Access A",
-    direction: "Stock In",
-    quantity: 5,
-    byUser: "Laila_Mahfood",
-    lastUpdated: "Oct 16, 2025, 9:25 AM",
-  },
-]);
+const allBookStock = ref([]);
+const getAllBookStock = (page = 1) => {
+  $q.loading.show();
+
+  services
+    .getAllBookStock(page, typeOfFilter.value, valueOfFilter.value)
+    .then((res) => {
+      allBookStock.value = res.data.data.results;
+
+      // Update pagination with API response
+      pagination.value.rowsNumber = res.data.data.count || 0;
+      pagination.value.page = page;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
+};
 
 const directionOptions = ref([
   { id: 1, name: "Stock In" },
-  { id: 2, name: "Stock Out" },
+  { id: -1, name: "Stock Out" },
 ]);
 
-const levelOptions = ref([
-  { id: 1, name: "Access A" },
-  { id: 2, name: "Intro B" },
-  { id: 3, name: "P2A" },
-]);
+const levelOptions = ref([]);
+const getlevelOptions = () => {
+  services
+    .getlevelOptions()
+    .then((res) => {
+      levelOptions.value = res.data.data;
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
 
-const byUserOptions = ref([
-  { id: 1, name: "Nawar_Hassan" },
-  { id: 2, name: "Laila_Mahfood" },
-]);
+const byUserOptions = ref([]);
+
+const getByUserOptions = () => {
+  services
+    .getByUserOptions()
+    .then((res) => {
+      byUserOptions.value = res.data.data;
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
 
 const addBook = () => {
   showAddBookPopup.value = true;
@@ -212,26 +196,105 @@ const onViewDetails = (row) => {
   showDetailsPopup.value = true;
 };
 
-const onEditStock = (row) => {
-  console.log("Edit stock entry:", row);
-  // Add logic to open edit dialog here
-};
-
 const handleSaveBook = (bookData) => {
-  console.log("Book saved:", bookData);
-  // Implementation for adding the book row or calling API would go here
+  $q.loading.show();
+
+  services
+    .addBookStock(bookData)
+    .then((res) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/SuccessIcon.png",
+        position: "bottom-right",
+        message: "Added Successfully",
+      });
+      getAllBookStock(1);
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.errors?.__all__?.[0] || "An error occurred.",
+      });
+    });
 };
 
 const onSearch = (val) => {
-  console.log("Search:", val);
+  if (!val || val.trim() === "") {
+    // If search is empty, load all book stock
+    getAllBookStock(1);
+  } else {
+    // Perform search
+    performSearch(val);
+  }
 };
 
+const performSearch = (searchQuery) => {
+  $q.loading.show();
+
+  services
+    .searchBookStock(searchQuery, 1)
+    .then((res) => {
+      allBookStock.value = res.data.results;
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = 1;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
+};
+
+const typeOfFilter = ref("");
+const valueOfFilter = ref("");
 const onFilterChange = ({ type, val }) => {
-  console.log("Filter Change:", type, val);
+  if (val != null) {
+    typeOfFilter.value = type;
+    valueOfFilter.value = val;
+    getAllBookStock(1);
+  } else {
+    typeOfFilter.value = "";
+    valueOfFilter.value = "";
+    getAllBookStock(1);
+  }
 };
 
 const clearFilters = () => {
-  console.log("Clear Filters");
+  typeOfFilter.value = "";
+  valueOfFilter.value = "";
+  getAllBookStock(1);
 };
-onMounted(() => {});
+
+const getPagFun = ([apiCall, page, paginationData]) => {
+  getAllBookStock(page);
+};
+
+const fireCall = ([apiCall, page, paginationData]) => {
+  getAllBookStock(page);
+};
+
+const fireSortCall = ([apiCall, sorting]) => {
+  getAllBookStock(1);
+};
+
+onMounted(() => {
+  getAllBookStock();
+  getlevelOptions();
+  getByUserOptions();
+});
 </script>

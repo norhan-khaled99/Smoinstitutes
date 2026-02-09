@@ -84,11 +84,12 @@ const saveDiscount = () => {
 </script>
 
 <style lang="scss" scoped>
-.btn-save-close {
-  min-width: 140px;
-}
-
-.btn-cancel {
-  min-width: 100px;
+.popup-actions {
+  .btn-save-close,
+  .btn-cancel {
+    width: 50%;
+    max-width: unset !important;
+    flex: 1;
+  }
 }
 </style>

@@ -99,8 +99,7 @@
                   </q-pagination>
                 </div>
 
-                <div class="pagination-show">
-                </div>
+                <div class="pagination-show"></div>
               </div>
             </template>
             <!--end -->
@@ -172,49 +171,6 @@
                         />
                       </div>
                       <!-- Department Filter -->
-                      <!-- Years Filter -->
-                      <div class="filter-item-wrapper" v-if="showYearFilter">
-                        <q-select
-                          outlined
-                          v-model="yearFilter"
-                          dense
-                          :options="yearOptions"
-                          option-label="name"
-                          option-value="id"
-                          fill-input
-                          emit-value
-                          map-options
-                          use-input
-                          input-debounce="0"
-                          class="filter-select"
-                          :placeholder="yearFilter ? '' : 'All Years'"
-                          @update:model-value="
-                            onFilterChange('year', yearFilter)
-                          "
-                        >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="yearFilter">{{ scope.opt.name }}</span>
-                          </template>
-                          <template v-slot:append>
-                            <q-icon
-                              v-if="yearFilter"
-                              name="cancel"
-                              class="cursor-pointer"
-                              @click.stop.prevent="
-                                yearFilter = null;
-                                onFilterChange('year', null);
-                              "
-                            />
-                          </template>
-                        </q-select>
-                      </div>
 
                       <!-- Status Filter -->
                       <div class="filter-item-wrapper" v-if="showStatusFilter">
@@ -467,13 +423,10 @@
                           :options="directionOptions"
                           option-label="name"
                           option-value="id"
-                          fill-input
                           emit-value
                           map-options
-                          use-input
-                          input-debounce="0"
                           class="filter-select"
-                          :placeholder="directionFilter ? '' : 'Direction'"
+                          :label="directionFilter ? '' : 'Direction'"
                           @update:model-value="
                             onFilterChange('direction', directionFilter)
                           "
@@ -485,11 +438,7 @@
                               >
                             </q-item>
                           </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="directionFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
+
                           <template v-slot:append>
                             <q-icon
                               v-if="directionFilter"
@@ -511,7 +460,7 @@
                           v-model="levelFilter"
                           dense
                           :options="levelOptions"
-                          option-label="name"
+                          option-label="levelname"
                           option-value="id"
                           fill-input
                           emit-value
@@ -521,7 +470,7 @@
                           class="filter-select"
                           :placeholder="levelFilter ? '' : 'Level'"
                           @update:model-value="
-                            onFilterChange('level', levelFilter)
+                            onFilterChange('level_id', levelFilter)
                           "
                         >
                           <template v-slot:no-option>
@@ -541,7 +490,7 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 levelFilter = null;
-                                onFilterChange('level', null);
+                                onFilterChange('level_id', null);
                               "
                             />
                           </template>
@@ -555,7 +504,7 @@
                           v-model="byUserFilter"
                           dense
                           :options="byUserOptions"
-                          option-label="name"
+                          option-label="username"
                           option-value="id"
                           fill-input
                           emit-value
@@ -565,7 +514,7 @@
                           class="filter-select"
                           :placeholder="byUserFilter ? '' : 'By user'"
                           @update:model-value="
-                            onFilterChange('byUser', byUserFilter)
+                            onFilterChange('by_user', byUserFilter)
                           "
                         >
                           <template v-slot:no-option>
@@ -902,9 +851,10 @@
                     <slot name="header-actions"></slot>
 
                     <q-btn-dropdown
-                      class="add-btn-header"
+                      class="add-btn-header q-ml-auto"
                       v-if="showAddButtonDropdown"
                       no-caps
+                      flat
                       content-class="action-menu"
                       :label="addBtnLabel"
                     >
@@ -1106,7 +1056,7 @@
 
             <template v-slot:body-cell-note="props">
               <q-td :props="props" class="note-cell">
-                 {{ props.row.note }}
+                {{ props.row.note }}
               </q-td>
             </template>
 
@@ -1115,11 +1065,11 @@
                 <q-badge
                   class="state"
                   :class="{
-                    'stock-in': props.row.direction === 'Stock In',
-                    'stock-out': props.row.direction === 'Stock Out',
+                    'stock-in': props.row.direction_label === 'Stock In',
+                    'stock-out': props.row.direction_label === 'Stock Out',
                   }"
                 >
-                  {{ props.row.direction }}
+                  {{ props.row.direction_label }}
                 </q-badge>
               </q-td>
             </template>
@@ -1389,15 +1339,15 @@ export default {
     },
     tableRows: {
       type: Array,
-      default: () => {},
+      default: () => [],
     },
     tableColumns: {
       type: Array,
-      default: () => {},
+      default: () => [],
     },
     tablePagination: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     apiCall: {
       type: String,
