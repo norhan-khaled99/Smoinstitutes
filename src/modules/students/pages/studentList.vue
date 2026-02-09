@@ -29,16 +29,19 @@
       emptyStateTitle="No students found"
       emptyStateDescription="Adjust your filters or add new students to get started."
       emptyStateButtonLabel="Add Student"
+      @filterChange="filterData"
+      @clearFilters="clearFilter"
     />
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import {ref, onMounted} from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import StudentService from "../services/service";
-import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
+import {useRouter} from "vue-router";
+import {useRoute} from "vue-router";
+import {useQuasar} from "quasar";
+
 const router = useRouter();
 const route = useRoute();
 const $q = useQuasar();
@@ -94,22 +97,27 @@ const columns = [
 ];
 
 const statusOptions = ref([
-  { name: "Active", id: 1 },
-  { name: "Inactive", id: 2 },
+  {name: "Active", id: 1},
+  {name: "Waiting", id: 2},
+  {name: "Idle", id: 3},
+  {name: "New", id: 4},
 ]);
 
 const balanceOptions = ref([
-  { name: "0-100", id: 1 },
-  { name: "100-500", id: 2 },
-  { name: "500+", id: 3 },
+  {name: "Negative", id: "neg"},
+  {name: "Zero", id: "zero"},
+  {name: "Positive", id: "positive"},
 ]);
 
 const yearOptions = ref([
-  { name: "2023", id: 2023 },
-  { name: "2024", id: 2024 },
-  { name: "2025", id: 2025 },
+  {name: "2023", id: 2023},
+  {name: "2024", id: 2024},
+  {name: "2025", id: 2025},
 ]);
 
+const statusFilter = ref("");
+const balanceFilter = ref("");
+const searchValue = ref("");
 // Static table data
 const tableRows = ref([]);
 
@@ -131,11 +139,11 @@ const openDialogDeleteEvent = (row) => {
 
 const DetailsEvent = (row) => {
   console.log("Details event:", row);
-  router.push({ name: "studentDetails", params: { id: row.student_id } });
+  router.push({name: "studentDetails", params: {id: row.student_id}});
 };
 const addEvent = () => {
   console.log("Add event");
-  router.push({ name: "addStudent" });
+  router.push({name: "addStudent"});
   // Add navigation or modal logic her
 };
 
@@ -143,31 +151,33 @@ const EditEvent = (row) => {
   console.log("Edit event:", row);
   router.push({
     name: "studentDetails",
-    params: { id: row.id },
-    query: { edit: "true" },
+    params: {id: row.id},
+    query: {edit: "true"},
   });
 };
 
-const onSearchEvent = (searchValue) => {
-  console.log("Search event:", searchValue);
-  if (!searchValue || searchValue.trim() === "") {
+const onSearchEvent = (search) => {
+  console.log("Search event:", search);
+  if (!search || search.trim() === "") {
+    searchValue.value = "";
     // If search is empty, load all notes
     getAllStudents(1);
   } else {
     // Perform search
-    performSearch(searchValue);
+    searchValue.value = search;
+    performSearch();
   }
   // Add search logic here
 };
 
-const performSearch = (searchQuery) => {
+const performSearch = () => {
   $q.loading.show();
 
   StudentService
-    .searchStudent(searchQuery, 1)
+    .searchStudent(searchValue.value, statusFilter.value, 1, balanceFilter.value)
     .then((res) => {
-      tableRows.value = res.data.results;
-      pagination.value.rowsNumber = res.data.count || 0;
+      tableRows.value = res.data.data.results;
+      pagination.value.rowsNumber = res.data.data.count || 0;
       pagination.value.page = 1;
       $q.loading.hide();
     })
@@ -197,29 +207,45 @@ const fireSortCall = ([apiCall, sortBy]) => {
 };
 
 const fireCall = ([apiCall, page, paginationData]) => {
- getAllStudents(page);
+  getAllStudents(page);
 };
+const filterData = (data) => {
+  console.log(data);
+  if (data.type === "status") {
+    statusFilter.value = data.val || "";
+  }
+  if (data.type === "balance") {
+    balanceFilter.value = data.val || "";
+  }
+  performSearch();
+}
 
-const getAllStudents = (page = 1)=>{
+const clearFilter = () => {
+  statusFilter.value = "";
+  balanceFilter.value = "";
+  getAllStudents(1);
+}
+
+const getAllStudents = (page = 1) => {
   $q.loading.show();
   StudentService.getAllStudents(page).then((response) => {
-     tableRows.value = response.data.data.results;
-     pagination.value.rowsNumber = response.data.data.count || 0;
-      pagination.value.page = page;
-      $q.loading.hide();
+    tableRows.value = response.data.data.results;
+    pagination.value.rowsNumber = response.data.data.count || 0;
+    pagination.value.page = page;
+    $q.loading.hide();
   }).catch((error) => {
     $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: error.response?.data?.result || "An error occurred.",
+    });
   })
 }
 onMounted(() => {
- getAllStudents();
+  getAllStudents();
 });
 </script>
