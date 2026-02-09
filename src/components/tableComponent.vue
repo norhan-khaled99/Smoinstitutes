@@ -785,7 +785,7 @@
                           dense
                           :options="typeOptions"
                           option-label="name"
-                          option-value="id"
+                          option-value="name"
                           fill-input
                           emit-value
                           map-options
@@ -794,7 +794,7 @@
                           class="filter-select"
                           :placeholder="typeFilter ? '' : typePlaceholder"
                           @update:model-value="
-                            onFilterChange('type', typeFilter)
+                            onFilterChange('account_type', typeFilter)
                           "
                         >
                           <template v-slot:no-option>
@@ -814,7 +814,7 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 typeFilter = null;
-                                onFilterChange('type', null);
+                                onFilterChange('account_type', null);
                               "
                             />
                           </template>
@@ -917,7 +917,7 @@
             <template v-slot:body-cell-accountType="props">
               <q-td :props="props">
                 <slot name="body-cell-accountType" :row="props.row">
-                  {{ props.row.accountType }}
+                  {{ props.row.mainacctype_name }}
                 </slot>
               </q-td>
             </template>
@@ -927,11 +927,11 @@
                 <div class="row items-center no-wrap">
                   <q-img
                     class="image"
-                    :src="props.row.studentImage"
+                    :src="props.row.picture"
                     ratio="1"
                   />
                   <div class="student-name-text">
-                    {{ props.row.studentName }}
+                    {{ props.row.full_name }}
                   </div>
                 </div>
               </q-td>
@@ -1771,6 +1771,6 @@ export default {
 .note-cell {
   white-space: normal !important;
   word-break: break-word;
-  max-width: 300px; /* اختياري */
+  max-width: 300px;
 }
 </style>
