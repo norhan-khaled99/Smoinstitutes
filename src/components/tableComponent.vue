@@ -796,7 +796,7 @@
                 <div class="row items-center no-wrap">
                   <q-img
                     class="image"
-                    :src="props.row.picture_thumb"
+                    :src="props.row.picture"
                     ratio="1"
                   />
                   <div class="student-name-text">
