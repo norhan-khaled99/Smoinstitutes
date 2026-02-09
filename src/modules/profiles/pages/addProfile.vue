@@ -8,13 +8,13 @@
         </div>
         <div class="header-actions">
           <q-btn-dropdown
-            split
+            split flat
             label="Save Profile"
-            class="save-btn"
+            class="save-btn-dropdown"
             @click.prevent="saveProfile(true)"
             no-caps
           >
-            <q-list style="min-width: 200px">
+            <q-list >
               <q-item
                 clickable
                 v-close-popup

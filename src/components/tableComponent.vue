@@ -372,11 +372,11 @@
                           dense
                           :options="directionOptions"
                           option-label="name"
-                          option-value="id"
-                          emit-value
-                          map-options
+                          option-value="id"   fill-input
+                          emit-value use-input
+                          map-options hide-selected
                           class="filter-select"
-                          :label="directionFilter ? '' : 'Direction'"
+                          :placeholder="directionFilter ? '' : 'Direction'"
                           @update:model-value="
                             onFilterChange('direction', directionFilter)
                           "
@@ -407,7 +407,7 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input
+                          use-input hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="levelFilter ? '' : 'Level'"
@@ -442,6 +442,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="byUserFilter ? '' : 'By user'"
@@ -475,7 +476,7 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input
+                          use-input hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="teacherFilter ? '' : 'Teacher'"
@@ -619,6 +620,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="courseFilter ? '' : 'All Courses'"
@@ -674,9 +676,7 @@
                           </template>
                         </q-select>
                       </div>
-
-                      <slot name="custom-filters"></slot>
-                    </div>
+                   </div>
 
                     <q-btn flat class="clear-filters-btn" @click="clearFilters">
                       <svg

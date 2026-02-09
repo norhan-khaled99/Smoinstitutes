@@ -189,7 +189,7 @@
 
       .q-radio {
         .q-radio__inner--truthy {
-          color: #2f5d6a;
+          color: #2f5d6a !important;
         }
       }
     }
@@ -204,6 +204,11 @@
   }
 }
 
+.q-radio {
+  .q-radio__inner--truthy {
+    color: #2f5d6a;
+  }
+}
 .q-field__control {
   background-color: #f9fafb !important;
   border: 1px solid #e5e9f0 !important;

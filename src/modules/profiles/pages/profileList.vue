@@ -6,7 +6,7 @@
     :loading="loading"
     pageTitle="Profiles"
     addBtnLabel="Add Profile"
-    :showAddButton="true"
+    :showAdd="true"
     :profiles="true"
     :showFilters="true"
     :showTypeFilter="true"
