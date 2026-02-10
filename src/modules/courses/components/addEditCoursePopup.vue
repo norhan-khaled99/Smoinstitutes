@@ -294,7 +294,7 @@ const nextCourseSerial = () => {
       nextCourseSerialValue.value = res.data.data.next_course_serial;
     })
     .catch((error) => {
-      console.error("Error fetching teachers:", error);
+      console.error("Error fetching next course serial:", error);
     });
 };
 

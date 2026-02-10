@@ -41,6 +41,13 @@ class CoursesServices {
     );
   }
 
+
+  getCourceData(courseId) {
+    return axiosInstance.get(
+      `/api/v1/courses/profile/${courseId}`
+    );
+  }
+
   searchCourses(query, page = 1) {
     return axiosInstance.get(
       `/api/v1/courses/profile/?q=${query}&page=${page}`
@@ -58,12 +65,29 @@ class CoursesServices {
   }
 
 
-  //  updateProfile(value,id) {
-  //   return axiosInstance.put(
-  //     `/api/v1/profiles/accounts/${id}/`,
-  //     value
-  //   );
-  // }
+   updateCourse(value,id) {
+    return axiosInstance.put(
+      `/api/v1/courses/profile/${id}/`,
+      value
+    );
+  }
+
+
+  executeAction(action, courseId) {
+    const url = action.link.replace("#", courseId);
+    const config = {
+      responseType: 'arraybuffer'
+    };
+    if (action.method === "GET") {
+      return axiosInstance.get(url, config);
+    } else if (action.method === "POST") {
+      return axiosInstance.post(url, {}, config);
+    } else if (action.method === "PUT") {
+      return axiosInstance.put(url, {}, config);
+    } else if (action.method === "DELETE") {
+      return axiosInstance.delete(url, config);
+    }
+  }
 
 }
 
