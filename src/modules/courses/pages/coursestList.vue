@@ -33,10 +33,9 @@
     v-model="showAddEditPopup"
     :isEdit="isEditMode"
     :initialData="selectedCourseData"
-    :levelOptions="levelOptions"
     :teacherOptions="teacherOptions"
     :shiftOptions="shiftOptions"
-    @save="handleSaveCourse"
+    @saveCourse="handleSaveCourse"
   />
 </template>
 
@@ -167,10 +166,12 @@ const fireSortCall = ([apiCall, sorting]) => {
 
 
 const statusOptions = ref([
-  { id: 1, name: "Active" },
-  { id: 2, name: "Pending" },
-  { id: 3, name: "Finished" },
+  { name: "Active" , value: "Active"},
+  { name: "Pending" , value: "Pending"},
+  { name: "Finished" , value: "Finished"},
 ]);
+
+
 
 const teacherOptions = ref([]);
 const getAllTeachers = () => {
@@ -183,15 +184,7 @@ const getAllTeachers = () => {
     });
 };
 
-const levelOptions = ref([]);
-const getAllLevels = () => {
-  services.getAllLevels().then((res) => {
-      levelOptions.value = res.data.results;
-    })
-    .catch((error) => {
-      console.error("Error fetching levels:", error);
-    });
-};
+
 
 
 const shiftOptions = ref([]);
@@ -222,10 +215,64 @@ const viewCourse = (row) => {
 };
 
 const handleSaveCourse = (courseData) => {
-  // Implementation for adding/updating the course row or calling API would go here
+    $q.loading.show();
+
+  services.addCourse(courseData).then((res) => {
+      $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: "Added Successfully",
+        });
+        getAllCourses(1);
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
 };
 
 const onSearch = (val) => {
+   if (!val || val.trim() === "") {
+    // If search is empty, load all courses without filters
+    getAllCourses(1);
+  } else {
+    // Perform search
+    performSearch(val);
+  }
+};
+const performSearch = (searchQuery) => {
+  $q.loading.show();
+
+  services.searchCourses(searchQuery, 1)
+    .then((res) => {
+      allCourses.value = res.data.results;
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = 1;
+
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
 };
 
 const onFilterChange = ({ type, val }) => {
@@ -249,7 +296,6 @@ const clearFilters = () => {
 onMounted(() => {
   getAllCourses();
   getAllTeachers();
-  getAllLevels();
   getAllShifts();
 });
 </script>

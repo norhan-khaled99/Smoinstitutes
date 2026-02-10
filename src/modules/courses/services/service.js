@@ -21,9 +21,10 @@ class CoursesServices {
   }
 
 
-  getAllLevels() {
+
+  serachForLevels(value) {
     return axiosInstance.get(
-      `/api/v1/courses/levels/`
+      `/api/v1/courses/levels/lookup/?q=${value}`
     );
   }
 
@@ -34,27 +35,27 @@ class CoursesServices {
     );
   }
 
-  // getAllCites() {
-  //   return axiosInstance.get(
-  //     `/api/v1/auth/lookups/?key=person.city_choices`
-  //   );
-  // }
+  getNextCourseSerial() {
+    return axiosInstance.get(
+      `/api/v1/courses/profile/next-serial`
+    );
+  }
 
-  // searchProfiles(query, page = 1) {
-  //   return axiosInstance.get(
-  //     `/api/v1/profiles/accounts/search/?q=${query}&page=${page}`
-  //   );
-  // }
-
-
+  searchCourses(query, page = 1) {
+    return axiosInstance.get(
+      `/api/v1/courses/profile/?q=${query}&page=${page}`
+    );
+  }
 
 
-  // addProfile(value) {
-  //   return axiosInstance.post(
-  //     `/api/v1/profiles/accounts/`,
-  //     value
-  //   );
-  // }
+
+
+  addCourse(value) {
+    return axiosInstance.post(
+      `/api/v1/courses/profile/`,
+      value
+    );
+  }
 
 
   //  updateProfile(value,id) {

@@ -370,7 +370,6 @@ const performSearch = (searchQuery) => {
       pagination.value.rowsNumber = res.data.count || 0;
       pagination.value.page = 1;
 
-      console.log(allProfiles.value, pagination.value.rowsNumber);
       $q.loading.hide();
     })
     .catch((error) => {

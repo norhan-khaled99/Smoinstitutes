@@ -180,7 +180,7 @@
                           dense
                           :options="statusOptions"
                           option-label="name"
-                          option-value="id"
+                          option-value="value"
                           fill-input
                           emit-value
                           map-options
