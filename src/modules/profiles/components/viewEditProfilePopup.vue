@@ -5,19 +5,25 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card class="edit-view-card row no-wrap">
+    <q-card
+      :class="[
+        'row no-wrap',
+        isEditMode ? 'create-view-card' : 'edit-view-card',
+      ]"
+    >
       <!-- Sidebar -->
       <div class="sidebar col-auto">
         <div class="profile-section">
-          <q-img src="/images/Image-368.png" class="profile-image" />
+          <q-img :src="profileData.picture" class="profile-image" />
           <q-file
             v-if="isEditMode"
-            v-model="profileData.imageFile"
+            v-model="profileData.picture"
             outlined
             dense
             label="Change Photo"
             class="change-photo-btn"
-            accept="image/*"
+            accept=".jpg, .png, .gif ,image/jpeg, image/png, image/gif"
+            @update:model-value="uploadPhoto"
           >
             <template v-slot:append>
               <svg
@@ -44,15 +50,15 @@
         <div class="header">
           <div>
             <div class="title">
-              {{ profileData.fullName || "Profile Name" }}
+              {{ profileData.full_name }}
             </div>
             <div class="row items-center q-gutter-lg">
               <div class="subtitle">
-                Profile ID : {{ profileData.profileId || "251221" }}
+                Profile ID : {{ profileData.globalid }}
               </div>
               <div class="subtitle">
                 Registration Date :
-                {{ profileData.registrationDate || "Oct 16, 2025, 9:25 AM" }}
+                {{ formatDate(profileData.registration_date) }}
               </div>
             </div>
           </div>
@@ -71,18 +77,47 @@
         <!-- Content Area -->
         <div class="popup-form-grid row">
           <!-- Full Name -->
-          <div class="col-6">
+          <div v-if="!isEditMode" class="col-6">
             <div :class="isEditMode ? 'field-label' : 'field-label-view'">
               Full Name
             </div>
+            <div class="field-value">{{ profileData.full_name }}</div>
+          </div>
+
+          <div v-if="isEditMode" class="col-6">
+            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
+              First Name
+            </div>
             <q-input
-              v-if="isEditMode"
               outlined
-              v-model="profileData.fullName"
+              v-model="profileData.first_name"
               dense
-              placeholder="Enter full name"
+              placeholder="Enter first name"
             />
-            <div v-else class="field-value">{{ profileData.fullName }}</div>
+          </div>
+
+          <div v-if="isEditMode" class="col-6">
+            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
+              Middle Name
+            </div>
+            <q-input
+              outlined
+              v-model="profileData.middle_names"
+              dense
+              placeholder="Enter Middle name"
+            />
+          </div>
+
+          <div v-if="isEditMode" class="col-6">
+            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
+              Last Name
+            </div>
+            <q-input
+              outlined
+              v-model="profileData.last_name"
+              dense
+              placeholder="Enter last name"
+            />
           </div>
 
           <!-- Gender -->
@@ -90,15 +125,11 @@
             <div :class="isEditMode ? 'field-label' : 'field-label-view'">
               Gender
             </div>
-            <q-select
-              v-if="isEditMode"
-              outlined
-              v-model="profileData.gender"
-              :options="['Male', 'Female']"
-              dense
-              placeholder="Select gender"
-            ></q-select>
-            <div v-else class="field-value">{{ profileData.gender }}</div>
+            <div v-if="isEditMode" class="radio-group">
+              <q-radio v-model="profileData.gender" val="1" label="Male" />
+              <q-radio v-model="profileData.gender" val="2" label="Female" />
+            </div>
+            <div v-else class="field-value">{{ profileData.gender_name }}</div>
           </div>
 
           <!-- Date of Birth -->
@@ -109,9 +140,9 @@
             <q-input
               v-if="isEditMode"
               outlined
-              v-model="profileData.dob"
+              v-model="profileData.d_o_b"
               dense
-              placeholder="DD/MM/YYYY"
+              placeholder="YYYY-MM-DD"
             >
               <template v-slot:append>
                 <div class="cursor-pointer row items-center">
@@ -159,8 +190,8 @@
                     transition-hide="scale"
                   >
                     <q-date
-                      v-model="profileData.dob"
-                      mask="DD/MM/YYYY"
+                      v-model="profileData.d_o_b"
+                      mask="YYYY-MM-DD"
                       color="grey-6"
                     >
                       <div class="row items-center justify-end">
@@ -176,7 +207,7 @@
                 </div>
               </template>
             </q-input>
-            <div v-else class="field-value">{{ profileData.dob }}</div>
+            <div v-else class="field-value">{{ profileData.d_o_b }}</div>
           </div>
 
           <!-- Main Account -->
@@ -186,43 +217,24 @@
             </div>
             <q-select
               v-if="isEditMode"
+              emit-value
+              map-options
               outlined
-              v-model="profileData.mainAccount"
+              option-label="name"
+              option-value="id"
+              v-model="profileData.mainacctype"
               :options="accountTypeOptions"
+              :label="
+                profileData.mainacctype == undefined ||
+                profileData.mainacctype == ''
+                  ? 'Select Main Account'
+                  : ''
+              "
               dense
-              placeholder="Select main account"
-            ></q-select>
-            <div v-else class="field-value">{{ profileData.mainAccount }}</div>
-          </div>
-
-          <!-- National ID -->
-          <div class="col-6">
-            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
-              National Id
-            </div>
-            <q-input
-              v-if="isEditMode"
-              outlined
-              v-model="profileData.nationalId"
-              dense
-              placeholder="Enter national ID"
             />
-            <div v-else class="field-value">{{ profileData.nationalId }}</div>
-          </div>
-
-          <!-- Email -->
-          <div class="col-6">
-            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
-              Email
+            <div v-else class="field-value">
+              {{ profileData.mainacctype_name }}
             </div>
-            <q-input
-              v-if="isEditMode"
-              outlined
-              v-model="profileData.email"
-              dense
-              placeholder="Enter email address"
-            />
-            <div v-else class="field-value">{{ profileData.email }}</div>
           </div>
 
           <!-- Phone -->
@@ -237,7 +249,7 @@
               dense
               placeholder="Enter phone number"
             />
-            <div v-else class="field-value">{{ profileData.phone || "-" }}</div>
+            <div v-else class="field-value">{{ profileData.phone }}</div>
           </div>
 
           <!-- Mobile -->
@@ -255,6 +267,34 @@
             <div v-else class="field-value">{{ profileData.mobile }}</div>
           </div>
 
+          <div class="col-6">
+            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
+              Other Contact
+            </div>
+            <q-input
+              v-if="isEditMode"
+              outlined
+              v-model="profileData.parentphone1"
+              dense
+              placeholder="Enter other contact number"
+            />
+            <div v-else class="field-value">{{ profileData.parentphone1 }}</div>
+          </div>
+
+          <div class="col-6">
+            <div :class="isEditMode ? 'field-label' : 'field-label-view'">
+              Other Contact 2
+            </div>
+            <q-input
+              v-if="isEditMode"
+              outlined
+              v-model="profileData.parentphone2"
+              dense
+              placeholder="Enter other contact number 2"
+            />
+            <div v-else class="field-value">{{ profileData.parentphone2 }}</div>
+          </div>
+
           <!-- City -->
           <div class="col-6">
             <div :class="isEditMode ? 'field-label' : 'field-label-view'">
@@ -264,10 +304,14 @@
               v-if="isEditMode"
               outlined
               v-model="profileData.city"
-              :options="cityOptions"
+              :options="allCites"
+              :label="
+                profileData.city == undefined || profileData.city == ''
+                  ? 'Select City'
+                  : ''
+              "
               dense
-              placeholder="Select city"
-            ></q-select>
+            />
             <div v-else class="field-value">{{ profileData.city }}</div>
           </div>
 
@@ -303,7 +347,7 @@
             no-caps
             label="Save Changes"
             class="save-btn"
-            @click="saveChanges"
+            @click.prevent="saveChanges"
             unelevated
           />
         </div>
@@ -313,70 +357,172 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import services from "../services/service.js";
 
 const props = defineProps({
   modelValue: Boolean,
   profileInfo: Object,
   initialEditMode: {
     type: Boolean,
-    default: false,
   },
 });
+const router = useRouter();
+const $q = useQuasar();
 
-const emit = defineEmits(["update:modelValue", "save"]);
+const emit = defineEmits(["save", "update:modelValue"]);
 
 const isOpen = ref(props.modelValue);
 const isEditMode = ref(false);
 
-const profileData = ref({
-  id: null,
-  profileId: "251221",
-  fullName: "Ahmed Mansour Al-Otaibi",
-  gender: "Male",
-  dob: "15/05/1992",
-  mainAccount: "Cash Box",
-  nationalId: "1092837465",
-  email: "ahmed@example.com",
-  phone: "-",
-  mobile: "+971 50 123 4567",
-  city: "Dubai",
-  address: "Villa 12, Street 45, Al Barsha 1, Dubai, UAE",
-  image: "https://cdn.quasar.dev/img/avatar.png",
-  imageFile: null,
-  registrationDate: "Oct 16, 2025, 9:25 AM",
-});
+const profileData = ref({});
 
-const cityOptions = ["Dubai", "Abu Dhabi", "Sharjah"];
-const accountTypeOptions = [
-  "Expenses",
-  "Income Fees",
-  "Cash Box",
-  "Purchase",
-  "Bank Accounts",
-  "Deductions",
-];
+const accountTypeOptions = ref([]);
+const getAllAccountType = () => {
+  services
+    .getAllAccountType()
+    .then((res) => {
+      accountTypeOptions.value = Object.entries(res.data.data).map(
+        ([id, label]) => ({
+          id: Number(id),
+          name: label,
+        }),
+      );
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
 
+const allCites = ref([]);
+const getAllCites = () => {
+  services
+    .getAllCites()
+    .then((res) => {
+      allCites.value = res.data.data.value.CITY_CHOICES;
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
+
+// Watch modelValue to open/close dialog
 watch(
   () => props.modelValue,
   (newVal) => {
     isOpen.value = newVal;
-    if (newVal && props.profileInfo) {
-      profileData.value = { ...profileData.value, ...props.profileInfo };
-      isEditMode.value = props.initialEditMode; // Set edit mode based on prop
-    }
   },
 );
 
+// Watch profileInfo to update form data
+watch(
+  () => props.profileInfo,
+  (newVal) => {
+    if (newVal) {
+      profileData.value = { ...profileData.value, ...newVal };
+    }
+  },
+  { deep: true },
+);
+
+// Watch initialEditMode to set edit/view state
+watch(
+  () => props.initialEditMode,
+  (newVal) => {
+    isEditMode.value = newVal || false;
+  },
+);
+
+// Reset when dialog closes
 watch(isOpen, (newVal) => {
-  emit("update:modelValue", newVal);
   if (!newVal) {
-    isEditMode.value = false; // Reset to view mode when closing
+    isEditMode.value = false;
   }
 });
 
+// Emit update so parent `v-model` stays in sync when dialog opens/closes
+watch(isOpen, (newVal) => {
+  emit("update:modelValue", newVal);
+});
+
 const saveChanges = () => {
+  const missing = [];
+
+  if (!profileData.value.first_name) missing.push("First Name");
+  if (!profileData.value.middle_names) missing.push("Middle Name");
+  if (!profileData.value.last_name) missing.push("Last Name");
+  if (!profileData.value.mobile) missing.push("Mobile");
+  if (!profileData.value.mainacctype) missing.push("Account Type");
+
+  if (missing.length) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: `${missing.join(", ")} is required.`,
+    });
+    return;
+  }
+
+
+
+  if (aldIamge.value != "") {
+    profileData.value.picture = aldIamge.value;
+  }
+
+
+
   emit("save", profileData.value);
   isOpen.value = false;
 };
+
+const formatDate = (date) => {
+  return date
+    ? new Date(date.replace(" ", "T")).toLocaleString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "";
+};
+
+const aldIamge = ref("");
+const uploadPhoto = (file) => {
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      aldIamge.value = profileData.value.picture;
+      profileData.value.picture = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+onMounted(() => {
+  getAllAccountType();
+  getAllCites();
+});
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <q-dialog v-model="model" persistent>
-    <q-card class="custom-popup">
+  <q-dialog  persistent>
+    <q-card class="custom-popup view-transaction-card">
       <q-card-section>
         <div class="popup-header">
-          <p class="popup-title">View Note</p>
+          <p class="popup-title">View Transaction</p>
           <q-btn flat dense v-close-popup class="close-btn">
             <svg
               width="13"
@@ -21,42 +21,62 @@
             </svg>
           </q-btn>
         </div>
-        <div class="popup-subtitle">
-          {{ person_type }}: {{ person_name }} (ID : {{ person }})
+        <div class="popup-subtitle row q-gutter-sm items-center">
+          <span>Paper No. ({{ transaction.paperNo }})</span>
+          <span class="q-ml-lg">Date of process : {{ transaction.date }}</span>
         </div>
 
         <div class="popup-divider"></div>
 
-        <div class="form-group q-mb-md">
-          <label class="form-group-label">Note</label>
-          <p class="form-group-value">
-            {{ note.note }}
-          </p>
-        </div>
-
-        <div class="form-group">
-          <label class="form-group-label">Type</label>
-          <div class="q-mt-xs">
-            <span class="popup-badge" :class="getTypeClass(note.note_type)">
-              {{ note.note_type }}
-            </span>
-          </div>
-        </div>
-
-        <div class="popup-divider"></div>
-
-        <div class="row q-col-gutter-xl">
+        <div class="row q-col-gutter-lg q-mb-md">
           <div class="col-6">
-            <label class="form-group-label">By user</label>
-            <p class="popup-subtitle">
-              {{ note.created_by_name }}
-            </p>
+            <div class="form-group">
+              <label class="form-group-label">Amount</label>
+              <p class="form-group-value">{{ transaction.amount }} EGP</p>
+            </div>
           </div>
           <div class="col-6">
-            <label class="form-group-label">Last updated</label>
-            <p class="popup-subtitle">
-              {{ formatDate(note.updated_at) }}
-            </p>
+            <div class="form-group">
+              <label class="form-group-label">Category id</label>
+              <p class="transaction-label">
+                {{ transaction.categoryId }}
+              </p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label class="form-group-label">From Account</label>
+              <p class="transaction-label">
+                {{ transaction.transferFrom }}
+              </p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label class="form-group-label">To Account</label>
+              <p class="transaction-label">
+                {{ transaction.transferTo }}
+              </p>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group">
+              <label class="form-group-label">Transaction Type</label>
+              <p class="form-group-value">
+                {{ transaction.transType }}
+              </p>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group">
+              <label class="form-group-label">Details</label>
+              <p class="form-group-value">
+                {{
+                  transaction.details ||
+                  `${transaction.transType} fee for ${transaction.categoryId}`
+                }}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -64,7 +84,7 @@
           <q-btn
             label="Close"
             v-close-popup
-            class="btn-close"
+            class="btn-close full-width"
             flat
             no-caps
           />
@@ -78,45 +98,15 @@
 const model = defineModel();
 
 const props = defineProps({
-  note: {
+  transaction: {
     type: Object,
     default: () => ({}),
   },
-  person_name: {
-    type: String,
-    default: "",
-  },
-  person_type: {
-    type: String,
-    default: "",
-  },
-  person: {
-    type: String,
-    default: "",
-  },
 });
-
-const getTypeClass = (type) => {
-  if (!type) return "";
-  const t = type.toLowerCase();
-  if (t === "important") return "stock-out"; // Using same red style
-  if (t === "info") return "stock-in"; // Using same green style
-  if (t === "warn") return "warning-badge";
-  return "";
-};
-
-const formatDate = (date) => {
-  return date
-    ? new Date(date.replace(" ", "T")).toLocaleString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-      })
-    : ""
-}
-
-
 </script>
+
+<style lang="scss">
+.custom-popup.view-transaction-card {
+  width: 39.5rem !important;
+}
+</style>

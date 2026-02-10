@@ -9,8 +9,6 @@
     :actions="true"
     :ShowActionsdropDown="true"
     :showFilters="true"
-    :showYearFilter="true"
-    :yearOptions="yearOptions"
     :showTypeFilter="true"
     :typeOptions="transTypeOptions"
     typePlaceholder="Trans Type"
@@ -28,11 +26,17 @@
     emptyStateDescription="Get started by adding a new transaction."
     emptyStateButtonLabel="Add Transaction"
   />
+
+  <viewTransaction
+    v-model="showViewTransaction"
+    :transaction="selectedTransaction"
+  />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
+import viewTransaction from "../components/viewTransaction.vue";
 
 const pagination = ref({
   page: 1,
@@ -196,6 +200,9 @@ const tableRows = ref([
   },
 ]);
 
+const showViewTransaction = ref(false);
+const selectedTransaction = ref({});
+
 const addTransaction = () => {
   console.log("Add Transaction");
 };
@@ -217,7 +224,8 @@ const viewReport = () => {
 };
 
 const viewDetails = (row) => {
-  console.log("View Details", row);
+  selectedTransaction.value = row;
+  showViewTransaction.value = true;
 };
 
 const editTransaction = (row) => {

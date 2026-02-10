@@ -24,7 +24,7 @@
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label>Level <span>*</span></label>
-              <q-select v-model="form.level" :options="levelOptions" option-label="name" option-value="id" outlined
+              <q-select v-model="form.level" :options="levelOptions" option-label="label" option-value="value" outlined
                 dense emit-value map-options :label="form.level == undefined || form.level == ''
                     ? 'Select Level'
                     : ''
@@ -34,7 +34,7 @@
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label>Teacher <span>*</span></label>
-              <q-select v-model="form.teacher" :options="teacherOptions" option-label="name" option-value="id" outlined
+              <q-select v-model="form.teacher" :options="teacherOptions" option-label="full_name" option-value="staff_id" outlined
                 dense emit-value map-options :label="form.teacher == undefined || form.teacher == ''
                     ? 'Select Teacher'
                     : ''
@@ -110,22 +110,15 @@ const props = defineProps({
   },
   levelOptions: {
     type: Array,
-    default: () => [
-      { id: 1, name: "Intro A" },
-      { id: 2, name: "Intro B" },
-      { id: 3, name: "ICDL" },
-    ],
+    default: () => [],
   },
   teacherOptions: {
     type: Array,
-    default: () => [
-      { id: 1, name: "Yara Abdullah Ahmed Ali" },
-      { id: 2, name: "Aseel Gamal Hammoud Musleh" },
-    ],
+    default: () => [],
   },
   shiftOptions: {
     type: Array,
-    default: () => ["1", "2", "3", "4", "5", "N/A"],
+    default: () => [],
   },
 });
 

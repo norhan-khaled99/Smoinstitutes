@@ -185,6 +185,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="statusFilter ? '' : 'All Status'"
@@ -199,11 +200,7 @@
                               </q-item-section>
                             </q-item>
                           </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="statusFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
+
                           <template v-slot:append>
                             <q-icon
                               v-if="statusFilter"
@@ -231,6 +228,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="balanceFilter ? '' : 'Any Balance'"
@@ -238,18 +236,6 @@
                             onFilterChange('balance', balanceFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="balanceFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="balanceFilter"
@@ -287,18 +273,6 @@
                             onFilterChange('noteType', noteTypeFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="noteTypeFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="noteTypeFilter"
@@ -336,18 +310,6 @@
                             onFilterChange('createdAt', createdAtFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="createdAtFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="createdAtFilter"
@@ -385,18 +347,6 @@
                             onFilterChange('createdBy', createdByFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="createdByFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="createdByFilter"
@@ -422,23 +372,15 @@
                           dense
                           :options="directionOptions"
                           option-label="name"
-                          option-value="id"
-                          emit-value
-                          map-options
+                          option-value="id"   fill-input
+                          emit-value use-input
+                          map-options hide-selected
                           class="filter-select"
-                          :label="directionFilter ? '' : 'Direction'"
+                          :placeholder="directionFilter ? '' : 'Direction'"
                           @update:model-value="
                             onFilterChange('direction', directionFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-
                           <template v-slot:append>
                             <q-icon
                               v-if="directionFilter"
@@ -465,7 +407,7 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input
+                          use-input hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="levelFilter ? '' : 'Level'"
@@ -473,16 +415,6 @@
                             onFilterChange('level_id', levelFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="levelFilter">{{ scope.opt.name }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="levelFilter"
@@ -510,6 +442,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="byUserFilter ? '' : 'By user'"
@@ -517,18 +450,6 @@
                             onFilterChange('by_user', byUserFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="byUserFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="byUserFilter"
@@ -550,12 +471,12 @@
                           v-model="teacherFilter"
                           dense
                           :options="teacherOptions"
-                          option-label="name"
-                          option-value="id"
+                          option-label="full_name"
+                          option-value="staff_id"
                           fill-input
                           emit-value
                           map-options
-                          use-input
+                          use-input hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="teacherFilter ? '' : 'Teacher'"
@@ -563,18 +484,6 @@
                             onFilterChange('teacher', teacherFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="teacherFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="teacherFilter"
@@ -601,6 +510,7 @@
                           fill-input
                           emit-value
                           map-options
+                          hide-selected
                           use-input
                           input-debounce="0"
                           class="filter-select"
@@ -609,18 +519,6 @@
                             onFilterChange('degree', degreeFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="degreeFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="degreeFilter"
@@ -651,6 +549,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="
@@ -660,18 +559,6 @@
                             onFilterChange('institution', institutionFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="institutionFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="institutionFilter"
@@ -698,6 +585,7 @@
                           fill-input
                           emit-value
                           map-options
+                          hide-selected
                           use-input
                           input-debounce="0"
                           class="filter-select"
@@ -706,18 +594,6 @@
                             onFilterChange('jobType', jobTypeFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="jobTypeFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="jobTypeFilter"
@@ -744,6 +620,7 @@
                           emit-value
                           map-options
                           use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="courseFilter ? '' : 'All Courses'"
@@ -751,18 +628,6 @@
                             onFilterChange('course', courseFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="courseFilter">{{
-                              scope.opt.name
-                            }}</span>
-                          </template>
                           <template v-slot:append>
                             <q-icon
                               v-if="courseFilter"
@@ -785,28 +650,19 @@
                           dense
                           :options="typeOptions"
                           option-label="name"
-                          option-value="id"
+                          option-value="name"
                           fill-input
                           emit-value
                           map-options
-                          use-input
+                          use-input hide-selected
                           input-debounce="0"
                           class="filter-select"
-                          :placeholder="typeFilter ? '' : typePlaceholder"
+                           :placeholder="typeFilter ? '' : 'All Types'"
                           @update:model-value="
-                            onFilterChange('type', typeFilter)
+                            onFilterChange('account_type', typeFilter)
                           "
                         >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-black"
-                                >No results</q-item-section
-                              >
-                            </q-item>
-                          </template>
-                          <template v-slot:selected-item="scope">
-                            <span v-if="typeFilter">{{ scope.opt.name }}</span>
-                          </template>
+
                           <template v-slot:append>
                             <q-icon
                               v-if="typeFilter"
@@ -814,15 +670,13 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 typeFilter = null;
-                                onFilterChange('type', null);
+                                onFilterChange('account_type', null);
                               "
                             />
                           </template>
                         </q-select>
                       </div>
-
-                      <slot name="custom-filters"></slot>
-                    </div>
+                   </div>
 
                     <q-btn flat class="clear-filters-btn" @click="clearFilters">
                       <svg
@@ -917,7 +771,7 @@
             <template v-slot:body-cell-accountType="props">
               <q-td :props="props">
                 <slot name="body-cell-accountType" :row="props.row">
-                  {{ props.row.accountType }}
+                  {{ props.row.mainacctype_name }}
                 </slot>
               </q-td>
             </template>
@@ -937,10 +791,25 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-imageProfile="props">
+              <q-td :props="props">
+                <div class="row items-center no-wrap">
+                  <q-img
+                    class="image"
+                    :src="props.row.picture"
+                    ratio="1"
+                  />
+                  <div class="student-name-text">
+                    {{ props.row.full_name }}
+                  </div>
+                </div>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-teacher="props">
               <q-td :props="props">
                 <div class="bold-text">
-                  {{ props.row.teacher }}
+                  {{ props.row.teacher_name }}
                 </div>
               </q-td>
             </template>
@@ -1370,14 +1239,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    showYearFilter: {
-      type: Boolean,
-      default: false,
-    },
-    yearOptions: {
-      type: Array,
-      default: () => [],
-    },
     showStatusFilter: {
       type: Boolean,
       default: false,
@@ -1494,10 +1355,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    typePlaceholder: {
-      type: String,
-      default: "All Types",
-    },
     showAddButtonDropdown: {
       type: Boolean,
       default: false,
@@ -1565,7 +1422,6 @@ export default {
     const sorting = ref("");
     const searchFilter = ref("");
     const departmentFilter = ref(null);
-    const yearFilter = ref(null);
     const statusFilter = ref(null);
     const balanceFilter = ref(null);
     const noteTypeFilter = ref(null);
@@ -1594,7 +1450,6 @@ export default {
     const clearFilters = () => {
       searchFilter.value = "";
       departmentFilter.value = null;
-      yearFilter.value = null;
       statusFilter.value = null;
       balanceFilter.value = null;
       noteTypeFilter.value = null;
@@ -1740,7 +1595,6 @@ export default {
       EditEvent,
       searchFilter,
       departmentFilter,
-      yearFilter,
       statusFilter,
       balanceFilter,
       noteTypeFilter,
@@ -1771,6 +1625,6 @@ export default {
 .note-cell {
   white-space: normal !important;
   word-break: break-word;
-  max-width: 300px; /* اختياري */
+  max-width: 300px;
 }
 </style>
