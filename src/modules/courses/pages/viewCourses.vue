@@ -86,27 +86,76 @@
       <div class="info-grid row q-col-gutter-x-md q-col-gutter-y-sm">
         <div class="info-item col-12 col-sm-6 col-md-4">
           <div class="label">Teacher</div>
-          <div class="value">Aseel Gamal Hammoud Musleh</div>
+          <q-input
+            v-model="courseInfo.teacher"
+            outlined
+            dense
+            class="info-input"
+          />
         </div>
-        <div class="info-item col-6 col-sm-3 col-md">
+        <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Shift</div>
-          <div class="value">SH 3</div>
+          <q-input
+            v-model="courseInfo.shift"
+            outlined
+            dense
+            class="info-input"
+          />
         </div>
-        <div class="info-item col-6 col-sm-3 col-md">
+        <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Fee</div>
-          <div class="value">3400</div>
+          <q-input
+            v-model="courseInfo.fee"
+            outlined
+            dense
+            type="number"
+            class="info-input"
+          />
         </div>
-        <div class="info-item col-6 col-md">
+        <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Start Date</div>
-          <div class="value">11-01-2026</div>
+          <q-input
+            v-model="courseInfo.startDate"
+            outlined
+            dense
+            mask="##-##-####"
+            class="info-input"
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date v-model="courseInfo.startDate" mask="DD-MM-YYYY">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Close" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
         </div>
-        <div class="info-item col-3 col-md">
+        <div class="info-item col-3 col-md-4">
           <div class="label">Days</div>
-          <div class="value">30</div>
+          <q-input
+            v-model="courseInfo.days"
+            outlined
+            dense
+            type="number"
+            class="info-input"
+          />
         </div>
-        <div class="info-item col-3 col-md">
+        <div class="info-item col-3 col-md-4">
           <div class="label">Score Ratio</div>
-          <div class="value">( 3 : 0 )</div>
+          <q-input
+            v-model="courseInfo.scoreRatio"
+            outlined
+            dense
+            class="info-input"
+          />
         </div>
       </div>
     </div>
@@ -122,8 +171,6 @@
       :balanceOptions="balanceOptions"
       :showStatusFilter="true"
       :statusOptions="statusOptions"
-      :showYearFilter="true"
-      :yearOptions="yearOptions"
       :ShowActionsdropDown="true"
       @openDialogDeleteEvent="openDialogDeleteEvent"
       :showFilters="true"
@@ -151,6 +198,16 @@ import { useQuasar } from "quasar";
 
 const router = useRouter();
 const $q = useQuasar();
+
+// Course information data
+const courseInfo = ref({
+  teacher: "Aseel Gamal Hammoud Musleh",
+  shift: "SH 3",
+  fee: "3400",
+  startDate: "11-01-2026",
+  days: "30",
+  scoreRatio: "( 3 : 0 )",
+});
 
 const columns = [
   {
@@ -194,11 +251,6 @@ const balanceOptions = ref([
   { name: "500+", id: 3 },
 ]);
 
-const yearOptions = ref([
-  { name: "2023", id: 2023 },
-  { name: "2024", id: 2024 },
-  { name: "2025", id: 2025 },
-]);
 
 // Static table data
 const tableRows = ref([
@@ -310,3 +362,16 @@ onMounted(() => {
   console.log("viewCourses with student list mounted");
 });
 </script>
+
+<style scoped lang="scss">
+.info-input {
+  :deep(.q-field__control) {
+    min-height: 40px;
+  }
+
+  :deep(.q-field__native) {
+    font-size: 14px;
+    color: #1f2937;
+  }
+}
+</style>
