@@ -17,6 +17,9 @@ class StudentService {
   updateStudent(id, data) {
     return axiosInstance.patch(`/api/v1/profiles/students/${id}/`, data);
   }
+  getStudentById(id) {
+    return axiosInstance.get(`/api/v1/profiles/students/${id}/profile`);
+  }
 }
 
 export default new StudentService();

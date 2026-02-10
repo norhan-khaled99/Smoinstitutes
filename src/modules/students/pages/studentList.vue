@@ -139,7 +139,7 @@ const openDialogDeleteEvent = (row) => {
 
 const DetailsEvent = (row) => {
   console.log("Details event:", row);
-  router.push({name: "studentDetails", params: {id: row.student_id}});
+  router.push({name: "studentDetails", params: {id: row.globalid}});
 };
 const addEvent = () => {
   console.log("Add event");
@@ -151,7 +151,7 @@ const EditEvent = (row) => {
   console.log("Edit event:", row);
   router.push({
     name: "studentDetails",
-    params: {id: row.id},
+    params: {id: row.globalid},
     query: {edit: "true"},
   });
 };

@@ -5,10 +5,13 @@
     >
       <div class="student-data">
         <div class="row items-center">
-          <p class="student-name">Moaz Essam</p>
-          <q-badge class="state waiting-status" label="Waiting" />
+          <p class="student-name">{{ studentData.full_name }}</p>
+          <q-badge class="state waiting-status" :label="studentData.status"  v-if="studentData.status==='Waiting'"/>
+          <q-badge class="state new-status" :label="studentData.status"  v-if="studentData.status==='New'"/>
+          <q-badge class="state active-status" :label="studentData.status"  v-if="studentData.status==='Active'"/>
+          <q-badge class="state idle-status" :label="studentData.status"  v-if="studentData.status==='Idle'"/>
         </div>
-        <p class="student-id">ID : 251221</p>
+        <p class="student-id">ID : {{ studentData.student_id }}</p>
       </div>
       <div class="row items-center q-gutter-md">
         <template v-if="isEditing">
@@ -149,25 +152,59 @@ import transactionList from "../components/trasactionList.vue";
 import notesList from "../components/notesList.vue";
 import attendanceList from "../components/attendanceList.vue";
 import overview from "../components/overview.vue";
+import {useQuasar} from "quasar";
+import StudentService from "../services/service";
 
+const $q = useQuasar();
 const route = useRoute();
 const tab = ref("overview");
 const isEditing = ref(false);
 const overviewRef = ref(null);
-
+const studentData = ref({
+  full_name: "",
+  student_id: "",
+  status: "",
+});
 const toggleEdit = () => {
   isEditing.value = !isEditing.value;
 };
 
-const saveEdit = () => {
-  isEditing.value = false;
+const saveEdit = async () => {
+  // Call the child component's save method
+  if (overviewRef.value) {
+    const success = await overviewRef.value.handleSave();
+    isEditing.value = false;
+  }
 };
 
 const cancelEdit = () => {
+  // Call the child component's cancel method to reset data
+  if (overviewRef.value) {
+    overviewRef.value.handleCancel();
+  }
   isEditing.value = false;
 };
 
+const getStudentDetails = () => {
+  StudentService.getStudentById(route.params.id)
+    .then((res) => {
+      if (res.status === 200) {
+        studentData.value = res.data.data.student;
+      }
+    }).catch((err) => {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: err.response?.data?.result || "An error occurred.",
+    });
+
+  })
+}
 onMounted(() => {
+  getStudentDetails();
   if (route.query.edit === "true") {
     isEditing.value = true;
   }
