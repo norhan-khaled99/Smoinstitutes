@@ -11,6 +11,12 @@ class StudentService {
   getAllCities() {
     return axiosInstance.get(`/api/v1/auth/lookups/?key=person.city_choices`);
   }
+  addStudent(data) {
+    return axiosInstance.post(`/api/v1/profiles/students/`, data);
+  }
+  updateStudent(id, data) {
+    return axiosInstance.patch(`/api/v1/profiles/students/${id}/`, data);
+  }
 }
 
 export default new StudentService();

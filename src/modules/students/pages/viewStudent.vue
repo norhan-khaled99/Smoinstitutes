@@ -171,5 +171,17 @@ onMounted(() => {
   if (route.query.edit === "true") {
     isEditing.value = true;
   }
+  if (route.query.addCourses === "true") {
+    tab.value = "courses";
+  }
+  // Check if edit mode
+  else if (route.query.edit === "true") {
+    isEditing.value = true;
+    tab.value = "overview";
+  }
+  // Default to overview
+  else {
+    tab.value = "overview";
+  }
 });
 </script>
