@@ -3,13 +3,17 @@
     <div class="course-header-section row items-center justify-between">
       <div class="course-data">
         <div class="row items-center">
-          <p class="course-name">ICDL</p>
-          <q-badge class="state waiting-status" label="Pending" />
+          <p class="course-name">
+            {{ courceData.courseserial }} {{ courceData.level_name }}
+          </p>
+          <q-badge class="state waiting-status" :label="courceData.status" />
         </div>
-        <p class="course-serial">Course Serial : 6381</p>
+        <p class="course-serial">
+          Course Serial : {{ courceData.courseserial }}
+        </p>
       </div>
       <div class="row items-center q-gutter-md">
-        <q-btn flat no-caps class="edit-course-btn">
+        <q-btn flat @click="editCourse" no-caps class="edit-course-btn">
           <svg
             width="18"
             height="18"
@@ -63,16 +67,12 @@
           </template>
 
           <q-list>
-            <q-item clickable v-close-popup>
+            <q-item v-for="action in courseActions" :key="action.link" clickable v-close-popup >
               <q-item-section>
-                <q-item-label>Print</q-item-label>
+                <q-item-label @click="handleAction(action)">{{ action.display_name }}</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-item-label>Delete Course</q-item-label>
-              </q-item-section>
-            </q-item>
+
           </q-list>
         </q-btn-dropdown>
       </div>
@@ -86,49 +86,70 @@
       <div class="info-grid row q-col-gutter-x-md q-col-gutter-y-sm">
         <div class="info-item col-12 col-sm-6 col-md-4">
           <div class="label">Teacher</div>
-          <q-input
-            v-model="courseInfo.teacher"
+          <q-select
+            v-model="courceData.teacher"
+            :options="teacherOptions"
+            option-label="full_name"
+            option-value="staff_id"
             outlined
             dense
-            class="info-input"
+            emit-value
+            map-options
+            :label="
+              courceData.teacher == undefined || courceData.teacher == ''
+                ? 'Select Teacher'
+                : ''
+            "
+            class="custom-select"
           />
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Shift</div>
-          <q-input
-            v-model="courseInfo.shift"
+          <q-select
+            v-model="courceData.shift"
+            :options="shiftOptions"
             outlined
             dense
-            class="info-input"
+            :label="
+              courceData.shift == undefined || courceData.shift == ''
+                ? 'Select Shift'
+                : ''
+            "
+            class="custom-select"
           />
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Fee</div>
           <q-input
-            v-model="courseInfo.fee"
+            v-model="courceData.fee"
+            type="number"
             outlined
             dense
-            type="number"
-            class="info-input"
+            placeholder="Enter Course Fee"
+            class="custom-input"
           />
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Start Date</div>
           <q-input
-            v-model="courseInfo.startDate"
+            v-model="courceData.startdate"
             outlined
             dense
-            mask="##-##-####"
-            class="info-input"
+            placeholder="YYYY-MM-DD"
+            class="custom-input"
           >
             <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
+              <q-icon
+                name="calendar_today"
+                class="cursor-pointer"
+                color="grey-6"
+              >
                 <q-popup-proxy
                   cover
                   transition-show="scale"
                   transition-hide="scale"
                 >
-                  <q-date v-model="courseInfo.startDate" mask="DD-MM-YYYY">
+                  <q-date v-model="courceData.startdate" mask="YYYY-MM-DD">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat />
                     </div>
@@ -141,20 +162,21 @@
         <div class="info-item col-3 col-md-4">
           <div class="label">Days</div>
           <q-input
-            v-model="courseInfo.days"
+            v-model="courceData.days"
+            type="number"
             outlined
             dense
-            type="number"
-            class="info-input"
+            placeholder="Enter Number of Days"
+            class="custom-input"
           />
         </div>
         <div class="info-item col-3 col-md-4">
           <div class="label">Score Ratio</div>
           <q-input
-            v-model="courseInfo.scoreRatio"
+            v-model="courceData.score_ratio"
             outlined
             dense
-            class="info-input"
+            class="custom-input"
           />
         </div>
       </div>
@@ -195,19 +217,14 @@ import { ref, onMounted } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+import services from "../services/service.js";
+import { useRoute } from "vue-router";
+import rules from "src/config/rules";
 
 const router = useRouter();
 const $q = useQuasar();
-
-// Course information data
-const courseInfo = ref({
-  teacher: "Aseel Gamal Hammoud Musleh",
-  shift: "SH 3",
-  fee: "3400",
-  startDate: "11-01-2026",
-  days: "30",
-  scoreRatio: "( 3 : 0 )",
-});
+const route = useRoute();
+const loading = ref(false);
 
 const columns = [
   {
@@ -250,7 +267,6 @@ const balanceOptions = ref([
   { name: "100-500", id: 2 },
   { name: "500+", id: 3 },
 ]);
-
 
 // Static table data
 const tableRows = ref([
@@ -358,8 +374,156 @@ const fireCall = ([apiCall, page, paginationData]) => {
   pagination.value = { ...pagination.value, ...paginationData };
 };
 
+const courceData = ref([]);
+const courseActions = ref([]);
+const getCourceData = () => {
+  $q.loading.show();
+  services
+    .getCourceData(route.params.id)
+    .then((res) => {
+      courceData.value = res.data.data.course;
+      courseActions.value = res.data.data.actions;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      console.error("Error fetching course data:", error);
+    });
+};
+
+const teacherOptions = ref([]);
+const getAllTeachers = () => {
+  services
+    .getAllTeachers()
+    .then((res) => {
+      teacherOptions.value = res.data.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching teachers:", error);
+    });
+};
+
+const shiftOptions = ref([]);
+const getAllShifts = () => {
+  services
+    .getAllShifts()
+    .then((res) => {
+      shiftOptions.value = res.data.data.value.SHIFT_CHOICES;
+    })
+    .catch((error) => {
+      console.error("Error fetching shifts:", error);
+    });
+};
+
+const editCourse = () => {
+  const missing = [];
+  if (!courceData.value.level) missing.push("Level");
+  if (!courceData.value.startdate) missing.push("Start Date");
+  if (!courceData.value.days) missing.push("Days");
+  if (!courceData.value.shift) missing.push("Shift");
+  if (!courceData.value.fee) missing.push("fee");
+  if (!courceData.value.teacher) missing.push("Teacher");
+
+  if (missing.length) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: `${missing.join(", ")} is required.`,
+    });
+    return;
+  }
+
+  const data = {
+    level: courceData.value.level,
+    courseserial: courceData.value.courseserial,
+    detail: courceData.value.detail,
+    startdate: courceData.value.startdate,
+    days: courceData.value.days,
+    shift: courceData.value.shift,
+    fee: courceData.value.fee,
+    teacher: courceData.value.teacher,
+    score_ratio: courceData.value.score_ratio,
+  };
+
+  $q.loading.show();
+  services.updateCourse(data, route.params.id)
+    .then((res) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/SuccessIcon.png",
+        position: "bottom-right",
+        message: "Course Updated Successfully",
+      });
+      router.push({ name: "courses" });
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.errors?.__all__?.[0] || "An error occurred.",
+      });
+    });
+};
+
+const handleAction = async (action) => {
+  try {
+    $q.loading.show();
+    const res = await services.executeAction(action, route.params.id);
+
+    $q.loading.hide();
+
+    const contentType = res.headers["content-type"];
+
+    if (contentType && contentType.includes("application/pdf")) {
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank");
+      setTimeout(() => window.URL.revokeObjectURL(url), 100);
+    } else if (contentType && contentType.includes("text/html")) {
+      const blob = new Blob([res.data], { type: "text/html" });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank");
+      setTimeout(() => window.URL.revokeObjectURL(url), 100);
+    } else {
+      const url = action.link.replace("#", route.params.id);
+      window.open(url, "_blank");
+    }
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/SuccessIcon.png",
+      position: "bottom-right",
+      message: "Report loaded successfully",
+    });
+
+  } catch (error) {
+    $q.loading.hide();
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: error.response?.data?.errors?.__all__?.[0] || "An error occurred.",
+    });
+  }
+};
+
 onMounted(() => {
-  console.log("viewCourses with student list mounted");
+  getCourceData();
+  getAllTeachers();
+  getAllShifts();
 });
 </script>
 
