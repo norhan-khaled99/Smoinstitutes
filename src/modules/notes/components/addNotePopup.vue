@@ -90,14 +90,14 @@
             <q-btn
               label="Save & Add Another"
               class="btn-save-add"
-              no-caps
+              no-caps flat
               type="submit"
               @click.prevent="saveNote(false)"
             />
             <q-btn
               label="Save & Close"
               class="btn-save-close"
-              no-caps
+              no-caps flat
               type="submit"
               @click.prevent="saveNote(true)"
             />
