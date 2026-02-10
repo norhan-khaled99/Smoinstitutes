@@ -899,7 +899,6 @@
                   <q-input
                     v-model="props.row.score"
                     dense
-                    readonly
                     outlined
                     class="score-input"
                     type="number"
