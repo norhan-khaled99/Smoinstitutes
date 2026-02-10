@@ -34,8 +34,8 @@
   }
 
   /* Ensure responsive two-column layout on medium+ screens */
-  .notes-list>.col-sm-12,
-  .notes-list>.col-12 {
+  .notes-list > .col-sm-12,
+  .notes-list > .col-12 {
     flex: 0 0 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -237,8 +237,8 @@
     font-size: 0.875rem;
     border-radius: 0.5rem;
     min-width: 8.75rem;
-    border: 1px solid #E5E9F0;
-    color: #4B5563;
+    border: 1px solid #e5e9f0;
+    color: #4b5563;
   }
 }
 
@@ -249,21 +249,20 @@
   .course-name {
     font-size: 24px;
     font-weight: 500;
-    color: #2F5D6A;
+    color: #2f5d6a;
     margin: 0 10px 0px 0px;
   }
 
   .course-serial {
     font-size: 14px;
-    color: #6B7280;
+    color: #6b7280;
     margin: 4px 0 0 0px;
   }
-
 
   .more-dropdown {
     border: 1px solid #e5e7eb;
     background-color: white !important;
-    color: #4B5563 !important;
+    color: #4b5563 !important;
     border-radius: 8px;
     padding: 8px 16px;
     font-weight: 500;
@@ -279,7 +278,7 @@
   }
 
   .edit-course-btn {
-    background-color: #2F5D6A !important;
+    background-color: #2f5d6a !important;
     color: white !important;
     border-radius: 8px;
     padding: 8px 16px;
@@ -299,48 +298,45 @@
   padding: 1.5rem;
   background: white;
   border-radius: 12px;
-  border: 1px solid #F3F4F6;
+  border: 1px solid #f3f4f6;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 
   .card-header {
-      font-size: 20px;
-      font-weight: 500;
-      color: #4B5563;
-
+    font-size: 20px;
+    font-weight: 500;
+    color: #4b5563;
   }
 
   .info-grid {
-    padding: 1.5rem 1.5rem 0 1rem;
+    padding: 1.5rem 0.5rem 0 0.5rem;
     .info-item {
-      // Respect Quasar gutters, only add vertical spacing where needed
       padding-top: 4px;
       padding-bottom: 4px;
 
+      &:first-child,
+      &:nth-child(4) {
+        border-right: none;
+        border-left: none;
+      }
+
       @media (min-width: 1024px) {
-        border-left: 1px solid #E2E8F0;
+        border-left: 1px solid #e2e8f0;
         padding-left: 24px;
         padding-right: 24px;
 
-        &:first-child {
-          padding-left: 0;
-          border-left: none;
-        }
 
-        &:last-child {
-          padding-right: 0;
-        }
       }
 
       .label {
         font-size: 13px;
-        color: #64748B;
+        color: #64748b;
         margin-bottom: 2px;
       }
 
       .value {
         font-size: 15px;
         font-weight: 600;
-        color: #1E293B;
+        color: #1e293b;
         white-space: normal;
         word-break: break-word;
         line-height: 1.25;
