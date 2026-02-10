@@ -354,11 +354,12 @@
 
 <script setup>
 import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
+import {useRouter,useRoute} from "vue-router";
 import StudentService from "../services/service";
 import {useQuasar} from "quasar";
 
 const router = useRouter();
+const route = useRoute();
 
 const $q = useQuasar();
 const isEditable = ref(false);
@@ -525,6 +526,7 @@ const saveAndAddAnother = async () => {
             city: null,
             address: "",
           };
+             isEditable.value = false;
         }
       }).catch((err) => {
       $q.notify({
@@ -562,6 +564,7 @@ const saveAndAddAnother = async () => {
             city: null,
             address: "",
           };
+             isEditable.value = false;
         }
       }).catch((err) => {
       $q.notify({
@@ -601,7 +604,7 @@ const saveAndAddCourses = async () => {
             position: "bottom-right",
             message: "Student Updated successfully.",
           });
-          studentId.value = res.data.data.student_id;
+          studentId.value = res.data.data.globalid;
           router.push({name: "studentDetails" , params:{id:studentId.value} , query: { addCourses: 'true' }});
         }
       }).catch((err) => {
@@ -626,7 +629,7 @@ const saveAndAddCourses = async () => {
             position: "bottom-right",
             message: "Student added successfully.",
           });
-          studentId.value = res.data.data.student_id;
+          studentId.value = res.data.data.globalid;
            router.push({name: "studentDetails", params:{id:studentId.value} , query: { addCourses: 'true' }});
         }
       }).catch((err) => {
@@ -668,7 +671,7 @@ const saveAndContinueEditing = async () => {
             position: "bottom-right",
             message: "Student Updated successfully.",
           });
-          studentId.value = res.data.data.student_id;
+          studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
       $q.notify({
@@ -692,7 +695,7 @@ const saveAndContinueEditing = async () => {
             position: "bottom-right",
             message: "Student added successfully.",
           });
-          studentId.value = res.data.data.student_id;
+          studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
       $q.notify({
