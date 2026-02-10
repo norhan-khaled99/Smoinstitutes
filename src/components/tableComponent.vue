@@ -471,8 +471,8 @@
                           v-model="teacherFilter"
                           dense
                           :options="teacherOptions"
-                          option-label="name"
-                          option-value="id"
+                          option-label="full_name"
+                          option-value="staff_id"
                           fill-input
                           emit-value
                           map-options
@@ -809,7 +809,7 @@
             <template v-slot:body-cell-teacher="props">
               <q-td :props="props">
                 <div class="bold-text">
-                  {{ props.row.teacher }}
+                  {{ props.row.teacher_name }}
                 </div>
               </q-td>
             </template>
