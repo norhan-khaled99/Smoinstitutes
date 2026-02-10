@@ -225,6 +225,14 @@
   border: 1px solid #e5e9f0 !important;
 }
 
+.q-field__append {
+  padding-left: 0;
+
+  .q-select__dropdown-icon {
+    display: none;
+  }
+}
+
 .q-item--active {
   background-color: #f5f7fd;
   color: #2f5d6a;

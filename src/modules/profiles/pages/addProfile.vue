@@ -49,6 +49,7 @@
           <div class="media-upload">
             <div class="media-placeholder">
               <svg
+                v-if="!showImage"
                 xmlns="http://www.w3.org/2000/svg"
                 width="90"
                 height="90"
@@ -80,6 +81,7 @@
                   </clipPath>
                 </defs>
               </svg>
+              <q-img v-else :src="showImage" class="profile-image" />
             </div>
             <div class="upload-info">
               <q-file
@@ -87,6 +89,7 @@
                 ref="fileInput"
                 style="display: none"
                 accept=".jpg, .png, .gif ,image/jpeg, image/png, image/gif"
+                @update:model-value="uploadPhoto"
               />
               <q-btn
                 flat
@@ -492,6 +495,17 @@ const getAllCites = () => {
         message: error.res?.data?.result || "An error occurred.",
       });
     });
+};
+
+const showImage = ref("")
+const uploadPhoto = (file) => {
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      showImage.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 };
 
 onMounted(() => {

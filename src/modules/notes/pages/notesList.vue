@@ -40,7 +40,7 @@
 import { onMounted, ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewNotePopup from "../components/viewNotePopup.vue";
-import addNotePopup from "../../students/components/addNotePopup.vue";
+import addNotePopup from "../components/addNotePopup.vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
