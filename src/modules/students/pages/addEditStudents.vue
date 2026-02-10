@@ -10,7 +10,7 @@
         </p>
       </div>
       <div class="header-actions">
-        <q-btn flat label="Save Student" class="save-btn" @click="saveStudent">
+        <q-btn flat label="Save Student" class="save-btn">
           <q-menu
             anchor="bottom right"
             self="top right"
@@ -84,7 +84,7 @@
               accept=".jpg, .png, .gif"
               @update:model-value="uploadPhoto"
             />
-            <q-btn flat class="upload-btn">
+            <q-btn flat class="upload-btn" @click="$refs.fileInput.pickFiles()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="15"
@@ -125,7 +125,7 @@
                 <div class="col-12 col-md-4">
                   <q-input
                     outlined
-                    v-model="form.firstName"
+                    v-model="form.first_name"
                     placeholder="First"
                     dense
                     class="name-input"
@@ -134,7 +134,7 @@
                 <div class="col-12 col-md-4">
                   <q-input
                     outlined
-                    v-model="form.middleName"
+                    v-model="form.middle_names"
                     placeholder="Middle"
                     dense
                     class="name-input"
@@ -143,7 +143,7 @@
                 <div class="col-12 col-md-4">
                   <q-input
                     outlined
-                    v-model="form.lastName"
+                    v-model="form.last_name"
                     placeholder="Last name"
                     dense
                     class="name-input"
@@ -157,8 +157,8 @@
             <div class="form-group">
               <p class="field-label">Gender <span class="required">*</span></p>
               <div class="radio-group">
-                <q-radio v-model="form.gender" val="Male" label="Male" />
-                <q-radio v-model="form.gender" val="Female" label="Female" />
+                <q-radio v-model="form.gender" val="1" label="Male" />
+                <q-radio v-model="form.gender" val="2" label="Female" />
               </div>
             </div>
           </div>
@@ -169,7 +169,7 @@
               <p class="field-label">Date Of Birth</p>
               <q-input
                 outlined
-                v-model="form.dateOfBirth"
+                v-model="form.d_o_b"
                 placeholder="DD/MM/YYYY"
                 dense
               >
@@ -279,7 +279,7 @@
               <p class="field-label">Parent Phone 1</p>
               <q-input
                 outlined
-                v-model="form.parentPhone1"
+                v-model="form.parentphone1"
                 placeholder="+971572254005"
                 dense
               />
@@ -291,7 +291,7 @@
               <p class="field-label">Parent Phone 2</p>
               <q-input
                 outlined
-                v-model="form.parentPhone2"
+                v-model="form.parentphone2"
                 placeholder="+971557134005"
                 dense
               />
@@ -332,26 +332,29 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
 import { useRouter } from "vue-router";
+import StudentList from "../services/service";
+import {useQuasar} from "quasar";
 
 const router = useRouter();
 
+const $q = useQuasar();
 const studentId = ref("251221");
 const registrationDate = ref("Oct 16, 2025, 9:25 AM");
 const photo = ref(null);
 
 const form = ref({
-  firstName: "",
-  middleName: "",
-  lastName: "",
+  first_name: "",
+  middle_names: "",
+  last_name: "",
   gender: "",
-  dateOfBirth: "",
+  d_o_b: "",
   mobile: "",
   email: "",
   phone: "",
-  parentPhone1: "",
-  parentPhone2: "",
+  parentphone1: "",
+  parentphone2: "",
   city: null,
   address: "",
 });
@@ -425,7 +428,31 @@ const saveAndNew = () => {
   };
 };
 
+const getAllCities = () => {
+  $q.loading.show();
+  // Fetch city options from API if needed
+  StudentList.getAllCities()
+    .then((res) => {
+      cityOptions.value = res.data.data.value.CITY_CHOICES ;
+      $q.loading.hide();
+    }).catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
+  }
+
 const cancel = () => {
   router.back();
 };
+
+onMounted(() => {
+  getAllCities();
+})
 </script>
