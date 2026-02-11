@@ -1138,17 +1138,6 @@
                   <q-menu class="action-menu">
                     <q-list>
                       <slot name="action-menu-items" :row="props.row"></slot>
-
-
-                      <!-- <q-item
-                        v-if="transactions"
-                        clickable
-                        class="action-menu-item text-negative"
-                        @click="DeleteEvent(props.row)"
-                      >
-                        <q-item-section>Delete</q-item-section>
-                      </q-item> --> -->
-
                       <q-item
                         v-if="student || staff || profiles "
                         clickable
