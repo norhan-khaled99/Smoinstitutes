@@ -119,7 +119,7 @@ const getAllBookStock = (page = 1) => {
   $q.loading.show();
 
   services
-    .getAllBookStock(page, typeOfFilter.value, valueOfFilter.value)
+    .getAllBookStock(page, typeOfFilter.value, valueOfFilter.value , searchQuery.value)
     .then((res) => {
       allBookStock.value = res.data.data.results;
 
@@ -226,38 +226,10 @@ const handleSaveBook = (bookData) => {
     });
 };
 
+const searchQuery = ref("");
 const onSearch = (val) => {
-  if (!val || val.trim() === "") {
-    // If search is empty, load all book stock
-    getAllBookStock(1);
-  } else {
-    // Perform search
-    performSearch(val);
-  }
-};
-
-const performSearch = (searchQuery) => {
-  $q.loading.show();
-
-  services
-    .searchBookStock(searchQuery, 1)
-    .then((res) => {
-      allBookStock.value = res.data.results;
-      pagination.value.rowsNumber = res.data.count || 0;
-      pagination.value.page = 1;
-      $q.loading.hide();
-    })
-    .catch((error) => {
-      $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
-    });
+  searchQuery.value = val;
+  getAllBookStock(1);
 };
 
 const typeOfFilter = ref("");
