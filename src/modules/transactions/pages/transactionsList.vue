@@ -31,12 +31,14 @@
     v-model="showViewTransaction"
     :transaction="selectedTransaction"
   />
+  <addTransaction v-model="showAddTransaction" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
+import addTransaction from "../components/addTransaction.vue";
 
 const pagination = ref({
   page: 1,
@@ -44,11 +46,7 @@ const pagination = ref({
   rowsNumber: 100,
 });
 
-const yearOptions = ref([
-  { id: 2026, name: "2026" },
-  { id: 2025, name: "2025" },
-  { id: 2024, name: "2024" },
-]);
+
 
 const transTypeOptions = ref([
   { id: 1, name: "Course deduction" },
@@ -202,9 +200,9 @@ const tableRows = ref([
 
 const showViewTransaction = ref(false);
 const selectedTransaction = ref({});
-
+const showAddTransaction = ref(false);
 const addTransaction = () => {
-  console.log("Add Transaction");
+  showAddTransaction.value = true;
 };
 
 const onSearch = (val) => {
