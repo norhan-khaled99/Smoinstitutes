@@ -3,15 +3,30 @@ import { axiosInstance } from "../../../../http-common.js";
 class CoursesServices {
 
 
-  getAllCourses(page, type, value) {
+  getAllCourses(page, type, value , searchQuery) {
     if (type && value) {
       return axiosInstance.get(
         `/api/v1/courses/profile/?${type}=${value}&page=${page}`,
       );
-    } else {
+    }
+    else if (searchQuery) {
+      return axiosInstance.get(
+        `/api/v1/courses/profile/?q=${searchQuery}&page=${page}`
+      );
+    }
+    else {
       return axiosInstance.get(`/api/v1/courses/profile/?page=${page}`);
     }
   }
+
+
+    searchCourses(query, page = 1) {
+    return axiosInstance.get(
+      `/api/v1/courses/profile/?q=${query}&page=${page}`
+    );
+  }
+
+
 
 
   getAllTeachers() {
@@ -48,11 +63,7 @@ class CoursesServices {
     );
   }
 
-  searchCourses(query, page = 1) {
-    return axiosInstance.get(
-      `/api/v1/courses/profile/?q=${query}&page=${page}`
-    );
-  }
+
 
 
 

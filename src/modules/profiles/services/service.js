@@ -3,15 +3,23 @@ import { axiosInstance } from "../../../../http-common.js";
 class ProfileServices {
 
 
-  getAllProfiles(page, type, value) {
+  getAllProfiles(page, type, value, searchQuery) {
     if (type && value) {
       return axiosInstance.get(
         `/api/v1/profiles/accounts/search/?${type}=${value}&page=${page}`,
       );
-    } else {
+    }
+    else if (searchQuery) {
+      return axiosInstance.get(
+        `/api/v1/profiles/accounts/search/?q=${searchQuery}&page=${page}`
+      );
+    }
+    else {
       return axiosInstance.get(`/api/v1/profiles/accounts/?page=${page}`);
     }
   }
+
+
 
 
 
@@ -30,11 +38,7 @@ class ProfileServices {
     );
   }
 
-  searchProfiles(query, page = 1) {
-    return axiosInstance.get(
-      `/api/v1/profiles/accounts/search/?q=${query}&page=${page}`
-    );
-  }
+
 
 
 

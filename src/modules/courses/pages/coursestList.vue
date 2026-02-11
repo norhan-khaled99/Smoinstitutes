@@ -127,7 +127,7 @@ const getAllCourses = (page = 1) => {
   $q.loading.show();
 
   services
-    .getAllCourses(page, typeOfFilter.value, valueOfFilter.value)
+    .getAllCourses(page, typeOfFilter.value, valueOfFilter.value , searchQuery.value)
     .then((res) => {
       allCourses.value = res.data.data.results;
 
@@ -242,38 +242,13 @@ const handleSaveCourse = (courseData) => {
     });
 };
 
+const searchQuery = ref("");
 const onSearch = (val) => {
-   if (!val || val.trim() === "") {
-    // If search is empty, load all courses without filters
-    getAllCourses(1);
-  } else {
-    // Perform search
-    performSearch(val);
-  }
-};
-const performSearch = (searchQuery) => {
-  $q.loading.show();
+  searchQuery.value = val;
+   getAllCourses(1)
 
-  services.searchCourses(searchQuery, 1)
-    .then((res) => {
-      allCourses.value = res.data.results;
-      pagination.value.rowsNumber = res.data.count || 0;
-      pagination.value.page = 1;
-
-      $q.loading.hide();
-    })
-    .catch((error) => {
-      $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.res?.data?.result || "An error occurred.",
-      });
-    });
 };
+
 
 const onFilterChange = ({ type, val }) => {
     if (val != null) {

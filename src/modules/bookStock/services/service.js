@@ -1,11 +1,7 @@
 import { axiosInstance } from "../../../../http-common.js";
 
 class BookStockServices {
-  // getAllBookStock(page = 1) {
-  //   return axiosInstance.get(
-  //     `/api/v1/courses/books-stock/?page=${page}`
-  //   );
-  // }
+
 
   getlevelOptions() {
     return axiosInstance.get(`/api/v1/courses/books-stock/levels`);
@@ -20,12 +16,17 @@ class BookStockServices {
   }
 
 
-  getAllBookStock(page, type, value) {
+  getAllBookStock(page, type, value , searchQuery) {
     if (type && value) {
       return axiosInstance.get(
         `/api/v1/courses/books-stock/search/?${type}=${value}&page=${page}`,
       );
-    } else {
+    }
+    else if (searchQuery) {
+      return axiosInstance.get(
+        `/api/v1/courses/books-stock/?q=${searchQuery}&page=${page}`
+      );
+    }else {
       return axiosInstance.get(`/api/v1/courses/books-stock/?page=${page}`);
     }
   }
