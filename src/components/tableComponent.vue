@@ -1074,22 +1074,7 @@
                     <q-list>
                       <slot name="action-menu-items" :row="props.row"></slot>
 
-                      <q-item
-                        v-if="transactions"
-                        clickable
-                        class="action-menu-item"
-                        @click="$emit('viewDetails', props.row)"
-                      >
-                        <q-item-section>View Details</q-item-section>
-                      </q-item>
-                      <q-item
-                        v-if="transactions"
-                        clickable
-                        class="action-menu-item"
-                        @click="EditEvent(props.row)"
-                      >
-                        <q-item-section>Edit</q-item-section>
-                      </q-item>
+          
                       <q-item
                         v-if="transactions"
                         clickable
@@ -1108,7 +1093,7 @@
                       </q-item>
 
                       <q-item
-                        v-if="student || staff || profiles"
+                        v-if="student || staff || profiles || transactions"
                         clickable
                         class="action-menu-item"
                         @click="EditEvent(props.row)"
@@ -1122,7 +1107,8 @@
                           Notes ||
                           courses ||
                           profiles ||
-                          staff
+                          staff ||
+                          transactions
                         "
                         clickable
                         class="action-menu-item"

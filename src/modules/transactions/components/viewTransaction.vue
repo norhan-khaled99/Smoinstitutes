@@ -1,5 +1,5 @@
 <template>
-  <q-dialog  persistent>
+  <q-dialog v-model="model" persistent>
     <q-card class="custom-popup view-transaction-card">
       <q-card-section>
         <div class="popup-header">
@@ -24,11 +24,10 @@
         <div class="popup-subtitle row q-gutter-sm items-center">
           <span>Paper No. ({{ transaction.paperNo }})</span>
           <span class="q-ml-lg">Date of process : {{ transaction.date }}</span>
-        </div>
-
+        <
         <div class="popup-divider"></div>
 
-        <div class="row q-col-gutter-lg q-mb-md">
+        <div class="row q-col-gutter-md">
           <div class="col-6">
             <div class="form-group">
               <label class="form-group-label">Amount</label>

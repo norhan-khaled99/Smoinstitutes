@@ -155,7 +155,7 @@ const getAllProfiles = (page = 1) => {
   $q.loading.show();
 
   services
-    .getAllProfiles(page, typeOfFilter.value, valueOfFilter.value)
+    .getAllProfiles(page, typeOfFilter.value, valueOfFilter.value, searchQuery.value)
     .then((res) => {
       allProfiles.value = res.data.data.results;
 
@@ -350,40 +350,13 @@ const clearFilters = () => {
   getAllProfiles(1);
 };
 
+const searchQuery = ref("");
 const onSearch = (val) => {
-  if (!val || val.trim() === "") {
-    // If search is empty, load all profiles
-    getAllProfiles(1);
-  } else {
-    // Perform search
-    performSearch(val);
-  }
+  searchQuery.value = val;
+   getAllProfiles(1)
 };
 
-const performSearch = (searchQuery) => {
-  $q.loading.show();
 
-  services
-    .searchProfiles(searchQuery, 1)
-    .then((res) => {
-      allProfiles.value = res.data.results;
-      pagination.value.rowsNumber = res.data.count || 0;
-      pagination.value.page = 1;
-
-      $q.loading.hide();
-    })
-    .catch((error) => {
-      $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.res?.data?.result || "An error occurred.",
-      });
-    });
-};
 
 onMounted(() => {
   getAllProfiles();
