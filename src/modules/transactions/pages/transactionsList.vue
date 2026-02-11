@@ -19,7 +19,8 @@
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
     @viewReport="viewReport"
-    @viewDetails="viewDetails"
+    @DetailsEvent="viewDetails"
+    @EditEvent="editTransaction"
     @reverseTransaction="reverseTransaction"
     @openDialogDeleteEvent="deleteTransaction"
     emptyStateTitle="No transactions found"
@@ -31,24 +32,20 @@
     v-model="showViewTransaction"
     :transaction="selectedTransaction"
   />
+  <AddTransaction v-model="showAddTransaction" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
+import AddTransaction from "../components/addTransaction.vue";
 
 const pagination = ref({
   page: 1,
   rowsPerPage: 10,
   rowsNumber: 100,
 });
-
-const yearOptions = ref([
-  { id: 2026, name: "2026" },
-  { id: 2025, name: "2025" },
-  { id: 2024, name: "2024" },
-]);
 
 const transTypeOptions = ref([
   { id: 1, name: "Course deduction" },
@@ -202,9 +199,9 @@ const tableRows = ref([
 
 const showViewTransaction = ref(false);
 const selectedTransaction = ref({});
-
+const showAddTransaction = ref(false);
 const addTransaction = () => {
-  console.log("Add Transaction");
+  showAddTransaction.value = true;
 };
 
 const onSearch = (val) => {
@@ -240,5 +237,3 @@ const deleteTransaction = (row) => {
   console.log("Delete Transaction", row);
 };
 </script>
-
-<style lang="scss" scoped></style>
