@@ -115,7 +115,7 @@ const getAllNotes = (page = 1) => {
   $q.loading.show();
 
   services
-    .getAllNotes(page)
+    .getAllNotes(page,searchQuery.value)
     .then((res) => {
       allNotes.value = res.data.results;
       // Update pagination with API response
@@ -173,39 +173,13 @@ const onViewDetails = (row) => {
   showViewDetailsPopup.value = true;
 };
 
+const searchQuery = ref("");
 const onSearch = (val) => {
-  if (!val || val.trim() === "") {
-    // If search is empty, load all notes
-    getAllNotes(1);
-  } else {
-    // Perform search
-    performSearch(val);
-  }
+  searchQuery.value = val;
+  getAllNotes(1);
 };
 
-const performSearch = (searchQuery) => {
-  $q.loading.show();
 
-  services
-    .searchNotes(searchQuery, 1)
-    .then((res) => {
-      allNotes.value = res.data.results;
-      pagination.value.rowsNumber = res.data.count || 0;
-      pagination.value.page = 1;
-      $q.loading.hide();
-    })
-    .catch((error) => {
-      $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
-    });
-};
 
 const getPagFun = ([apiCall, page, paginationData]) => {
   getAllNotes(page);
