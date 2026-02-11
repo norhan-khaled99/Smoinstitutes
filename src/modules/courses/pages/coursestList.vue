@@ -33,7 +33,6 @@
     v-model="showAddEditPopup"
     :isEdit="isEditMode"
     :initialData="selectedCourseData"
-    :teacherOptions="teacherOptions"
     :shiftOptions="shiftOptions"
     @saveCourse="handleSaveCourse"
   />
