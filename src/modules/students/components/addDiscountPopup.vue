@@ -21,14 +21,14 @@
             </svg>
           </q-btn>
         </div>
-        <div class="popup-subtitle">Student: Moaz Essam (ID : 251221)</div>
+        <div class="popup-subtitle">Student: {{ student.full_name }} (ID : {{ student.student_id }})</div>
 
         <div class="popup-divider"></div>
 
         <div class="form-group">
           <label>Course Name</label>
           <p class="">
-            {{ courseName }}
+            {{ courseName.course_name }}
           </p>
         </div>
 
@@ -65,8 +65,12 @@ const model = defineModel();
 
 const props = defineProps({
   courseName: {
-    type: String,
-    default: "Intro A",
+    type: Object,
+    default: {},
+  },
+  student: {
+    type: Object,
+    default: {},
   },
 });
 
@@ -77,7 +81,7 @@ const discountAmount = ref(0);
 const saveDiscount = () => {
   emit("save", {
     amount: discountAmount.value,
-    courseName: props.courseName,
+    courseName: props.courseName.course_name,
   });
   model.value = false;
 };

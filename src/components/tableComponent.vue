@@ -831,6 +831,23 @@
                 </div>
               </q-td>
             </template>
+            <template v-slot:body-cell-course_balance="props">
+              <q-td :props="props">
+                <div
+                  :class="{
+                    'positive-balance': Number(props.row.course_balance) > 0,
+                    'negative-balance': Number(props.row.course_balance) < 0,
+                    'zero-balance': Number(props.row.course_balance) == 0,
+                  }"
+                >
+                  {{
+                    Number(props.row.course_balance) > 0
+                      ? "+" + props.row.course_balance
+                      : props.row.course_balance
+                  }}
+                </div>
+              </q-td>
+            </template>
 
             <template v-slot:body-cell-balanceDisplay="props">
               <q-td :props="props">
