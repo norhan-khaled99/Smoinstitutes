@@ -23,7 +23,7 @@
         </p>
       </div>
       <div class="row items-center q-gutter-md">
-        <q-btn flat @click="editCourse" no-caps class="edit-course-btn">
+        <q-btn flat @click="editCourse" v-if="courceData.status !== 'Finished'" no-caps class="edit-course-btn">
           <svg
             width="18"
             height="18"
@@ -103,20 +103,21 @@
         <div class="info-item col-12 col-sm-6 col-md-4">
           <div class="label">Teacher</div>
           <q-select
-            v-model="courceData.teacher"
+            v-model="courceData.teacher_name"
             :options="teacherOptions"
-            option-label="full_name"
-            option-value="staff_id"
+            option-label="label"
+            option-value="id"
             outlined
             dense
             emit-value
             map-options
-            :label="
-              courceData.teacher == undefined || courceData.teacher == ''
-                ? 'Select Teacher'
-                : ''
-            "
+            fill-input
+            use-input
+            input-debounce="400"
             class="custom-select"
+            :loading="teacherLoading"
+            @filter="serachForTeacher"
+            placeholder="Select Teacher After Searching..."
           />
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
@@ -147,52 +148,17 @@
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Start Date</div>
+
           <q-input
             v-model="courceData.startdate"
             outlined
             dense
             placeholder="YYYY-MM-DD"
             class="custom-input"
+            readonly
           >
             <template v-slot:append>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                class="cursor-pointer"
-              >
-                <path
-                  d="M12.75 10.5C13.1642 10.5 13.5 10.1642 13.5 9.75C13.5 9.33579 13.1642 9 12.75 9C12.3358 9 12 9.33579 12 9.75C12 10.1642 12.3358 10.5 12.75 10.5Z"
-                  fill="#6B7280"
-                />
-                <path
-                  d="M12.75 13.5C13.1642 13.5 13.5 13.1642 13.5 12.75C13.5 12.3358 13.1642 12 12.75 12C12.3358 12 12 12.3358 12 12.75C12 13.1642 12.3358 13.5 12.75 13.5Z"
-                  fill="#6B7280"
-                />
-                <path
-                  d="M9.75 9.75C9.75 10.1642 9.41421 10.5 9 10.5C8.58579 10.5 8.25 10.1642 8.25 9.75C8.25 9.33579 8.58579 9 9 9C9.41421 9 9.75 9.33579 9.75 9.75Z"
-                  fill="#6B7280"
-                />
-                <path
-                  d="M9.75 12.75C9.75 13.1642 9.41421 13.5 9 13.5C8.58579 13.5 8.25 13.1642 8.25 12.75C8.25 12.3358 8.58579 12 9 12C9.41421 12 9.75 12.3358 9.75 12.75Z"
-                  fill="#6B7280"
-                />
-                <path
-                  d="M5.25 10.5C5.66421 10.5 6 10.1642 6 9.75C6 9.33579 5.66421 9 5.25 9C4.83579 9 4.5 9.33579 4.5 9.75C4.5 10.1642 4.83579 10.5 5.25 10.5Z"
-                  fill="#6B7280"
-                />
-                <path
-                  d="M5.25 13.5C5.66421 13.5 6 13.1642 6 12.75C6 12.3358 5.66421 12 5.25 12C4.83579 12 4.5 12.3358 4.5 12.75C4.5 13.1642 4.83579 13.5 5.25 13.5Z"
-                  fill="#6B7280"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M5.25 1.3125C5.56066 1.3125 5.8125 1.56434 5.8125 1.875V2.44704C6.309 2.43749 6.856 2.43749 7.45759 2.4375H10.5423C11.1439 2.43749 11.691 2.43749 12.1875 2.44704V1.875C12.1875 1.56434 12.4393 1.3125 12.75 1.3125C13.0607 1.3125 13.3125 1.56434 13.3125 1.875V2.49532C13.5075 2.51018 13.6921 2.52886 13.8668 2.55235C14.7461 2.67057 15.4578 2.91966 16.0191 3.48093C16.5803 4.0422 16.8294 4.75392 16.9476 5.63323C17.0625 6.48764 17.0625 7.57935 17.0625 8.95766V10.5423C17.0625 11.9206 17.0625 13.0124 16.9476 13.8668C16.8294 14.7461 16.5803 15.4578 16.0191 16.0191C15.4578 16.5803 14.7461 16.8294 13.8668 16.9476C13.0124 17.0625 11.9206 17.0625 10.5423 17.0625H7.45769C6.07939 17.0625 4.98764 17.0625 4.13323 16.9476C3.25392 16.8294 2.54221 16.5803 1.98093 16.0191C1.41966 15.4578 1.17057 14.7461 1.05235 13.8668C0.937479 13.0124 0.937488 11.9206 0.9375 10.5423V8.95769C0.937488 7.57937 0.937479 6.48764 1.05235 5.63323C1.17057 4.75392 1.41966 4.0422 1.98093 3.48093C2.54221 2.91966 3.25392 2.67057 4.13323 2.55235C4.30793 2.52886 4.49254 2.51018 4.6875 2.49532V1.875C4.6875 1.56434 4.93934 1.3125 5.25 1.3125ZM4.28314 3.66732C3.52857 3.76877 3.09383 3.95902 2.77643 4.27643C2.45902 4.59383 2.26877 5.02857 2.16732 5.78314C2.15014 5.91093 2.13577 6.04546 2.12376 6.1875H15.8762C15.8642 6.04546 15.8499 5.91093 15.8327 5.78314C15.7312 5.02857 15.541 4.59383 15.2236 4.27643C14.9062 3.95902 14.4714 3.76877 13.7169 3.66732C12.9461 3.56369 11.9301 3.5625 10.5 3.5625H7.5C6.06989 3.5625 5.05389 3.56369 4.28314 3.66732ZM2.0625 9C2.0625 8.35949 2.06274 7.80205 2.07231 7.3125H15.9277C15.9373 7.80205 15.9375 8.35949 15.9375 9V10.5C15.9375 11.9301 15.9363 12.9461 15.8327 13.7169C15.7312 14.4714 15.541 14.9062 15.2236 15.2236C14.9062 15.541 14.4714 15.7312 13.7169 15.8327C12.9461 15.9363 11.9301 15.9375 10.5 15.9375H7.5C6.06989 15.9375 5.05388 15.9363 4.28314 15.8327C3.52857 15.7312 3.09383 15.541 2.77643 15.2236C2.45902 14.9062 2.26877 14.4714 2.16732 13.7169C2.0637 12.9461 2.0625 11.9301 2.0625 10.5V9Z"
-                  fill="#6B7280"
-                />
+              <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy
                   cover
                   transition-show="scale"
@@ -204,10 +170,11 @@
                     </div>
                   </q-date>
                 </q-popup-proxy>
-              </svg>
+              </q-icon>
             </template>
           </q-input>
         </div>
+
         <div class="info-item col-3 col-md-4">
           <div class="label">Days</div>
           <q-input
@@ -231,29 +198,37 @@
       </div>
     </div>
 
+    <q-dialog v-model="pdfDialog" persistent maximized>
+      <q-card>
+        <q-bar>
+          <div>Preview</div>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup />
+        </q-bar>
+
+        <q-card-section class="q-pa-none">
+          <iframe
+            v-if="pdfUrl"
+            :src="pdfUrl"
+            style="width: 100%; height: calc(100vh - 50px); border: 0"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <tableComp
-      :tableRows="tableRows"
+      :tableRows="courceData.registrations"
+      :tablePagination="false"
       :tableColumns="columns"
-      :tablePagination="pagination"
       :showAddButton="true"
+      :displayPagination="false"
       addBtnLabel="Add Student"
-      :actions="true"
       :showBalanceFilter="true"
       :balanceOptions="balanceOptions"
-      :showStatusFilter="true"
-      :statusOptions="statusOptions"
-      :ShowActionsdropDown="true"
-      @openDialogDeleteEvent="openDialogDeleteEvent"
       :showFilters="true"
       :student="true"
       @addNew="addEvent"
-      @EditEvent="EditEvent"
-      @DetailsEvent="DetailsEvent"
       @searchEvent="onSearchEvent"
-      @updatePag="updatePag"
-      @getPagFun="getPagFun"
-      @sortApi="fireSortCall"
-      @callApi="fireCall"
       emptyStateTitle="No students found"
       emptyStateDescription="Adjust your filters or add new students to get started."
       emptyStateButtonLabel="Add Student"
@@ -262,7 +237,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted , watch} from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -275,18 +250,20 @@ const $q = useQuasar();
 const route = useRoute();
 const loading = ref(false);
 
+
+
 const columns = [
   {
-    name: "image",
+    name: "student_name",
     label: "Student Name",
-    field: (row) => row.studentName,
+    field: (row) => row.student_name,
     align: "left",
     sortable: false,
   },
   {
     name: "studentId",
     label: "Student ID",
-    field: (row) => row.studentId,
+    field: (row) => row.student_id,
     align: "left",
     sortable: false,
   },
@@ -298,130 +275,34 @@ const columns = [
     sortable: false,
   },
   {
-    name: "balanceDisplay",
+    name: "balanceDisplayInCourse",
     label: "Course Balance",
-    field: (row) => row.balance,
+    field: (row) => row.course_balance,
     align: "left",
     sortable: false,
   },
 ];
 
-const statusOptions = ref([
-  { name: "Active", id: 1 },
-  { name: "Inactive", id: 2 },
-]);
+
 
 const balanceOptions = ref([
-  { name: "0-100", id: 1 },
-  { name: "100-500", id: 2 },
-  { name: "500+", id: 3 },
+  {name: "Negative", id: "neg"},
+  {name: "Zero", id: "zero"},
+  {name: "Positive", id: "positive"},
 ]);
 
-// Static table data
-const tableRows = ref([
-  {
-    id: 1,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Yara Abdullah Ahmed Ali",
-    studentId: 251221,
-    score: 0,
-    balance: -4950,
-  },
-  {
-    id: 2,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Moaz Essam Hammoud Musleh",
-    studentId: 251220,
-    score: 0,
-    balance: 2000,
-  },
-  {
-    id: 3,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Ali Saleh Mohammed Muthana",
-    studentId: 251219,
-    score: 0,
-    balance: 0,
-  },
-  {
-    id: 4,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Qassem Abdulghani Mohammed Motlaq",
-    studentId: 251218,
-    score: 0,
-    balance: -5250,
-  },
-  {
-    id: 5,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Eman Saleh Ben Saleh Salem",
-    studentId: 251213,
-    score: 0,
-    balance: 0,
-  },
-  {
-    id: 6,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Abdullah Saleh Mobarek Hussien Alharthy",
-    studentId: 251212,
-    score: 0,
-    balance: 1500,
-  },
-  {
-    id: 7,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Youssef Mobarek Hussien Alharthy",
-    studentId: 251231,
-    score: 0,
-    balance: 1000,
-  },
-]);
 
-// Pagination configuration
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 10,
-});
-
-// Event handlers
-const openDialogDeleteEvent = (row) => {
-  console.log("Delete event:", row);
-};
-
-const DetailsEvent = (row) => {
-  router.push({ name: "studentDetails", params: { id: row.id } });
-};
 
 const addEvent = () => {
   router.push({ name: "addStudent" });
 };
 
-const EditEvent = (row) => {
-  console.log("Edit event:", row);
-};
+
 
 const onSearchEvent = (searchValue) => {
   console.log("Search event:", searchValue);
 };
 
-const updatePag = (rowsPerPage) => {
-  pagination.value.rowsPerPage = rowsPerPage;
-};
-
-const getPagFun = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
-  pagination.value = { ...pagination.value, ...paginationData };
-};
-
-const fireSortCall = ([apiCall, sortBy]) => {
-  console.log("Sort API call:", { apiCall, sortBy });
-};
-
-const fireCall = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
-  pagination.value = { ...pagination.value, ...paginationData };
-};
 
 const courceData = ref([]);
 const courseActions = ref([]);
@@ -437,18 +318,6 @@ const getCourceData = () => {
     .catch((error) => {
       $q.loading.hide();
       console.error("Error fetching course data:", error);
-    });
-};
-
-const teacherOptions = ref([]);
-const getAllTeachers = () => {
-  services
-    .getAllTeachers()
-    .then((res) => {
-      teacherOptions.value = res.data.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching teachers:", error);
     });
 };
 
@@ -525,39 +394,37 @@ const editCourse = () => {
     });
 };
 
+const pdfDialog = ref(false);
+const pdfUrl = ref(null);
 const handleAction = async (action) => {
   try {
     $q.loading.show();
+
     const res = await services.executeAction(action, route.params.id);
 
     $q.loading.hide();
 
     const contentType = res.headers["content-type"];
 
-    if (contentType && contentType.includes("application/pdf")) {
+    if (contentType?.includes("application/pdf")) {
       const blob = new Blob([res.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
-      setTimeout(() => window.URL.revokeObjectURL(url), 100);
-    } else if (contentType && contentType.includes("text/html")) {
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else if (contentType?.includes("text/html")) {
       const blob = new Blob([res.data], { type: "text/html" });
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
-      setTimeout(() => window.URL.revokeObjectURL(url), 100);
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
     } else {
-      const url = action.link.replace("#", route.params.id);
-      window.open(url, "_blank");
+      $q.notify({
+        type: "warning",
+        message: "Unsupported file type",
+      });
     }
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/SuccessIcon.png",
-      position: "bottom-right",
-      message: "Report loaded successfully",
-    });
   } catch (error) {
     $q.loading.hide();
+
     $q.notify({
       badgeStyle: "display:none",
       classes: "custom-Notify",
@@ -569,15 +436,55 @@ const handleAction = async (action) => {
     });
   }
 };
+watch(pdfDialog, (val) => {
+  if (!val && pdfUrl.value) {
+    URL.revokeObjectURL(pdfUrl.value);
+    pdfUrl.value = null;
+  }
+});
+
+
+const teacherOptions = ref([]);
+const teacherLoading = ref(false);
+const serachForTeacher = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      teacherOptions.value = [];
+    });
+    return;
+  }
+
+  teacherLoading.value = true;
+
+  try {
+    const res = await services.serachForTeacher(val);
+
+    update(() => {
+      teacherOptions.value = res.data.data;
+    });
+  } catch (e) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: e.response?.data?.result || "An error occurred.",
+    });
+  } finally {
+    teacherLoading.value = false;
+  }
+};
 
 onMounted(() => {
   getCourceData();
-  getAllTeachers();
   getAllShifts();
 });
 </script>
 
 <style scoped lang="scss">
+
+
 .info-input {
   :deep(.q-field__control) {
     min-height: 40px;

@@ -20,6 +20,18 @@ class StudentService {
   getStudentById(id) {
     return axiosInstance.get(`/api/v1/profiles/students/${id}/profile`);
   }
+  getCoursesForRegistration(id) {
+    return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=Acce`);
+  }
+  registerCourse(id , data) {
+    return axiosInstance.post(`/api/v1/courses/profile/${id}/register/`, data);
+  }
+  addCourseDiscount(id , data) {
+    return axiosInstance.post(`/api/v1/courses/profile/${id}/add-discount/`, data);
+  }
+  cancelCourseRegistration(id , data) {
+    return axiosInstance.post(`/api/v1/courses/profile/${id}/cancel-registration/`, data);
+  }
 }
 
 export default new StudentService();
