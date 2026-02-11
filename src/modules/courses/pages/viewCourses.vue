@@ -217,28 +217,18 @@
     </q-dialog>
 
     <tableComp
-      :tableRows="tableRows"
+      :tableRows="courceData.registrations"
+      :tablePagination="false"
       :tableColumns="columns"
-      :tablePagination="pagination"
       :showAddButton="true"
+      :displayPagination="false"
       addBtnLabel="Add Student"
-      :actions="true"
       :showBalanceFilter="true"
       :balanceOptions="balanceOptions"
-      :showStatusFilter="true"
-      :statusOptions="statusOptions"
-      :ShowActionsdropDown="true"
-      @openDialogDeleteEvent="openDialogDeleteEvent"
       :showFilters="true"
       :student="true"
       @addNew="addEvent"
-      @EditEvent="EditEvent"
-      @DetailsEvent="DetailsEvent"
       @searchEvent="onSearchEvent"
-      @updatePag="updatePag"
-      @getPagFun="getPagFun"
-      @sortApi="fireSortCall"
-      @callApi="fireCall"
       emptyStateTitle="No students found"
       emptyStateDescription="Adjust your filters or add new students to get started."
       emptyStateButtonLabel="Add Student"
@@ -260,18 +250,20 @@ const $q = useQuasar();
 const route = useRoute();
 const loading = ref(false);
 
+
+
 const columns = [
   {
-    name: "image",
+    name: "student_name",
     label: "Student Name",
-    field: (row) => row.studentName,
+    field: (row) => row.student_name,
     align: "left",
     sortable: false,
   },
   {
     name: "studentId",
     label: "Student ID",
-    field: (row) => row.studentId,
+    field: (row) => row.student_id,
     align: "left",
     sortable: false,
   },
@@ -283,130 +275,34 @@ const columns = [
     sortable: false,
   },
   {
-    name: "balanceDisplay",
+    name: "balanceDisplayInCourse",
     label: "Course Balance",
-    field: (row) => row.balance,
+    field: (row) => row.course_balance,
     align: "left",
     sortable: false,
   },
 ];
 
-const statusOptions = ref([
-  { name: "Active", id: 1 },
-  { name: "Inactive", id: 2 },
-]);
+
 
 const balanceOptions = ref([
-  { name: "0-100", id: 1 },
-  { name: "100-500", id: 2 },
-  { name: "500+", id: 3 },
+  {name: "Negative", id: "neg"},
+  {name: "Zero", id: "zero"},
+  {name: "Positive", id: "positive"},
 ]);
 
-// Static table data
-const tableRows = ref([
-  {
-    id: 1,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Yara Abdullah Ahmed Ali",
-    studentId: 251221,
-    score: 0,
-    balance: -4950,
-  },
-  {
-    id: 2,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Moaz Essam Hammoud Musleh",
-    studentId: 251220,
-    score: 0,
-    balance: 2000,
-  },
-  {
-    id: 3,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Ali Saleh Mohammed Muthana",
-    studentId: 251219,
-    score: 0,
-    balance: 0,
-  },
-  {
-    id: 4,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Qassem Abdulghani Mohammed Motlaq",
-    studentId: 251218,
-    score: 0,
-    balance: -5250,
-  },
-  {
-    id: 5,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Eman Saleh Ben Saleh Salem",
-    studentId: 251213,
-    score: 0,
-    balance: 0,
-  },
-  {
-    id: 6,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Abdullah Saleh Mobarek Hussien Alharthy",
-    studentId: 251212,
-    score: 0,
-    balance: 1500,
-  },
-  {
-    id: 7,
-    studentImage: "https://cdn.quasar.dev/img/avatar.png",
-    studentName: "Youssef Mobarek Hussien Alharthy",
-    studentId: 251231,
-    score: 0,
-    balance: 1000,
-  },
-]);
 
-// Pagination configuration
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 10,
-});
-
-// Event handlers
-const openDialogDeleteEvent = (row) => {
-  console.log("Delete event:", row);
-};
-
-const DetailsEvent = (row) => {
-  router.push({ name: "studentDetails", params: { id: row.id } });
-};
 
 const addEvent = () => {
   router.push({ name: "addStudent" });
 };
 
-const EditEvent = (row) => {
-  console.log("Edit event:", row);
-};
+
 
 const onSearchEvent = (searchValue) => {
   console.log("Search event:", searchValue);
 };
 
-const updatePag = (rowsPerPage) => {
-  pagination.value.rowsPerPage = rowsPerPage;
-};
-
-const getPagFun = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
-  pagination.value = { ...pagination.value, ...paginationData };
-};
-
-const fireSortCall = ([apiCall, sortBy]) => {
-  console.log("Sort API call:", { apiCall, sortBy });
-};
-
-const fireCall = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
-  pagination.value = { ...pagination.value, ...paginationData };
-};
 
 const courceData = ref([]);
 const courseActions = ref([]);
@@ -587,6 +483,8 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+
+
 .info-input {
   :deep(.q-field__control) {
     min-height: 40px;

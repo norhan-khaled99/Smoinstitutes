@@ -47,7 +47,7 @@
               <div
                 class="row justify-between full-width items-center pagination-wrapper"
               >
-                <div class="pagination-text">
+                <div class="pagination-text" >
                   <p class="q-mb-0">
                     Page {{ pagination.page }} of {{ pagesNumber }}
                   </p>
@@ -372,9 +372,12 @@
                           dense
                           :options="directionOptions"
                           option-label="name"
-                          option-value="id"   fill-input
-                          emit-value use-input
-                          map-options hide-selected
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          use-input
+                          map-options
+                          hide-selected
                           class="filter-select"
                           :placeholder="directionFilter ? '' : 'Direction'"
                           @update:model-value="
@@ -407,7 +410,8 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input hide-selected
+                          use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="levelFilter ? '' : 'Level'"
@@ -476,7 +480,8 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input hide-selected
+                          use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="teacherFilter ? '' : 'Teacher'"
@@ -654,15 +659,15 @@
                           fill-input
                           emit-value
                           map-options
-                          use-input hide-selected
+                          use-input
+                          hide-selected
                           input-debounce="0"
                           class="filter-select"
-                           :placeholder="typeFilter ? '' : 'All Types'"
+                          :placeholder="typeFilter ? '' : 'All Types'"
                           @update:model-value="
                             onFilterChange('account_type', typeFilter)
                           "
                         >
-
                           <template v-slot:append>
                             <q-icon
                               v-if="typeFilter"
@@ -676,7 +681,7 @@
                           </template>
                         </q-select>
                       </div>
-                   </div>
+                    </div>
 
                     <q-btn flat class="clear-filters-btn" @click="clearFilters">
                       <svg
@@ -794,11 +799,7 @@
             <template v-slot:body-cell-imageProfile="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
-                  <q-img
-                    class="image"
-                    :src="props.row.picture"
-                    ratio="1"
-                  />
+                  <q-img class="image" :src="props.row.picture" ratio="1" />
                   <div class="student-name-text">
                     {{ props.row.full_name }}
                   </div>
@@ -893,13 +894,77 @@
               </q-td>
             </template>
 
+            <template v-slot:body-cell-balanceDisplayInCourse="props">
+              <q-td :props="props">
+                <div class="row items-center no-wrap">
+                  <span>
+                    {{
+                      (isBalanceVisible(props.row)
+                        ? props.row.course_balance
+                        : "******") + " EGP"
+                    }}
+                  </span>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    class=""
+                    @click.stop="toggleBalance(props.row)"
+                  >
+                    <!-- Show Icon (Eye) - Shows when Hidden -->
+                    <svg
+                      v-if="!isBalanceVisible(props.row)"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M7.99998 5.50033C6.61927 5.50033 5.49998 6.61961 5.49998 8.00033C5.49998 9.38104 6.61927 10.5003 7.99998 10.5003C9.38069 10.5003 10.5 9.38104 10.5 8.00033C10.5 6.61961 9.38069 5.50033 7.99998 5.50033ZM6.49998 8.00033C6.49998 7.1719 7.17155 6.50033 7.99998 6.50033C8.82841 6.50033 9.49998 7.1719 9.49998 8.00033C9.49998 8.82875 8.82841 9.50033 7.99998 9.50033C7.17155 9.50033 6.49998 8.82875 6.49998 8.00033Z"
+                        fill="#6B7280"
+                      />
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M7.99998 2.16699C4.99056 2.16699 2.96351 3.96979 1.78702 5.49823L1.76581 5.52579C1.49974 5.87135 1.25469 6.18961 1.08844 6.56592C0.910409 6.96891 0.833313 7.40812 0.833313 8.00033C0.833313 8.59253 0.910409 9.03175 1.08844 9.43473C1.25469 9.81105 1.49974 10.1293 1.76581 10.4749L1.78702 10.5024C2.96351 12.0309 4.99056 13.8337 7.99998 13.8337C11.0094 13.8337 13.0365 12.0309 14.2129 10.5024L14.2341 10.4749C14.5002 10.1293 14.7453 9.81105 14.9115 9.43473C15.0895 9.03175 15.1666 8.59253 15.1666 8.00033C15.1666 7.40812 15.0895 6.96891 14.9115 6.56592C14.7453 6.1896 14.5002 5.87134 14.2341 5.52578L14.2129 5.49823C13.0365 3.96979 11.0094 2.16699 7.99998 2.16699ZM2.57946 6.10819C3.66574 4.69694 5.43355 3.16699 7.99998 3.16699C10.5664 3.16699 12.3342 4.69694 13.4205 6.10819C13.7129 6.48805 13.8842 6.71503 13.9968 6.97002C14.1021 7.20834 14.1666 7.49962 14.1666 8.00033C14.1666 8.50104 14.1021 8.79232 13.9968 9.03063C13.8842 9.28562 13.7129 9.5126 13.4205 9.89246C12.3342 11.3037 10.5664 12.8337 7.99998 12.8337C5.43355 12.8337 3.66574 11.3037 2.57946 9.89246C2.28707 9.5126 2.1158 9.28562 2.00315 9.03063C1.89787 8.79231 1.83331 8.50104 1.83331 8.00033C1.83331 7.49962 1.89787 7.20834 2.00315 6.97002C2.1158 6.71503 2.28707 6.48805 2.57946 6.10819Z"
+                        fill="#6B7280"
+                      />
+                    </svg>
+
+                    <!-- Hide Icon (Eye Slash) - Shows when Visible -->
+                    <svg
+                      v-else
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M14.8636 4.20657C15.1174 4.31535 15.235 4.60929 15.1262 4.8631L14.6667 4.66614C15.1262 4.8631 15.1263 4.86299 15.1262 4.8631L15.1257 4.86422L15.125 4.86588L15.1229 4.87079L15.1158 4.88684C15.1098 4.90026 15.1013 4.91907 15.0902 4.94286C15.068 4.99043 15.0355 5.05797 14.9926 5.14225C14.9067 5.31068 14.7784 5.5466 14.6057 5.82379C14.3219 6.27915 13.915 6.85125 13.3747 7.4196L14.0202 8.06515C14.2155 8.26041 14.2155 8.57699 14.0202 8.77226C13.8249 8.96752 13.5084 8.96752 13.3131 8.77226L12.646 8.1052C12.2063 8.47366 11.7019 8.8195 11.1301 9.10363L11.7524 10.0601C11.903 10.2916 11.8375 10.6013 11.606 10.7519C11.3746 10.9025 11.0648 10.837 10.9142 10.6055L10.1881 9.48957C9.66856 9.65925 9.10603 9.77455 8.49999 9.81589V10.9995C8.49999 11.2756 8.27613 11.4995 7.99999 11.4995C7.72385 11.4995 7.49999 11.2756 7.49999 10.9995V9.81589C6.91264 9.77583 6.3661 9.66628 5.85992 9.50508L5.14388 10.6055C4.99327 10.837 4.68355 10.9026 4.45209 10.7519C4.22063 10.6013 4.15509 10.2916 4.30569 10.0602L4.91397 9.12532C4.33771 8.84391 3.82925 8.49959 3.38566 8.13165L2.745 8.7723C2.54974 8.96756 2.23316 8.96756 2.0379 8.7723C1.84263 8.57704 1.84263 8.26046 2.0379 8.06519L2.65374 7.44935C2.10403 6.87623 1.69021 6.29718 1.40189 5.83592C1.2266 5.5555 1.09644 5.31657 1.0093 5.14594C0.965695 5.06056 0.932776 4.99211 0.910288 4.9439C0.899041 4.91979 0.890394 4.90073 0.884317 4.88713L0.877121 4.87087L0.87496 4.86591L0.874236 4.86423L0.873964 4.8636C0.873913 4.86348 0.873751 4.8631 1.33332 4.66614L0.873964 4.8636C0.765186 4.60978 0.882549 4.31535 1.13636 4.20657C1.38997 4.09788 1.68363 4.21518 1.79263 4.46856C1.79259 4.46847 1.79266 4.46865 1.79263 4.46856L1.79326 4.47002L1.79731 4.47916C1.80124 4.48796 1.80764 4.50208 1.81652 4.52113C1.8343 4.55924 1.86202 4.61698 1.89988 4.69113C1.97568 4.83954 2.09178 5.05299 2.24986 5.30588C2.56693 5.81313 3.04775 6.47087 3.70378 7.08054C4.28105 7.61701 4.98843 8.11118 5.83447 8.43668C6.4708 8.6815 7.19029 8.83281 7.99999 8.83281C8.8278 8.83281 9.56141 8.67465 10.2083 8.42002C11.0492 8.08903 11.7518 7.59164 12.3245 7.05414C12.9708 6.44745 13.4446 5.79625 13.7569 5.29495C13.9127 5.04501 14.0271 4.83432 14.1017 4.68792C14.139 4.61478 14.1663 4.55786 14.1838 4.52031C14.1926 4.50154 14.1989 4.48763 14.2028 4.47897L14.2067 4.46998L14.2071 4.46918C14.2071 4.46925 14.2071 4.46912 14.2071 4.46918M14.8636 4.20657C14.6099 4.09782 14.3159 4.2155 14.2071 4.46918L14.8636 4.20657ZM1.79263 4.46856C1.79259 4.46847 1.79266 4.46865 1.79263 4.46856V4.46856Z"
+                        fill="#6B7280"
+                      />
+                    </svg>
+                  </q-btn>
+                </div>
+              </q-td>
+            </template>
+
             <template v-slot:body-cell-score="props">
               <q-td :props="props">
                 <slot name="body-cell-score" :row="props.row">
                   <q-input
                     v-model="props.row.score"
+                    :ref="(el) => (scoreInputs[props.rowIndex] = el)"
+                    @keydown.tab.prevent="focusNext(props.rowIndex)"
                     dense
                     outlined
+                    @blur="handleChangeScore(props.row)"
                     class="score-input"
                     type="number"
                   />
@@ -1057,7 +1122,6 @@
                     <q-list>
                       <slot name="action-menu-items" :row="props.row"></slot>
 
-          
                       <q-item
                         v-if="transactions"
                         clickable
@@ -1454,6 +1518,18 @@ export default {
       emit("clearFilters");
     };
 
+    const scoreInputs = ref([]);
+    const focusNext = (index) => {
+      const next = scoreInputs.value[index + 1];
+      if (next) {
+        next.focus();
+      }
+    };
+    const handleChangeScore = (row) => {
+      alert("Score changed to: ");
+      emit("scoreChanged", row);
+    };
+
     const onSearch = () => {
       emit("searchEvent", searchResult.value);
     };
@@ -1602,6 +1678,9 @@ export default {
       onFilterChange,
       clearFilters,
       AddDiscount,
+      handleChangeScore,
+      scoreInputs,
+      focusNext,
     };
   },
 };
