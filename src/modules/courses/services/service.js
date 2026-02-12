@@ -49,6 +49,11 @@ class CoursesServices {
     return axiosInstance.put(`/api/v1/courses/profile/${id}/`, value);
   }
 
+
+  updateScores(value, id) {
+    return axiosInstance.post(`/api/v1/courses/profile/${id}/update-scores/`, value);
+  }
+
   executeAction(action, courseId) {
     const url = action.link.replace("#", courseId);
     const config = {

@@ -23,7 +23,13 @@
         </p>
       </div>
       <div class="row items-center q-gutter-md">
-        <q-btn flat @click="editCourse" v-if="courceData.status !== 'Finished'" no-caps class="edit-course-btn">
+        <q-btn
+          flat
+          @click="editCourse"
+          v-if="courceData.status !== 'Finished'"
+          no-caps
+          class="edit-course-btn"
+        >
           <svg
             width="18"
             height="18"
@@ -218,26 +224,29 @@
 
     <tableComp
       :tableRows="courceData.registrations"
-      :tablePagination="false"
       :tableColumns="columns"
       :showAddButton="true"
       :displayPagination="false"
+      :tablePagination="{ rowsPerPage: 0 }"
       addBtnLabel="Add Student"
       :showBalanceFilter="true"
       :balanceOptions="balanceOptions"
       :showFilters="true"
       :student="true"
       @addNew="addEvent"
+      @scoreChanged="scoreChanged"
       @searchEvent="onSearchEvent"
       emptyStateTitle="No students found"
       emptyStateDescription="Adjust your filters or add new students to get started."
       emptyStateButtonLabel="Add Student"
+      @filterChange="onFilterChange"
+      @clearFilters="clearFilters"
     />
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted , watch} from "vue";
+import { ref, onMounted, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -249,8 +258,6 @@ const router = useRouter();
 const $q = useQuasar();
 const route = useRoute();
 const loading = ref(false);
-
-
 
 const columns = [
   {
@@ -283,27 +290,97 @@ const columns = [
   },
 ];
 
-
-
 const balanceOptions = ref([
-  {name: "Negative", id: "neg"},
-  {name: "Zero", id: "zero"},
-  {name: "Positive", id: "positive"},
+  { name: "Negative", id: "neg" },
+  { name: "Zero", id: "zero" },
+  { name: "Positive", id: "positive" },
 ]);
-
-
 
 const addEvent = () => {
   router.push({ name: "addStudent" });
 };
 
+const scoreChanged = (row) => {
+  const index = courceData.value.registrations.findIndex(
+    (r) => r.regid === row.regid,
+  );
 
+  if (index !== -1) {
+    courceData.value.registrations[index].score = row.score;
+  }
+
+  const payload = {
+    scores: courceData.value.registrations.map((r) => ({
+      regid: r.regid,
+      score: r.score !== "" ? Number(r.score) : null,
+    })),
+  };
+
+  services
+    .updateScores(payload, route.params.id)
+    .then(() => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/SuccessIcon.png",
+        position: "bottom-right",
+        message: "Scores Updated Successfully",
+      });
+    })
+    .catch((error) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message:
+          error.response?.data?.errors?.__all__?.[0] || "An error occurred.",
+      });
+    });
+};
 
 const onSearchEvent = (searchValue) => {
-  console.log("Search event:", searchValue);
+  if (!searchValue || searchValue.trim() === "") {
+    courceData.value.registrations = [...originalRegistrations.value];
+    return;
+  }
+
+  const value = searchValue.toString().toLowerCase();
+
+  courceData.value.registrations = originalRegistrations.value.filter((row) =>
+    Object.values(row).some(
+      (v) => v !== null && v.toString().toLowerCase().includes(value),
+    ),
+  );
 };
 
 
+const oldcourseData = ref([]);
+const onFilterChange = ({ type, val }) => {
+  if (type !== "balance") return;
+
+  courceData.value.registrations = oldcourseData.value.filter(row => {
+    const balance = Number(row.course_balance);
+
+    if (val === "neg") return balance < 0;
+    if (val === "zero") return balance === 0;
+    if (val === "positive") return balance > 0;
+
+    return true;
+  });
+};
+
+
+const clearFilters = () => {
+  courceData.value.registrations = [...oldcourseData.value];
+};
+
+
+
+
+const originalRegistrations = ref([]);
 const courceData = ref([]);
 const courseActions = ref([]);
 const getCourceData = () => {
@@ -312,7 +389,9 @@ const getCourceData = () => {
     .getCourceData(route.params.id)
     .then((res) => {
       courceData.value = res.data.data.course;
+      oldcourseData.value = res.data.data.course.registrations;
       courseActions.value = res.data.data.actions;
+      originalRegistrations.value = [...courceData.value.registrations];
       $q.loading.hide();
     })
     .catch((error) => {
@@ -443,7 +522,6 @@ watch(pdfDialog, (val) => {
   }
 });
 
-
 const teacherOptions = ref([]);
 const teacherLoading = ref(false);
 const serachForTeacher = async (val, update) => {
@@ -483,8 +561,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-
-
 .info-input {
   :deep(.q-field__control) {
     min-height: 40px;

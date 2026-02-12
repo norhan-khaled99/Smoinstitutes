@@ -1543,7 +1543,6 @@ export default {
       }
     };
     const handleChangeScore = (row) => {
-      alert("Score changed to: ");
       emit("scoreChanged", row);
     };
 
