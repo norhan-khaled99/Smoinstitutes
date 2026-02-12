@@ -24,7 +24,8 @@
         <div class="popup-subtitle row q-gutter-sm items-center">
           <span>Paper No. ({{ transaction.paperNo }})</span>
           <span class="q-ml-lg">Date of process : {{ transaction.date }}</span>
-        <
+        </div>
+
         <div class="popup-divider"></div>
 
         <div class="row q-col-gutter-md">
