@@ -1,6 +1,6 @@
 import authRoutes from "src/modules/auth/routes/routes";
 import students from "src/modules/students/routes/routes";
-import reports from "src/modules/reports/routes/routes";
+import reports from "src/modules/courseFinance/routes/routes";
 import staff from "src/modules/staff/routes/routes";
 import transactions from "src/modules/transactions/routes/routes";
 import notes from "src/modules/notes/routes/routes";
@@ -12,7 +12,7 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requiresAuth: true }, 
+    meta: { requiresAuth: true },
     children: [
       {
         path: "",
