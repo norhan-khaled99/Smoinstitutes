@@ -20,33 +20,18 @@
     emptyStateTitle="No course finances found"
     emptyStateDescription="Course financial data will appear here."
   >
-    <!-- Custom Column: Duration -->
-    <template v-slot:body-cell-duration="props">
-      <q-td :props="props">
-        <div class="duration-cell">
-          <div class="date-text">{{ props.row.startDate }}</div>
-          <div class="date-text">{{ props.row.endDate }}</div>
-        </div>
-      </q-td>
-    </template>
-
-    <!-- Custom Column: Paid/Remaining -->
-    <template v-slot:body-cell-paidRemaining="props">
-      <q-td :props="props">
-        <div class="paid-remaining-cell">
-          <div class="paid-amount">{{ formatNumber(props.row.paid) }}</div>
-          <div class="remaining-amount">
-            {{ formatNumber(props.row.remaining) }}
-          </div>
-        </div>
-      </q-td>
-    </template>
   </tableComp>
+  <CourseFinancePopup
+    v-model="viewCourseFinancePopup"
+    :course="selectedCourse"
+    @close="viewCourseFinancePopup = false"
+  />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
+import CourseFinancePopup from "./viewCourseFinancePopup.vue";
 
 const pagination = ref({
   page: 1,
@@ -54,6 +39,8 @@ const pagination = ref({
   rowsNumber: 100,
 });
 
+const viewCourseFinancePopup = ref(false);
+const selectedCourse = ref({});
 // Filter options
 const statusOptions = ref([
   { name: "Active", value: "Active" },
@@ -73,6 +60,13 @@ const columns = [
     name: "name",
     label: "Name",
     field: "name",
+    align: "left",
+    sortable: false,
+  },
+  {
+    name: "shift",
+    label: "Shift",
+    field: "shift",
     align: "left",
     sortable: false,
   },
@@ -312,6 +306,8 @@ const viewReport = () => {
 
 const viewCourseReport = (row) => {
   console.log("View course report:", row);
+  selectedCourse.value = row;
+  viewCourseFinancePopup.value = true;
 };
 
 const getPagFun = ([apiCall, page, paginationData]) => {

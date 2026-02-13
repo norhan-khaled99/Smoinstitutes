@@ -593,9 +593,34 @@
   .date-text {
     font-size: 14px;
     font-weight: 500;
-    color: #4b5563;
+    color: #1F2933;
+  }
+
+  .enddate-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #6B7280;
   }
 }
+
+.shift-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .date-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1F2933;
+  }
+
+  .enddate-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #6B7280;
+  }
+}
+
 
 .paid-remaining-cell {
   display: flex;
@@ -604,14 +629,14 @@
 
   .paid-amount {
     font-size: 14px;
-    font-weight: 600;
-    color: #4caf50;
+    font-weight: 500;
+    color: #2E7D32;
   }
 
   .remaining-amount {
     font-size: 14px;
-    font-weight: 500;
-    color: #c63030;
+    font-weight: 400;
+    color: #C81E1E;
   }
 }
 

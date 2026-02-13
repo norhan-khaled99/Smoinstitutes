@@ -1200,6 +1200,8 @@
               </q-td>
             </template>
 
+
+
             <template v-slot:body-cell-reports="props">
               <q-td :props="props">
                 <div
@@ -1215,7 +1217,16 @@
               <q-td :props="props">
                 <div class="duration-cell">
                   <div class="date-text">{{ props.row.startDate }}</div>
-                  <div class="date-text">{{ props.row.endDate }}</div>
+                  <div class="enddate-text">{{ props.row.endDate }}</div>
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-shift="props">
+              <q-td :props="props">
+                <div class="shift-cell">
+                  <div class="date-text">{{ props.row.name }}</div>
+                  <div class="enddate-text">{{ props.row.shiftName }}</div>
                 </div>
               </q-td>
             </template>
