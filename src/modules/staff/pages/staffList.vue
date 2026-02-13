@@ -32,7 +32,6 @@
     v-model="showEditPopup"
     :staffInfo="selectedStaff"
     :initialEditMode="popupEditMode"
-    @save="onSaveStaff"
   />
 </template>
 
@@ -170,7 +169,6 @@ const statusOptions = ref([
 
 const addStaff = () => {
   router.push({ name: "addStaff" });
-  console.log("Add Staff clicked");
 };
 
 const onSearch = (val) => {
@@ -204,22 +202,10 @@ const viewEvent = (row) => {
 
 const editEvent = (row) => {
   selectedStaff.value = row;
-  popupEditMode.value = true; // Open in edit mode
+  popupEditMode.value = true;
   showEditPopup.value = true;
 };
 
-const onSaveStaff = (data) => {
-  console.log("Saving staff data:", data);
-  // Update the row in tableRows if needed
-  const index = tableRows.value.findIndex((r) => r.id === data.id);
-  if (index !== -1) {
-    tableRows.value[index] = {
-      ...tableRows.value[index],
-      ...data,
-      name: `${data.firstName} ${data.middleName} ${data.lastName}`.trim(),
-    };
-  }
-};
 
 const getPagFun = ([apiCall, page, paginationData]) => {
   getAllStaff(page);

@@ -19,11 +19,6 @@ class StaffServices {
     }
   }
 
-  // serachForTeacher(value) {
-  //   return axiosInstance.get(
-  //     `/api/v1/profiles/staff/search-dropdown/?q=${value}`,
-  //   );
-  // }
 
   getAlljob() {
     return axiosInstance.get(`/api/v1/profiles/jobstypes/`);
@@ -33,48 +28,22 @@ class StaffServices {
     return axiosInstance.get(`/api/v1/profiles/institution/`);
   }
 
-  // serachForLevels(value) {
-  //   return axiosInstance.get(`/api/v1/courses/levels/lookup/?q=${value}`);
-  // }
-
-  // getAllShifts() {
-  //   return axiosInstance.get(`/api/v1/auth/lookups/?key=course.shifts`);
-  // }
+  getAllCites() {
+    return axiosInstance.get(
+      `/api/v1/auth/lookups/?key=person.city_choices`
+    );
+  }
 
 
 
-  // getCourceData(courseId) {
-  //   return axiosInstance.get(`/api/v1/courses/profile/${courseId}`);
-  // }
-
-  // addCourse(value) {
-  //   return axiosInstance.post(`/api/v1/courses/profile/`, value);
-  // }
+  addStaff(value) {
+    return axiosInstance.post(`/api/v1/profiles/staff/`, value);
+  }
 
   // updateCourse(value, id) {
   //   return axiosInstance.put(`/api/v1/courses/profile/${id}/`, value);
   // }
 
-
-  // updateScores(value, id) {
-  //   return axiosInstance.post(`/api/v1/courses/profile/${id}/update-scores/`, value);
-  // }
-
-  // executeAction(action, courseId) {
-  //   const url = action.link.replace("#", courseId);
-  //   const config = {
-  //     responseType: "arraybuffer",
-  //   };
-  //   if (action.method === "GET") {
-  //     return axiosInstance.get(url, config);
-  //   } else if (action.method === "POST") {
-  //     return axiosInstance.post(url, {}, config);
-  //   } else if (action.method === "PUT") {
-  //     return axiosInstance.put(url, {}, config);
-  //   } else if (action.method === "DELETE") {
-  //     return axiosInstance.delete(url, config);
-  //   }
-  // }
 }
 
 export default new StaffServices();
