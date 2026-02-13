@@ -180,6 +180,49 @@
                           dense
                           :options="statusOptions"
                           option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          hide-selected
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="statusFilter ? '' : 'All Status'"
+                          @update:model-value="
+                            onFilterChange('status', statusFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="statusFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                statusFilter = null;
+                                onFilterChange('status', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+
+                      <div class="filter-item-wrapper" v-if="showStatusFilterInCourse">
+                        <q-select
+                          outlined
+                          v-model="statusFilter"
+                          dense
+                          :options="statusOptions"
+                          option-label="name"
                           option-value="value"
                           fill-input
                           emit-value
@@ -585,8 +628,8 @@
                           v-model="jobTypeFilter"
                           dense
                           :options="jobTypeOptions"
-                          option-label="name"
-                          option-value="id"
+                          option-label="jobstypename"
+                          option-value="jobstypeid"
                           fill-input
                           emit-value
                           map-options
@@ -596,7 +639,7 @@
                           class="filter-select"
                           :placeholder="jobTypeFilter ? '' : 'Job Type'"
                           @update:model-value="
-                            onFilterChange('jobType', jobTypeFilter)
+                            onFilterChange('staffjobtype', jobTypeFilter)
                           "
                         >
                           <template v-slot:append>
@@ -606,12 +649,13 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 jobTypeFilter = null;
-                                onFilterChange('jobType', null);
+                                onFilterChange('staffjobtype', null);
                               "
                             />
                           </template>
                         </q-select>
                       </div>
+
                       <!-- Course Filter -->
                       <div class="filter-item-wrapper" v-if="showCourseFilter">
                         <q-select
@@ -1288,6 +1332,10 @@ export default {
       default: false,
     },
     showStatusFilter: {
+      type: Boolean,
+      default: false,
+    },
+    showStatusFilterInCourse: {
       type: Boolean,
       default: false,
     },

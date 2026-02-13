@@ -1,7 +1,7 @@
 <template>
   <tableComp
     pageTitle="Staff"
-    :tableRows="tableRows"
+    :tableRows="allStaff"
     :tableColumns="columns"
     :tablePagination="pagination"
     :showAdd="true"
@@ -11,22 +11,19 @@
     :showFilters="true"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search by Name, ID, or Mobile..."
-    :showDegreeFilter="true"
-    :degreeOptions="degreeOptions"
-    :showInstitutionFilter="true"
-    :institutionOptions="institutionOptions"
     :showJobTypeFilter="true"
     :jobTypeOptions="jobTypeOptions"
     @addNew="addStaff"
     @searchEvent="onSearch"
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
-    @updatePag="updatePag"
     @getPagFun="getPagFun"
     @sortApi="fireSortCall"
     @callApi="fireCall"
     @editEvent="editEvent"
     @DetailsEvent="viewEvent"
+    :showStatusFilter="true"
+    :statusOptions="statusOptions"
     emptyStateTitle="No staff found"
     emptyStateDescription="Get started by adding a new staff member."
     emptyStateButtonLabel="Add Staff"
@@ -40,20 +37,25 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import tableComp from "src/components/tableComponent.vue";
 import editStaffPopup from "../components/viewEditStaffPopup.vue";
+import { useRoute } from "vue-router";
+import { useQuasar } from "quasar";
+import services from "../services/service.js";
 
 const router = useRouter();
-
+const typeOfFilter = ref("");
+const valueOfFilter = ref("");
+const searchQuery = ref("");
 const showEditPopup = ref(false);
 const selectedStaff = ref(null);
 const popupEditMode = ref(false);
-
+const $q = useQuasar();
 const pagination = ref({
   page: 1,
-  rowsPerPage: 10,
+  rowsPerPage: 20,
   rowsNumber: 100,
 });
 
@@ -61,14 +63,14 @@ const columns = [
   {
     name: "staffId",
     label: "Staff ID",
-    field: (row) => row.staffId,
+    field: (row) => row.staff_id,
     align: "left",
     sortable: false,
   },
   {
     name: "studentName",
     label: "Student Name",
-    field: (row) => row.name,
+    field: (row) => row.full_name,
     align: "left",
     sortable: false,
     classes: "bold-text",
@@ -81,30 +83,30 @@ const columns = [
     sortable: false,
   },
   {
-    name: "startDate",
-    label: "Start Date",
-    field: (row) => row.startDate,
+    name: "last_seen_date",
+    label: "Last seen Date",
+    field: (row) => row.last_seen_date,
     align: "left",
     sortable: false,
   },
   {
-    name: "institution",
-    label: "Institution",
-    field: (row) => row.institution,
+    name: "job",
+    label: "Job",
+    field: (row) => row.job,
     align: "left",
     sortable: false,
   },
   {
-    name: "balanceDisplay",
+    name: "current_Salary",
     label: "Balance",
-    field: (row) => row.balance,
+    field: (row) => row.current_salary,
     align: "left",
     sortable: false,
   },
   {
-    name: "courses",
-    label: "Courses (Total : Active)",
-    field: (row) => row.courses,
+    name: "courses_ratio",
+    label: "Courses Ratio",
+    field: (row) => row.courses_ratio,
     align: "left",
     sortable: false,
   },
@@ -115,123 +117,55 @@ const columns = [
   },
 ];
 
-const tableRows = ref([
-  {
-    id: 1,
-    staffId: "601",
-    name: "Fadel Mohammed Alnoud",
-    mobile: "+971523084607",
-    startDate: "11-01-2026",
-    institution: "USA",
-    balance: "-84950",
-    courses: "( 9 : 4 )",
-  },
-  {
-    id: 2,
-    staffId: "602",
-    name: "Rina Wageeh Alyafai",
-    mobile: "+971557134005",
-    startDate: "11-01-2026",
-    institution: "EGY",
-    balance: "+2000",
-    courses: "( 3 : 0 )",
-  },
-  {
-    id: 3,
-    staffId: "603",
-    name: "Ahmed Mansour Al-Otaibi",
-    mobile: "+971556072983",
-    startDate: "11-01-2026",
-    institution: "USA",
-    balance: "0",
-    courses: "None",
-  },
-  {
-    id: 4,
-    staffId: "604",
-    name: "Abdullah Saleh Mobarek Hussien Alharthy",
-    mobile: "+971553088206",
-    startDate: "11-01-2026",
-    institution: "USA",
-    balance: "-56250",
-    courses: "( 3 : 0 )",
-  },
-  {
-    id: 5,
-    staffId: "605",
-    name: "Youssef Mohammed Yaslam Mohammed",
-    mobile: "+971553296324",
-    startDate: "11-01-2026",
-    institution: "EGY",
-    balance: "0",
-    courses: "None",
-  },
-  {
-    id: 6,
-    staffId: "606",
-    name: "Mohammed Mansour Shaif",
-    mobile: "+971559533707",
-    startDate: "11-01-2026",
-    institution: "USA",
-    balance: "+6500",
-    courses: "( 3 : 0 )",
-  },
-  {
-    id: 7,
-    staffId: "607",
-    name: "Samar Sultan Ahmed",
-    mobile: "+971503603570",
-    startDate: "11-01-2026",
-    institution: "EGY",
-    balance: "-56250",
-    courses: "None",
-  },
-  {
-    id: 8,
-    staffId: "608",
-    name: "Marwa Gamal Hamood",
-    mobile: "+971553296324",
-    startDate: "04-01-2026",
-    institution: "USA",
-    balance: "+5000",
-    courses: "( 3 : 0 )",
-  },
-  {
-    id: 9,
-    staffId: "609",
-    name: "Qassem Abdulghani Mohammed Motlaq",
-    mobile: "+971502469158",
-    startDate: "01-11-2025",
-    institution: "EGY",
-    balance: "0",
-    courses: "( 2 : 1 )",
-  },
-  {
-    id: 10,
-    staffId: "610",
-    name: "Eman Saleh Ben Saleh Salem",
-    mobile: "+971505437621",
-    startDate: "11-01-2026",
-    institution: "USA",
-    balance: "-56250",
-    courses: "( 1 : 0 )",
-  },
-]);
+const allStaff = ref([]);
+const getAllStaff = (page = 1) => {
+  $q.loading.show();
 
-const degreeOptions = ref([
-  { id: 1, name: "Bachelor" },
-  { id: 2, name: "Master" },
-  { id: 3, name: "PhD" },
-]);
+  services
+    .getAllStaff(
+      page,
+      typeOfFilter.value,
+      valueOfFilter.value,
+      searchQuery.value,
+    )
+    .then((res) => {
+      allStaff.value = res.data.data.results;
 
-const institutionOptions = ref([
-  { id: 1, name: "USA" },
-  { id: 2, name: "EGY" },
-]);
+      // Update pagination with API response
+      pagination.value.rowsNumber = res.data.data.count || 0;
+      pagination.value.page = page;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
 
-const jobTypeOptions = ref([
-  { id: 1, name: "Full-time" },
-  { id: 2, name: "Part-time" },
+const jobTypeOptions = ref([]);
+const getAlljob = () => {
+  services
+    .getAlljob()
+    .then((res) => {
+      jobTypeOptions.value = res.data.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching shifts:", error);
+    });
+};
+
+const statusOptions = ref([
+  {name: "Active", id: 1},
+  {name: "Waiting", id: 2},
+  {name: "Idle", id: 3},
+  {name: "New", id: 4},
 ]);
 
 const addStaff = () => {
@@ -240,15 +174,26 @@ const addStaff = () => {
 };
 
 const onSearch = (val) => {
-  console.log("Search:", val);
+  searchQuery.value = val;
+  getAllStaff(1);
 };
 
 const onFilterChange = ({ type, val }) => {
-  console.log("Filter Change:", type, val);
+  if (val != null) {
+    typeOfFilter.value = type;
+    valueOfFilter.value = val;
+    getAllStaff(1);
+  } else {
+    typeOfFilter.value = "";
+    valueOfFilter.value = "";
+    getAllStaff(1);
+  }
 };
 
 const clearFilters = () => {
-  console.log("Clear Filters");
+  typeOfFilter.value = "";
+  valueOfFilter.value = "";
+  getAllStaff(1);
 };
 
 const viewEvent = (row) => {
@@ -275,6 +220,23 @@ const onSaveStaff = (data) => {
     };
   }
 };
+
+const getPagFun = ([apiCall, page, paginationData]) => {
+  getAllStaff(page);
+};
+
+const fireCall = ([apiCall, page, paginationData]) => {
+  getAllStaff(page);
+};
+
+const fireSortCall = ([apiCall, sorting]) => {
+  getAllStaff(1);
+};
+
+onMounted(() => {
+  getAllStaff();
+  getAlljob();
+});
 </script>
 
 <style lang="scss" scoped></style>
