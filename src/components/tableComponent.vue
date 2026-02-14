@@ -215,8 +215,10 @@
                         </q-select>
                       </div>
 
-
-                      <div class="filter-item-wrapper" v-if="showStatusFilterInCourse">
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showStatusFilterInCourse"
+                      >
                         <q-select
                           outlined
                           v-model="statusFilter"
@@ -726,6 +728,41 @@
                         </q-select>
                       </div>
 
+
+                      <div class="filter-item-wrapper" v-if="showTypeFilterInTransation">
+                        <q-select
+                          outlined
+                          v-model="typeFilter"
+                          dense
+                          :options="typeOptions"
+                          option-label="label"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          hide-selected
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="typeFilter ? '' : 'All Types'"
+                          @update:model-value="
+                            onFilterChange('jtype', typeFilter)
+                          "
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="typeFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                typeFilter = null;
+                                onFilterChange('jtype', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
                       <!-- Shift Filter -->
                       <div class="filter-item-wrapper" v-if="showShiftFilter">
                         <q-select
@@ -1163,8 +1200,10 @@
             <template v-slot:body-cell-transfer="props">
               <q-td :props="props">
                 <div class="transfer-cell">
-                  <div class="transfer-from">{{ props.row.transferFrom }}</div>
-                  <div class="transfer-to">{{ props.row.transferTo }}</div>
+                  <div class="transfer-from">
+                    {{ props.row.from_account.name }}
+                  </div>
+                  <div class="transfer-to">{{ props.row.to_account.name }}</div>
                 </div>
               </q-td>
             </template>
@@ -1173,20 +1212,17 @@
               <q-td :props="props">
                 <span
                   :class="{
-                    'transaction-reversal':
-                      props.row.transType === 'Transaction Reversal',
-                    'text-grey-8':
-                      props.row.transType !== 'Transaction Reversal',
+                    'transaction-reversal': props.row.is_reversed === true,
+                    'text-grey-8': !props.row.is_reversed,
                   }"
                   class="trans-type-text"
                 >
-                  {{ props.row.transType }}
+                  {{ props.row.jtype.name }}
                 </span>
               </q-td>
             </template>
 
-
-             <template v-slot:body-cell-courseFinaceStatus="props">
+            <template v-slot:body-cell-courseFinaceStatus="props">
               <q-td :props="props">
                 <q-badge
                   class="state"
@@ -1199,8 +1235,6 @@
                 </q-badge>
               </q-td>
             </template>
-
-
 
             <template v-slot:body-cell-reports="props">
               <q-td :props="props">
@@ -1538,6 +1572,10 @@ export default {
       default: () => [],
     },
     showTypeFilter: {
+      type: Boolean,
+      default: false,
+    },
+    showTypeFilterInTransation: {
       type: Boolean,
       default: false,
     },
