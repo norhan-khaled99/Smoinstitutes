@@ -140,9 +140,7 @@ const onSearch = (val) => {
 };
 
 onMounted(() => {
-  if (props.staffId) {
     getAllCourses();
-  }
 });
 </script>
 
