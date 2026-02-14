@@ -527,8 +527,8 @@
           </div>
         </div>
 
-        <div v-if="activeTab === 'courses'" class=" row">
-          <staffCoursesList  />
+        <div v-if="activeTab === 'courses'">
+          <staffCoursesList />
         </div>
         <!-- </q-scroll-area> -->
 
@@ -544,7 +544,7 @@
 </template>
 
 <script setup>
-import { ref, watch, markRaw, h, onMounted } from "vue";
+import { ref, watch, markRaw, h, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
@@ -724,13 +724,32 @@ const createIcon = (svgString) =>
     render: () => h("div", { innerHTML: svgString }),
   });
 
-const tabs = [
-  { id: "basic", label: "Basic Info", icon: createIcon(iconSVGs.basic) },
-  { id: "job", label: "Job Info", icon: createIcon(iconSVGs.job) },
-  { id: "education", label: "Education", icon: createIcon(iconSVGs.education) },
-  { id: "documents", label: "Documents", icon: createIcon(iconSVGs.documents) },
-  { id: "courses", label: "Courses", icon: createIcon(iconSVGs.courses) },
-];
+const tabs = computed(() => {
+  const tabsList = [
+    { id: "basic", label: "Basic Info", icon: createIcon(iconSVGs.basic) },
+    { id: "job", label: "Job Info", icon: createIcon(iconSVGs.job) },
+    {
+      id: "education",
+      label: "Education",
+      icon: createIcon(iconSVGs.education),
+    },
+    {
+      id: "documents",
+      label: "Documents",
+      icon: createIcon(iconSVGs.documents),
+    },
+  ];
+
+  if (!isEditMode.value) {
+    tabsList.push({
+      id: "courses",
+      label: "Courses",
+      icon: createIcon(iconSVGs.courses),
+    });
+  }
+
+  return tabsList;
+});
 
 const saveChanges = () => {
   const missing = [];
