@@ -473,18 +473,18 @@ const uploadPhoto = (file) => {
 // Convert date from API format (YYYY-MM-DD) to display format (DD/MM/YYYY)
 const formatDateForDisplay = (dateString) => {
   if (!dateString) return '';
-  
+
   // If already in DD/MM/YYYY format, return as is
   if (dateString.includes('/')) {
     return dateString;
   }
-  
+
   // Convert YYYY-MM-DD to DD/MM/YYYY
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
   }
-  
+
   return dateString;
 };
 

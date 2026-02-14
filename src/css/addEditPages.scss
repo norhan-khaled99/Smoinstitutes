@@ -354,13 +354,15 @@
       }
 
       .student-name {
-        // margin: 0 0 0.25rem 1.5rem;
-        // margin-top: 1rem;
         margin-bottom: 2px;
         font-size: 24px;
         font-weight: 500;
         color: #1f2933;
         text-align: start;
+        max-width: 18.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .student-id {
@@ -524,5 +526,5 @@
   background-color: #f9fafb;
 }
 
-  
+
 
