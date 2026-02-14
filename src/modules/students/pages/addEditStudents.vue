@@ -434,7 +434,6 @@ const saveStudent = async () => {
     return;
   }
   // Handle save
-  console.log("Student saved", form.value);
   const data = handleFormData();
   if (isEditable.value) {
     StudentService.updateStudent(studentId.value, data)
@@ -498,7 +497,6 @@ const saveAndAddAnother = async () => {
     return;
   }
   // Handle save and add another
-  console.log("Student saved and adding another");
   const data = handleFormData();
   if (isEditable.value) {
     StudentService.updateStudent(studentId.value, data)
@@ -590,7 +588,6 @@ const saveAndAddCourses = async () => {
     return;
   }
   // Handle save and add courses
-  console.log("Student saved and navigating to add courses");
   const data = handleFormData();
   if (isEditable.value) {
     StudentService.updateStudent(studentId.value, data)
@@ -657,7 +654,6 @@ const saveAndContinueEditing = async () => {
     return;
   }
   // Handle save and continue editing
-  console.log("Student saved and continuing to edit");
   const data = handleFormData();
   if (isEditable.value) {
     StudentService.updateStudent(studentId.value, data)

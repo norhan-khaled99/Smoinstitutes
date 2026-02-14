@@ -569,7 +569,6 @@ const handleFormData = () => {
 
 const handleSave = ()=>{
   const data = handleFormData();
-  console.log(typeof(studentData.value.d_o_b));
     StudentService.updateStudent(route.params.id, data)
       .then((res) => {
         if (res.status === 200) {
