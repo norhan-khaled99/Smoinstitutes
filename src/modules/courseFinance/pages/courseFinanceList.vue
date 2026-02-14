@@ -1,13 +1,13 @@
 <template>
   <tableComp
     pageTitle="Course finances"
-    :tableRows="tableRows"
+    :tableRows="allCourseFinance"
     :tableColumns="columns"
     :tablePagination="pagination"
     :showFilters="true"
     searchPlaceholder="Search Course finances..."
     :transactions="true"
-    :showStatusFilter="true"
+    :showStatusFilterInCourse="true"
     :statusOptions="statusOptions"
     :showShiftFilter="true"
     :shiftOptions="shiftOptions"
@@ -17,6 +17,8 @@
     @getPagFun="getPagFun"
     @viewReport="viewReport"
     @viewCourseReport="viewCourseReport"
+    @sortApi="fireSortCall"
+    @callApi="fireCall"
     emptyStateTitle="No course finances found"
     emptyStateDescription="Course financial data will appear here."
   >
@@ -29,93 +31,86 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref , onMounted, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import CourseFinancePopup from "./viewCourseFinancePopup.vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import services from "../service/service.js";
+
+const $q = useQuasar();
+const router = useRouter();
+const searchQuery = ref("");
+const typeOfFilter = ref("");
+const valueOfFilter = ref("");
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 10,
+  rowsPerPage: 20,
   rowsNumber: 100,
 });
-
-const viewCourseFinancePopup = ref(false);
-const selectedCourse = ref({});
-// Filter options
-const statusOptions = ref([
-  { name: "Active", value: "Active" },
-  { name: "Finished", value: "Finished" },
-  { name: "Waiting", value: "Waiting" },
-]);
-
-const shiftOptions = ref([
-  { name: "Morning", value: "Morning" },
-  { name: "Evening", value: "Evening" },
-  { name: "Night", value: "Night" },
-]);
-
 // Table columns
 const columns = [
   {
     name: "name",
     label: "Name",
-    field: "name",
+    field: (row) => row.name,
     align: "left",
     sortable: false,
   },
   {
     name: "shift",
     label: "Shift",
-    field: "shift",
+    field: (row) => row.shift,
     align: "left",
     sortable: false,
   },
   {
     name: "duration",
     label: "Duration (From - To)",
-    field: "duration",
+    field: (row) => row.startdate,
     align: "left",
     sortable: false,
   },
   {
     name: "courseFinaceStatus",
     label: "Status",
-    field: "status",
+    field: (row) => row.status,
     align: "left",
     sortable: false,
   },
   {
     name: "students",
     label: "Students",
-    field: "students",
+    field: (row) => row.students,
     align: "left",
     sortable: false,
   },
   {
     name: "totalFees",
     label: "Total Fees",
-    field: "totalFees",
+    field: (row) => row.total_fees,
     align: "left",
     sortable: false,
   },
   {
     name: "discounts",
     label: "Discounts",
-    field: "discounts",
+    field: (row) => row.total_discounts,
     align: "left",
     sortable: false,
   },
   {
     name: "paidRemaining",
     label: "Paid Remaining",
-    field: "paidRemaining",
+    field: (row) => row.full_name,
     align: "left",
     sortable: false,
   },
   {
     name: "expenses",
     label: "Expenses",
-    field: "expenses",
+    field: (row) => row.total_expences,
     align: "left",
     sortable: false,
   },
@@ -128,168 +123,58 @@ const columns = [
   },
 ];
 
-// Sample data matching the screenshot
-const tableRows = ref([
-  {
-    id: 1,
-    courseId: "6362",
-    name: "Intro A",
-    code: "SH1",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Finished",
-    students: 8,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
-  {
-    id: 2,
-    courseId: "6381",
-    name: "Intro A",
-    code: "SH1",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Finished",
-    students: 12,
-    totalFees: 120000,
-    discounts: 0.0,
-    paid: 80000,
-    remaining: 40000,
-    expenses: 0.0,
-  },
-  {
-    id: 3,
-    courseId: "6380",
-    name: "Intro B",
-    code: "SH4",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Active",
-    students: 16,
-    totalFees: 400000,
-    discounts: 10000,
-    paid: 372000,
-    remaining: 18000,
-    expenses: 0.0,
-  },
-  {
-    id: 4,
-    courseId: "6380",
-    name: "Intro B",
-    code: "SH4",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Active",
-    students: 14,
-    totalFees: 90000,
-    discounts: 0.0,
-    paid: 90000,
-    remaining: 0,
-    expenses: 0.0,
-  },
-  {
-    id: 5,
-    courseId: "6379",
-    name: "1A",
-    code: "SH4",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Finished",
-    students: 16,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
-  {
-    id: 6,
-    courseId: "6378",
-    name: "Access A",
-    code: "SH3",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Active",
-    students: 7,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
-  {
-    id: 7,
-    courseId: "6377",
-    name: "Basic",
-    code: "SH2",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Finished",
-    students: 6,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
-  {
-    id: 8,
-    courseId: "6376",
-    name: "ICDL",
-    code: "SH3",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Finished",
-    students: 10,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
-  {
-    id: 9,
-    courseId: "6375",
-    name: "Access A",
-    code: "SH3",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Active",
-    students: 8,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
-  {
-    id: 10,
-    courseId: "6374",
-    name: "Intro B",
-    code: "SH4",
-    startDate: "10-01-2026",
-    endDate: "11-02-2026",
-    status: "Active",
-    students: 11,
-    totalFees: 360000,
-    discounts: 0.0,
-    paid: 290000,
-    remaining: 70000,
-    expenses: 0.0,
-  },
+const allCourseFinance = ref([]);
+const getAllCourseFinance = (page = 1) => {
+  $q.loading.show();
+
+  services.getAllCourseFinance(page, typeOfFilter.value, valueOfFilter.value, searchQuery.value)
+    .then((res) => {
+      allCourseFinance.value = res.data.results;
+
+      // Update pagination with API response
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = page;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
+
+
+const viewCourseFinancePopup = ref(false);
+const selectedCourse = ref({});
+// Filter options
+const statusOptions = ref([
+  { name: "Active" , value: "Active"},
+  { name: "Pending" , value: "Pending"},
+  { name: "Finished" , value: "Finished"},
 ]);
 
-// Helper function to format numbers
-const formatNumber = (value) => {
-  return new Intl.NumberFormat("en-US").format(value);
+
+const shiftOptions = ref([]);
+const getAllShifts = () => {
+  services.getAllShifts().then((res) => {
+      shiftOptions.value = res.data.data.value.SHIFT_CHOICES;
+    })
+    .catch((error) => {
+      console.error("Error fetching shifts:", error);
+    });
 };
+
 
 // Event handlers
 const onSearch = (val) => {
-  console.log("Search:", val);
+  searchQuery.value = val;
+   getAllCourseFinance(1)
 };
 
 const onFilterChange = (type, val) => {
@@ -305,13 +190,28 @@ const viewReport = () => {
 };
 
 const viewCourseReport = (row) => {
-  console.log("View course report:", row);
   selectedCourse.value = row;
   viewCourseFinancePopup.value = true;
 };
 
+
+
+
 const getPagFun = ([apiCall, page, paginationData]) => {
-  console.log("Pagination:", page);
-  pagination.value.page = page;
+  getAllCourseFinance(page);
 };
+
+const fireCall = ([apiCall, page, paginationData]) => {
+  getAllCourseFinance(page);
+};
+
+const fireSortCall = ([apiCall, sorting]) => {
+  getAllCourseFinance(1);
+};
+
+onMounted(() => {
+  getAllCourseFinance();
+  getAllShifts();
+});
+
 </script>

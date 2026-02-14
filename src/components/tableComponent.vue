@@ -768,11 +768,9 @@
                         <q-select
                           outlined
                           v-model="shiftFilter"
-                          dense
                           :options="shiftOptions"
-                          option-label="name"
-                          option-value="value"
                           fill-input
+                          dense
                           emit-value
                           map-options
                           use-input
@@ -1229,6 +1227,7 @@
                   :class="{
                     'important-status': props.row.status === 'Finished',
                     'active-status': props.row.status === 'Active',
+                    'pending-status': props.row.status === 'Pending',
                   }"
                 >
                   {{ props.row.status }}
@@ -1250,8 +1249,8 @@
             <template v-slot:body-cell-duration="props">
               <q-td :props="props">
                 <div class="duration-cell">
-                  <div class="date-text">{{ props.row.startDate }}</div>
-                  <div class="enddate-text">{{ props.row.endDate }}</div>
+                  <div class="date-text">{{ props.row.startdate }}</div>
+                  <div class="enddate-text">{{ props.row.enddate }}</div>
                 </div>
               </q-td>
             </template>
@@ -1269,7 +1268,7 @@
               <q-td :props="props">
                 <div class="paid-remaining-cell">
                   <div class="paid-amount">
-                    {{ formatNumber(props.row.paid) }}
+                    {{ formatNumber(props.row.total_payed) }}
                   </div>
                   <div class="remaining-amount">
                     {{ formatNumber(props.row.remaining) }}
