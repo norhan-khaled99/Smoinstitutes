@@ -32,6 +32,7 @@
     v-model="showEditPopup"
     :staffInfo="selectedStaff"
     :initialEditMode="popupEditMode"
+    @save="handleSaveStaff"
   />
 </template>
 
@@ -161,10 +162,10 @@ const getAlljob = () => {
 };
 
 const statusOptions = ref([
-  {name: "Active", id: 1},
-  {name: "Waiting", id: 2},
-  {name: "Idle", id: 3},
-  {name: "New", id: 4},
+  { name: "Active", id: 1 },
+  { name: "Waiting", id: 2 },
+  { name: "Idle", id: 3 },
+  { name: "New", id: 4 },
 ]);
 
 const addStaff = () => {
@@ -194,18 +195,39 @@ const clearFilters = () => {
   getAllStaff(1);
 };
 
-const viewEvent = (row) => {
+const viewEvent = async (row) => {
   selectedStaff.value = row;
+  await getStaffData();
   popupEditMode.value = false;
   showEditPopup.value = true;
 };
 
-const editEvent = (row) => {
+const editEvent = async (row) => {
   selectedStaff.value = row;
+  await getStaffData();
   popupEditMode.value = true;
   showEditPopup.value = true;
 };
 
+const getStaffData = () => {
+  $q.loading.show();
+  if (selectedStaff.value.staff_id) {
+    services
+      .getStaffData(selectedStaff.value.globalid)
+      .then((res) => {
+        selectedStaff.value = res.data.data.staff;
+        if (selectedStaff.value.gender) {
+          selectedStaff.value.gender = selectedStaff.value.gender.toString();
+        }
+
+        $q.loading.hide();
+      })
+      .catch((error) => {
+        $q.loading.hide();
+        console.error("Error fetching shifts:", error);
+      });
+  }
+};
 
 const getPagFun = ([apiCall, page, paginationData]) => {
   getAllStaff(page);
@@ -217,6 +239,64 @@ const fireCall = ([apiCall, page, paginationData]) => {
 
 const fireSortCall = ([apiCall, sorting]) => {
   getAllStaff(1);
+};
+
+const handleSaveStaff = (staffData) => {
+  $q.loading.show();
+  let staffID = staffData.globalid;
+  const removeKeys = ["balance", "globalid", "registration_date", "staff_id"];
+
+   staffData = Object.fromEntries(
+    Object.entries(staffData).filter(([k]) => !removeKeys.includes(k)),
+  );
+
+  const fd = new FormData();
+  Object.keys(staffData).forEach((key) => {
+    const value = staffData[key];
+
+    // Skip id_card, cv, and picture if they are strings (from backend, not modified)
+    if (key === "id_card" || key === "cv" || key === "picture") {
+      // Only append if it's a File object or null
+      if (value instanceof File) {
+        fd.append(key, value);
+      } else if (value === null) {
+        // Optionally append null to delete the file on backend
+        fd.append(key, "");
+      }
+      // Skip strings - they are unchanged files from backend
+      return;
+    }
+
+    if (value !== null && value !== "") {
+      fd.append(key, value);
+    }
+  });
+
+  services
+    .updateStaff(fd, staffID)
+    .then((res) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/SuccessIcon.png",
+        position: "bottom-right",
+        message: "Profile Updated Successfully",
+      });
+      getAllStaff(1);
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.errors?.__all__?.[0] || "An error occurred.",
+      });
+    });
 };
 
 onMounted(() => {

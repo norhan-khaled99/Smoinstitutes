@@ -35,14 +35,20 @@ class StaffServices {
   }
 
 
+  getStaffData(staffID) {
+    return axiosInstance.get(
+      `/api/v1/profiles/staff/${staffID}/profile`
+    );
+  }
+
 
   addStaff(value) {
     return axiosInstance.post(`/api/v1/profiles/staff/`, value);
   }
 
-  // updateCourse(value, id) {
-  //   return axiosInstance.put(`/api/v1/courses/profile/${id}/`, value);
-  // }
+  updateStaff(value, staffID) {
+    return axiosInstance.put(`/api/v1/profiles/staff/${staffID}/`, value);
+  }
 
 }
 

@@ -564,6 +564,8 @@ const degreeOptions = ref([
   { id: "DIP", name: "Diploma" },
   { id: "OTH", name: "Other" },
 ]);
+
+
 const showImage = ref("");
 const uploadPhoto = (file) => {
   if (file) {
