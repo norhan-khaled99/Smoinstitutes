@@ -36,12 +36,15 @@
               map-options
               fill-input
               use-input
+              hide-selected
+              clearable
               input-debounce="400"
               class="custom-select"
               :loading="personLoading"
               @filter="serachForPerson"
               placeholder="Select Person After Searching..."
               :rules="rules.required"
+              disable
             />
           </div>
 
@@ -109,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../../notes/services/service.js";
@@ -119,13 +122,18 @@ const $q = useQuasar();
 const router = useRouter();
 const personOptions = ref([]);
 const formRef = ref(null);
-
+const props = defineProps({
+  student: {
+    type: Object,
+    default: {},
+  },
+});
 const model = defineModel();
 
 const emit = defineEmits(["save"]);
 
 const form = ref({
-  person: "",
+  person: props.student.globalid || "",
   noteText: "",
   noteType: "info",
 });
@@ -158,7 +166,7 @@ const saveNote = async (closeModal = false) => {
 
 
 const resetForm = () => {
-  form.value.person = "";
+  form.value.person = props.student.globalid || "";
   form.value.noteText = "";
   form.value.noteType = "info";
 };
@@ -194,6 +202,16 @@ const serachForPerson = async (val, update) => {
     personLoading.value = false;
   }
 };
+
+onMounted(()=>{
+  if (props.student && props.student.globalid) {
+    personOptions.value = [{
+      id: props.student.globalid,
+      label: props.student.full_name
+    }];
+    form.value.person = props.student.globalid;
+  }
+})
 </script>
 <style scoped>
 .persopn_label {

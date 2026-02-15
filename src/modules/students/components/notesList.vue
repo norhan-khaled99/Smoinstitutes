@@ -3,7 +3,7 @@
     <div class="header">
       <h2 class="title">Student Notes</h2>
       <q-btn class="add-note-btn q-px-md" flat @click="addNote">
-        <q-icon name="add_circle_outline" class="q-mr-sm" size="18px" />
+        <q-icon name="add_circle_outline" class="q-mr-sm" size="18px"/>
         Add Note
       </q-btn>
     </div>
@@ -14,12 +14,12 @@
         :key="note.id"
         class="col-md-6 col-sm-12 col-12"
       >
-        <div class="note-card" :class="note.type.toLowerCase()">
+        <div class="note-card" :class="note.note_type">
           <div class="note-status-border"></div>
           <div class="note-content">
             <div class="note-header items-center row no-wrap">
               <svg
-                v-if="note.type === 'Warning'"
+                v-if="note.note_type === 'warn'"
                 width="20"
                 height="20"
                 viewBox="0 0 20 20"
@@ -43,7 +43,7 @@
                 />
               </svg>
               <svg
-                v-else-if="note.type === 'Important'"
+                v-else-if="note.note_type === 'important'"
                 width="20"
                 height="20"
                 viewBox="0 0 20 20"
@@ -67,7 +67,7 @@
                 />
               </svg>
               <svg
-                v-else-if="note.type === 'Information'"
+                v-else-if="note.note_type === 'info'"
                 width="20"
                 height="20"
                 viewBox="0 0 20 20"
@@ -90,70 +90,41 @@
                   fill="#1565C0"
                 />
               </svg>
-              <span class="note-type-label">{{ note.type }} Note</span>
+              <span class="note-type-label" v-if="note.note_type==='warn'">Warning Note</span>
+              <span class="note-type-label" v-if="note.note_type==='important'">Important Note</span>
+              <span class="note-type-label" v-if="note.note_type==='info'">Information Note</span>
+
             </div>
-            <p class="note-description q-mt-sm">{{ note.description }}</p>
+            <p class="note-description q-mt-sm">{{ note.note }}</p>
             <div class="note-footer text-caption q-mt-sm">
-              Added on {{ note.date }} <span class="bullet">•</span> by
-              {{ note.author }}
+              Added on {{ note.created_at }} <span class="bullet">•</span> by
+              {{ note.created_by_name }}
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <addNotePopup v-model="showAddPopup" @save="handleSaveNote" />
+    <addNotePopup v-model="showAddPopup" v-if="props.student" :student="props.student" @save="handleSaveNote"/>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
 import addNotePopup from "./addNotePopup.vue";
+import Service from "../services/service";
+import {useQuasar} from "quasar";
 
+const $q = useQuasar();
 const showAddPopup = ref(false);
+const props = defineProps({
+  student: {
+    type: Object,
+    default: {},
+  },
+});
 
-const notes = ref([
-  {
-    id: 1,
-    type: "Warning",
-    description:
-      "Student has been absent 3 times this week without any notice from the guardian.",
-    date: "Oct 26, 2025, 9:25 AM",
-    author: "Mohamed_Essam",
-  },
-  {
-    id: 2,
-    type: "Important",
-    description:
-      "Student has been absent 3 times this week without any notice from the guardian.",
-    date: "Oct 22, 2025, 9:00 AM",
-    author: "Mohamed_Essam",
-  },
-  {
-    id: 3,
-    type: "Information",
-    description:
-      "Student has been absent 3 times this week without any notice from the guardian.",
-    date: "Oct 19, 2025, 8:25 AM",
-    author: "Mohamed_Essam",
-  },
-  {
-    id: 4,
-    type: "Information",
-    description:
-      "Student has been absent 3 times this week without any notice from the guardian.",
-    date: "Oct 17, 2025, 8:25 AM",
-    author: "Mohamed_Essam",
-  },
-  {
-    id: 5,
-    type: "Important",
-    description:
-      "Student has been absent 3 times this week without any notice from the guardian.",
-    date: "Oct 10, 2025, 9:55 AM",
-    author: "Mohamed_Essam",
-  },
-]);
+const notes = ref([]);
 
 const getIcon = (type) => {
   switch (type) {
@@ -173,9 +144,54 @@ const addNote = () => {
 };
 
 const handleSaveNote = (newNote) => {
-  notes.value.unshift({
-    id: Date.now(),
-    ...newNote,
-  });
+  Service.addNotes(newNote)
+    .then((response) => {
+      if (response.status === 201) {
+        $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: "Note added successfully.",
+        });
+        getAllNotes();
+      }
+    })
+    .catch((error) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
 };
+
+const getAllNotes = () => {
+   $q.loading.show();
+  Service.getAllNotes(props.student.globalid)
+    .then((response) => {
+      if (response.status === 200) {
+        notes.value = response.data.results;
+      }
+       $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+      $q.loading.hide();
+    });
+};
+onMounted(() => {
+  getAllNotes();
+})
 </script>

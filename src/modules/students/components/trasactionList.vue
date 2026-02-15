@@ -188,7 +188,7 @@ const onSaveTransaction = (data) => {
           badgeStyle: "display:none",
           classes: "custom-Notify",
           textColor: "black-1",
-          icon: "img:/images/success.png",
+          icon: "img:/images/SuccessIcon.png",
           position: "bottom-right",
           message: response.data.result || "Payment added successfully.",
         });
