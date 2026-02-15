@@ -563,7 +563,6 @@ const emit = defineEmits(["update:modelValue", "save"]);
 const isOpen = ref(props.modelValue);
 const isEditMode = ref(false);
 const activeTab = ref("basic");
-const router = useRouter();
 const $q = useQuasar();
 const staffData = ref({});
 
@@ -635,6 +634,13 @@ watch(
     isEditMode.value = newVal || false;
   },
 );
+
+// Reset activeTab if it's not available in edit mode
+watch(isEditMode, (newVal) => {
+  if (newVal && activeTab.value === "courses") {
+    activeTab.value = "basic";
+  }
+});
 
 // Reset when dialog closes
 watch(isOpen, (newVal) => {
