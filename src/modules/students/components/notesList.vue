@@ -114,6 +114,7 @@ import {onMounted, ref} from "vue";
 import addNotePopup from "./addNotePopup.vue";
 import Service from "../services/service";
 import {useQuasar} from "quasar";
+import {useRoute} from "vue-router";
 
 const $q = useQuasar();
 const showAddPopup = ref(false);
@@ -123,7 +124,7 @@ const props = defineProps({
     default: {},
   },
 });
-
+const route = useRoute();
 const notes = ref([]);
 
 const getIcon = (type) => {
@@ -172,7 +173,7 @@ const handleSaveNote = (newNote) => {
 
 const getAllNotes = () => {
    $q.loading.show();
-  Service.getAllNotes(props.student.globalid)
+  Service.getAllNotes(route.params.id)
     .then((response) => {
       if (response.status === 200) {
         notes.value = response.data.results;

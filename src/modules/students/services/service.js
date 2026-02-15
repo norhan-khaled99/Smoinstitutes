@@ -84,6 +84,22 @@ class StudentService {
   addNotes(value) {
     return axiosInstance.post(`/api/v1/profiles/person-notes/`, value);
   }
+
+  executeAction(action, student) {
+    const url = action.link.replace("#", student[action.parameter_name]);
+    const config = {
+      responseType: "arraybuffer",
+    };
+    if (action.method === "GET") {
+      return axiosInstance.get(url, config);
+    } else if (action.method === "POST") {
+      return axiosInstance.post(url, {}, config);
+    } else if (action.method === "PUT") {
+      return axiosInstance.put(url, {}, config);
+    } else if (action.method === "DELETE") {
+      return axiosInstance.delete(url, config);
+    }
+  }
 }
 
 export default new StudentService();
