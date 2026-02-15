@@ -133,7 +133,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="notes">
-          <notesList />
+          <notesList v-if="studentData" :student="studentData"/>
         </q-tab-panel>
 
         <q-tab-panel name="attendance">

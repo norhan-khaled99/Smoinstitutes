@@ -57,24 +57,32 @@ class StudentService {
     return axiosInstance.get(`/api/v1/profiles/accounts/search-dropdown/?q=${search}`);
   }
 
-  addIncomePayment(date , random) {
-    return axiosInstance.post(`/api/v1/finance/income/`, date , {headers : {'Idempotency-Key': random}});
+  addIncomePayment(date, random) {
+    return axiosInstance.post(`/api/v1/finance/income/`, date, {headers: {'Idempotency-Key': random}});
   }
 
-  addExpensePayment(date , random ) {
-    return axiosInstance.post(`/api/v1/finance/expense/`, date, {headers : {'Idempotency-Key': random}})
+  addExpensePayment(date, random) {
+    return axiosInstance.post(`/api/v1/finance/expense/`, date, {headers: {'Idempotency-Key': random}})
   }
 
-  addServicePayment(date , random ) {
-    return axiosInstance.post(`/api/v1/finance/service/`, date, {headers : {'Idempotency-Key': random}})
+  addServicePayment(date, random) {
+    return axiosInstance.post(`/api/v1/finance/service/`, date, {headers: {'Idempotency-Key': random}})
   }
 
-  addGenericPayment(date , random) {
-    return axiosInstance.post(`/api/v1/finance/generic/`, date, {headers : {'Idempotency-Key': random}})
+  addGenericPayment(date, random) {
+    return axiosInstance.post(`/api/v1/finance/generic/`, date, {headers: {'Idempotency-Key': random}})
   }
 
   searchForCourse(search) {
     return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=${search}`);
+  }
+
+  getAllNotes(id) {
+    return axiosInstance.get(`api/v1/profiles/person-notes/?person=${id}`);
+  }
+
+  addNotes(value) {
+    return axiosInstance.post(`/api/v1/profiles/person-notes/`, value);
   }
 }
 
