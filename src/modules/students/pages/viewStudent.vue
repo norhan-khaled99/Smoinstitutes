@@ -87,14 +87,16 @@
           </template>
 
           <q-list>
-            <q-item clickable v-close-popup>
+             <q-item
+              v-for="action in studentActions"
+              :key="action.link"
+              clickable
+              v-close-popup
+            >
               <q-item-section>
-                <q-item-label>Print</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-item-label>Delete Account</q-item-label>
+                <q-item-label @click="handleAction(action)">{{
+                  action.display_name
+                }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -142,10 +144,27 @@
       </q-tab-panels>
     </div>
   </q-page>
+  <q-dialog v-model="pdfDialog" persistent>
+      <q-card class="pdf-card">
+        <q-bar class="pdf-bar">
+          <div>Preview</div>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup class="pdf-close-btn" aria-label="Close preview" />
+        </q-bar>
+
+        <q-card-section class="q-pa-none pdf-card-section">
+          <iframe
+            v-if="pdfUrl"
+            :src="pdfUrl"
+            style="width: 100%; height: calc(100% - 56px); border: 0"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import {ref, onMounted, watch} from "vue";
 import { useRoute } from "vue-router";
 import coursesList from "../components/coursesList.vue";
 import transactionList from "../components/trasactionList.vue";
@@ -165,6 +184,7 @@ const studentData = ref({
   student_id: "",
   status: "",
 });
+const studentActions = ref([]);
 const paymentData = ref([]);
 const courseData = ref([]);
 const toggleEdit = () => {
@@ -194,6 +214,7 @@ const getStudentDetails = () => {
         studentData.value = res.data.data.student;
         paymentData.value = res.data.data.payment_list;
         courseData.value = res.data.data.courses;
+        studentActions.value = res.data.data.actions;
       }
     }).catch((err) => {
     $q.notify({
@@ -207,6 +228,55 @@ const getStudentDetails = () => {
 
   })
 }
+const pdfDialog = ref(false);
+const pdfUrl = ref(null);
+const handleAction = async (action) => {
+  try {
+    $q.loading.show();
+
+    const res = await StudentService.executeAction(action, studentData.value);
+
+    $q.loading.hide();
+
+    const contentType = res.headers["content-type"];
+
+    if (contentType?.includes("application/pdf")) {
+      const blob = new Blob([res.data], { type: "application/pdf" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else if (contentType?.includes("text/html")) {
+      const blob = new Blob([res.data], { type: "text/html" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else {
+      $q.notify({
+        type: "warning",
+        message: "Unsupported file type",
+      });
+    }
+  } catch (error) {
+    $q.loading.hide();
+
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message:
+        error.response?.data?.errors?.__all__?.[0] || "An error occurred.",
+    });
+  }
+};
+watch(pdfDialog, (val) => {
+  if (!val && pdfUrl.value) {
+    URL.revokeObjectURL(pdfUrl.value);
+    pdfUrl.value = null;
+  }
+});
+
 onMounted(() => {
   getStudentDetails();
   if (route.query.edit === "true") {
@@ -226,3 +296,40 @@ onMounted(() => {
   }
 });
 </script>
+<style scoped>
+.pdf-card {
+  width: 90vw;
+  max-width: 1000px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+
+.pdf-card-section {
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.pdf-bar {
+  background-color: #2f5d6a;
+  color: #ffffff;
+}
+
+.pdf-bar :deep(.q-btn) {
+  min-width: 44px;
+  height: 44px;
+}
+
+.pdf-bar :deep(.q-icon) {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.pdf-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
