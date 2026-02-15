@@ -190,7 +190,8 @@
 import { onMounted, ref, computed } from "vue";
 import addNotePopup from "./addNotePopup.vue";
 import Service from "../services/service";
-import { useQuasar } from "quasar";
+import {useQuasar} from "quasar";
+import {useRoute} from "vue-router";
 
 const $q = useQuasar();
 const showAddPopup = ref(false);
@@ -200,7 +201,7 @@ const props = defineProps({
     default: {},
   },
 });
-
+const route = useRoute();
 const notes = ref([]);
 const pagination = ref({
   page: 1,
@@ -247,7 +248,7 @@ const handleSaveNote = (newNote) => {
 const getAllNotes = (page = 1) => {
   pagination.value.page = page;
   $q.loading.show();
-  Service.getAllNotes(props.student.globalid, page)
+  Service.getAllNotes(route.params.id, page)
     .then((response) => {
       if (response.status === 200) {
         notes.value = response.data.results;

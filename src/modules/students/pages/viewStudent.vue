@@ -87,14 +87,16 @@
           </template>
 
           <q-list>
-            <q-item clickable v-close-popup>
+             <q-item
+              v-for="action in studentActions"
+              :key="action.link"
+              clickable
+              v-close-popup
+            >
               <q-item-section>
-                <q-item-label>Print</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-item-label>Delete Account</q-item-label>
+                <q-item-label @click="handleAction(action)">{{
+                  action.display_name
+                }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -121,7 +123,7 @@
       <q-separator color="grey-2" />
       <q-tab-panels v-model="tab" animated class="text-left">
         <q-tab-panel name="overview">
-          <overview ref="overviewRef" :is-editing="isEditing" />
+          <overview ref="overviewRef" :is-editing="isEditing" :payment-options="paymentData" @view-transactions="handleViewTransactions" @add-payment="handleAddPayment"/>
         </q-tab-panel>
 
         <q-tab-panel name="courses">
@@ -142,10 +144,37 @@
       </q-tab-panels>
     </div>
   </q-page>
+
+  <TransactionPopup
+    v-model="isTransactionPopupOpen"
+    :type="currentTransactionType"
+    :currentTransaction="currentTransactionData"
+    :studentName="studentData.full_name + ' ( ID : ' + studentData.student_id + ' )'"
+    v-if="currentTransactionData && studentData"
+    :student="studentData"
+    @save="onSaveTransaction"
+  />
+  <q-dialog v-model="pdfDialog" persistent>
+      <q-card class="pdf-card">
+        <q-bar class="pdf-bar">
+          <div>Preview</div>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup class="pdf-close-btn" aria-label="Close preview" />
+        </q-bar>
+
+        <q-card-section class="q-pa-none pdf-card-section">
+          <iframe
+            v-if="pdfUrl"
+            :src="pdfUrl"
+            style="width: 100%; height: calc(100% - 56px); border: 0"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import {ref, onMounted, watch} from "vue";
 import { useRoute } from "vue-router";
 import coursesList from "../components/coursesList.vue";
 import transactionList from "../components/trasactionList.vue";
@@ -154,8 +183,14 @@ import attendanceList from "../components/attendanceList.vue";
 import overview from "../components/overview.vue";
 import {useQuasar} from "quasar";
 import StudentService from "../services/service";
+import TransactionPopup from "../components/TransactionPopup.vue";
+import { uid } from "quasar";
 
 const $q = useQuasar();
+const isTransactionPopupOpen = ref(false);
+const currentTransactionType = ref("Income");
+const currentTransactionData = ref({});
+
 const route = useRoute();
 const tab = ref("overview");
 const isEditing = ref(false);
@@ -165,6 +200,7 @@ const studentData = ref({
   student_id: "",
   status: "",
 });
+const studentActions = ref([]);
 const paymentData = ref([]);
 const courseData = ref([]);
 const toggleEdit = () => {
@@ -194,6 +230,7 @@ const getStudentDetails = () => {
         studentData.value = res.data.data.student;
         paymentData.value = res.data.data.payment_list;
         courseData.value = res.data.data.courses;
+        studentActions.value = res.data.data.actions;
       }
     }).catch((err) => {
     $q.notify({
@@ -207,6 +244,139 @@ const getStudentDetails = () => {
 
   })
 }
+
+const handleViewTransactions = () => {
+  tab.value = 'transaction';
+};
+
+const handleAddPayment = (option) => {
+  currentTransactionType.value = option.name;
+  currentTransactionData.value = option;
+  isTransactionPopupOpen.value = true;
+};
+
+const onSaveTransaction = (data) => {
+  const random = uid();
+  let promise;
+  const payload = {};
+
+  if (data.type === 'Income') {
+    Object.assign(payload, {
+      paper_no: data.voucherNumber,
+      to_account: data.toAccount ? data.toAccount : studentData.value.globalid,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+    });
+    promise = StudentService.addIncomePayment(payload, random);
+  } else if (data.type === 'Expense') {
+    Object.assign(payload, {
+      paper_no: data.voucherNumber,
+      from_account: studentData.value.globalid,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+    });
+    promise = StudentService.addExpensePayment(payload, random);
+  } else if (data.type === 'Service') {
+    Object.assign(payload, {
+      student: data.toAccount ? data.toAccount : studentData.value.globalid,
+      service: data.service ? data.serviceId : null,
+      amount: data.amount,
+      details: data.details,
+    });
+    promise = StudentService.addServicePayment(payload, random);
+  } else if (data.type === 'Funds Transfer') {
+    Object.assign(payload, {
+      from_account: studentData.value.globalid,
+      to_account: data.toAccount ? data.toAccount : null,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+      jtype: data.type_id,
+    });
+    promise = StudentService.addGenericPayment(payload, random);
+  }
+
+  if (promise) {
+    $q.loading.show();
+    promise.then((response) => {
+      if (response.status === 200 || response.status === 201) {
+        $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: response.data.result || "Payment added successfully.",
+        });
+        isTransactionPopupOpen.value = false;
+        // Ideally reload transaction list if we were on that tab, or just refresh student details to update balance
+        getStudentDetails();
+      }
+    }).catch((error) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    }).finally(() => {
+      $q.loading.hide();
+    });
+  }
+};
+const pdfDialog = ref(false);
+const pdfUrl = ref(null);
+const handleAction = async (action) => {
+  try {
+    $q.loading.show();
+
+    const res = await StudentService.executeAction(action, studentData.value);
+
+    $q.loading.hide();
+
+    const contentType = res.headers["content-type"];
+
+    if (contentType?.includes("application/pdf")) {
+      const blob = new Blob([res.data], { type: "application/pdf" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else if (contentType?.includes("text/html")) {
+      const blob = new Blob([res.data], { type: "text/html" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else {
+      $q.notify({
+        type: "warning",
+        message: "Unsupported file type",
+      });
+    }
+  } catch (error) {
+    $q.loading.hide();
+
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message:
+        error.response?.data?.errors?.__all__?.[0] || "An error occurred.",
+    });
+  }
+};
+watch(pdfDialog, (val) => {
+  if (!val && pdfUrl.value) {
+    URL.revokeObjectURL(pdfUrl.value);
+    pdfUrl.value = null;
+  }
+});
+
 onMounted(() => {
   getStudentDetails();
   if (route.query.edit === "true") {
@@ -226,3 +396,40 @@ onMounted(() => {
   }
 });
 </script>
+<style scoped>
+.pdf-card {
+  width: 90vw;
+  max-width: 1000px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+
+.pdf-card-section {
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.pdf-bar {
+  background-color: #2f5d6a;
+  color: #ffffff;
+}
+
+.pdf-bar :deep(.q-btn) {
+  min-width: 44px;
+  height: 44px;
+}
+
+.pdf-bar :deep(.q-icon) {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.pdf-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

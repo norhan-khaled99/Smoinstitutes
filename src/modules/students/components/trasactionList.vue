@@ -33,6 +33,7 @@
     v-model="isTransactionPopupOpen"
     :type="currentTransactionType"
     :currentTransaction="currentTransactionData"
+    :studentName="props.student.full_name + ' ( ID : ' + props.student.student_id + ' )'"
     v-if="currentTransactionData"
     @save="onSaveTransaction"
   />

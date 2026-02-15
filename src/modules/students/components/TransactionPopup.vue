@@ -188,7 +188,7 @@ const props = defineProps({
   },
   studentName: {
     type: String,
-    default: "Moaz Essam (ID : 251221)",
+    default: "",
   },
 });
 const courseSearch = ref("");

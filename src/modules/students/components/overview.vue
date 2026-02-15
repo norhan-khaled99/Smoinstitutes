@@ -254,24 +254,27 @@
               >
             </div>
             <div class="balance-actions">
-              <q-btn flat label="View Payments" class="view-payments-btn"/>
-              <q-btn flat label="Add Payment" class="add-payment-btn">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  style="margin-left: 0.5rem"
-                >
-                  <path
-                    d="M8 3.5V12.5M12.5 8H3.5"
-                    stroke="white"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                  />
-                </svg>
-              </q-btn>
+              <q-btn flat label="View Payments" class="view-payments-btn" @click="$emit('view-transactions')"/>
+              <q-btn-dropdown
+                flat
+                label="Add Payment"
+                class="add-payment-btn"
+                dropdown-icon="none"
+              >
+                <q-list>
+                  <q-item
+                    v-for="option in addDropdownOptions"
+                    :key="option.id"
+                    clickable
+                    v-close-popup
+                    @click="$emit('add-payment', option)"
+                  >
+                    <q-item-section>
+                      <q-item-label>{{ option.name }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
             </div>
           </div>
 
@@ -432,7 +435,26 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  paymentOptions: {
+    type: Array,
+    default: () => [],
+  },
 });
+
+const emit = defineEmits(['view-transactions', 'add-payment']);
+
+const addDropdownOptions = ref([]);
+
+watch(() => props.paymentOptions, (newVal) => {
+  addDropdownOptions.value = newVal.map(item => ({
+    ...item,
+    name: item.type
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '),
+    id: item.type_id
+  }));
+}, { immediate: true });
 
 const studentData = ref({
   full_name: "",
