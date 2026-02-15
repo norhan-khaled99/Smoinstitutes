@@ -157,7 +157,6 @@ const saveNote = async (closeModal = false) => {
   // Close modal if closeModal is true
   if (closeModal) {
     // Clear form
-    form.value.person = "";
     form.value.noteText = "";
     form.value.noteType = "info";
     model.value = false;
