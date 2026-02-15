@@ -74,6 +74,7 @@
         background-color: #f9fafb;
         border: 1px solid #e5e9f0;
         border-radius: 8px;
+        color:#6B7280 !important;
 
         &:before {
           border: 1px solid #e5e7eb;
@@ -87,7 +88,10 @@
       &.q-field--focused .q-field__control:after {
         border-color: #2f5d6a;
       }
+
     }
+
+
   }
 
   .popup-badge {
@@ -114,7 +118,12 @@
       border: 1px solid #b45309;
     }
   }
-
+  .remaining-text {
+    color: #c81e1e;
+  }
+  .paid-text {
+    color: #2E7D32;
+  }
   .popup-actions {
     display: flex;
     justify-content: space-between;

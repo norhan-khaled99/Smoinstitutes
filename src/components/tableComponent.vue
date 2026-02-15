@@ -47,7 +47,7 @@
               <div
                 class="row justify-between full-width items-center pagination-wrapper"
               >
-                <div class="pagination-text" >
+                <div class="pagination-text">
                   <p class="q-mb-0">
                     Page {{ pagination.page }} of {{ pagesNumber }}
                   </p>
@@ -174,6 +174,51 @@
 
                       <!-- Status Filter -->
                       <div class="filter-item-wrapper" v-if="showStatusFilter">
+                        <q-select
+                          outlined
+                          v-model="statusFilter"
+                          dense
+                          :options="statusOptions"
+                          option-label="name"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          hide-selected
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="statusFilter ? '' : 'All Status'"
+                          @update:model-value="
+                            onFilterChange('status', statusFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="statusFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                statusFilter = null;
+                                onFilterChange('status', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showStatusFilterInCourse"
+                      >
                         <q-select
                           outlined
                           v-model="statusFilter"
@@ -585,8 +630,8 @@
                           v-model="jobTypeFilter"
                           dense
                           :options="jobTypeOptions"
-                          option-label="name"
-                          option-value="id"
+                          option-label="jobstypename"
+                          option-value="jobstypeid"
                           fill-input
                           emit-value
                           map-options
@@ -596,7 +641,7 @@
                           class="filter-select"
                           :placeholder="jobTypeFilter ? '' : 'Job Type'"
                           @update:model-value="
-                            onFilterChange('jobType', jobTypeFilter)
+                            onFilterChange('staffjobtype', jobTypeFilter)
                           "
                         >
                           <template v-slot:append>
@@ -606,12 +651,13 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 jobTypeFilter = null;
-                                onFilterChange('jobType', null);
+                                onFilterChange('staffjobtype', null);
                               "
                             />
                           </template>
                         </q-select>
                       </div>
+
                       <!-- Course Filter -->
                       <div class="filter-item-wrapper" v-if="showCourseFilter">
                         <q-select
@@ -676,6 +722,74 @@
                               @click.stop.prevent="
                                 typeFilter = null;
                                 onFilterChange('account_type', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+
+                      <div class="filter-item-wrapper" v-if="showTypeFilterInTransation">
+                        <q-select
+                          outlined
+                          v-model="typeFilter"
+                          dense
+                          :options="typeOptions"
+                          option-label="label"
+                          option-value="id"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          hide-selected
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="typeFilter ? '' : 'All Types'"
+                          @update:model-value="
+                            onFilterChange('jtype', typeFilter)
+                          "
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="typeFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                typeFilter = null;
+                                onFilterChange('jtype', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <!-- Shift Filter -->
+                      <div class="filter-item-wrapper" v-if="showShiftFilter">
+                        <q-select
+                          outlined
+                          v-model="shiftFilter"
+                          :options="shiftOptions"
+                          fill-input
+                          dense
+                          emit-value
+                          map-options
+                          use-input
+                          hide-selected
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="shiftFilter ? '' : 'Shift'"
+                          @update:model-value="
+                            onFilterChange('shift', shiftFilter)
+                          "
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="shiftFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                shiftFilter = null;
+                                onFilterChange('shift', null);
                               "
                             />
                           </template>
@@ -1084,8 +1198,10 @@
             <template v-slot:body-cell-transfer="props">
               <q-td :props="props">
                 <div class="transfer-cell">
-                  <div class="transfer-from">{{ props.row.transferFrom }}</div>
-                  <div class="transfer-to">{{ props.row.transferTo }}</div>
+                  <div class="transfer-from">
+                    {{ props.row.from_account.name }}
+                  </div>
+                  <div class="transfer-to">{{ props.row.to_account.name }}</div>
                 </div>
               </q-td>
             </template>
@@ -1094,15 +1210,70 @@
               <q-td :props="props">
                 <span
                   :class="{
-                    'transaction-reversal':
-                      props.row.transType === 'Transaction Reversal',
-                    'text-grey-8':
-                      props.row.transType !== 'Transaction Reversal',
+                    'transaction-reversal': props.row.is_reversed === true,
+                    'text-grey-8': !props.row.is_reversed,
                   }"
                   class="trans-type-text"
                 >
-                  {{ props.row.transType }}
+                  {{ props.row.jtype.name }}
                 </span>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-courseFinaceStatus="props">
+              <q-td :props="props">
+                <q-badge
+                  class="state"
+                  :class="{
+                    'important-status': props.row.status === 'Finished',
+                    'active-status': props.row.status === 'Active',
+                    'pending-status': props.row.status === 'Pending',
+                  }"
+                >
+                  {{ props.row.status }}
+                </q-badge>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-reports="props">
+              <q-td :props="props">
+                <div
+                  class="view-link cursor-pointer"
+                  @click="viewCourseReport(props.row)"
+                >
+                  View
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-duration="props">
+              <q-td :props="props">
+                <div class="duration-cell">
+                  <div class="date-text">{{ props.row.startdate }}</div>
+                  <div class="enddate-text">{{ props.row.enddate }}</div>
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-shift="props">
+              <q-td :props="props">
+                <div class="shift-cell">
+                  <div class="date-text">{{ props.row.name }}</div>
+                  <div class="enddate-text">{{ props.row.shiftName }}</div>
+                </div>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-paidRemaining="props">
+              <q-td :props="props">
+                <div class="paid-remaining-cell">
+                  <div class="paid-amount">
+                    {{ formatNumber(props.row.total_payed) }}
+                  </div>
+                  <div class="remaining-amount">
+                    {{ formatNumber(props.row.remaining) }}
+                  </div>
+                </div>
               </q-td>
             </template>
 
@@ -1139,7 +1310,7 @@
                     <q-list>
                       <slot name="action-menu-items" :row="props.row"></slot>
                       <q-item
-                        v-if="student || staff || profiles "
+                        v-if="student || staff || profiles"
                         clickable
                         class="action-menu-item"
                         @click="EditEvent(props.row)"
@@ -1291,6 +1462,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showStatusFilterInCourse: {
+      type: Boolean,
+      default: false,
+    },
     statusOptions: {
       type: Array,
       default: () => [],
@@ -1399,7 +1574,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    showTypeFilterInTransation: {
+      type: Boolean,
+      default: false,
+    },
     typeOptions: {
+      type: Array,
+      default: () => [],
+    },
+    showShiftFilter: {
+      type: Boolean,
+      default: false,
+    },
+    shiftOptions: {
       type: Array,
       default: () => [],
     },
@@ -1484,6 +1671,7 @@ export default {
     const jobTypeFilter = ref(null);
     const courseFilter = ref(null);
     const typeFilter = ref(null);
+    const shiftFilter = ref(null);
     const fromNo = ref("");
     const toNo = ref("");
 
@@ -1512,6 +1700,7 @@ export default {
       jobTypeFilter.value = null;
       courseFilter.value = null;
       typeFilter.value = null;
+      shiftFilter.value = null;
       fromNo.value = "";
       toNo.value = "";
       emit("clearFilters");
@@ -1526,6 +1715,10 @@ export default {
     };
     const handleChangeScore = (row) => {
       emit("scoreChanged", row);
+    };
+
+    const formatNumber = (value) => {
+      return new Intl.NumberFormat("en-US").format(value);
     };
 
     const onSearch = () => {
@@ -1561,6 +1754,10 @@ export default {
 
     const details = (id) => {
       emit("DetailsEvent", id);
+    };
+
+    const viewCourseReport = (row) => {
+      emit("viewCourseReport", row);
     };
 
     const onRequest = (propss) => {
@@ -1643,6 +1840,7 @@ export default {
       onSearch,
       openDialogDelete,
       details,
+      viewCourseReport,
       model,
       update,
       options,
@@ -1668,6 +1866,9 @@ export default {
       jobTypeFilter,
       courseFilter,
       typeFilter,
+      shiftFilter,
+      fromNo,
+      toNo,
       handleDropdownAction,
       AddDiscount,
       DeleteEvent,
@@ -1679,6 +1880,7 @@ export default {
       handleChangeScore,
       scoreInputs,
       focusNext,
+      formatNumber,
     };
   },
 };

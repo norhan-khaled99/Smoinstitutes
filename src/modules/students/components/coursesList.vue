@@ -214,7 +214,6 @@ const tableRows = computed(() => {
 
 // Event handlers
 const openDialogDeleteEvent = (row) => {
-  console.log("Delete event:", row);
   StudentService.cancelCourseRegistration(row.course_id , {
     regid: row.regid,
   }).then((res)=>{
@@ -235,7 +234,6 @@ const openDialogDeleteEvent = (row) => {
 };
 
 const DetailsEvent = (row) => {
-  console.log("Details event:", row);
   router.push({ name: "studentDetails", params: { id: row.id } });
 };
 
@@ -244,14 +242,11 @@ const addEvent = () => {
 };
 
 const addDiscount = (row) => {
-  console.log(row);
   selectedCourse.value = row;
   showAddDiscountPopup.value = true;
 };
 
 const handleSaveDiscount = (data) => {
-  console.log("Save discount:", data);
-  console.log(selectedCourse.value);
   StudentService.addCourseDiscount(selectedCourse.value.course_id , {
     regid:selectedCourse.value.regid,
     discount: data.amount,

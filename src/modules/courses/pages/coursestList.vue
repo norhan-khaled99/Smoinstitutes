@@ -11,7 +11,7 @@
     :showFilters="true"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search Courses..."
-    :showStatusFilter="true"
+    :showStatusFilterInCourse="true"
     :statusOptions="statusOptions"
     :showTeacherFilter="true"
     :teacherOptions="teacherOptions"

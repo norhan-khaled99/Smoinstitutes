@@ -15,7 +15,6 @@
       :showYearFilter="true"
       :yearOptions="yearOptions"
       :ShowActionsdropDown="true"
-      @openDialogDeleteEvent="openDialogDeleteEvent"
       :showFilters="true"
       :student="true"
       @addNew="addEvent"
@@ -132,23 +131,16 @@ const pagination = ref({
 // Permission status
 
 // Event handlers
-const openDialogDeleteEvent = (row) => {
-  console.log("Delete event:", row);
-  // Add delete logic here
-};
+
 
 const DetailsEvent = (row) => {
-  console.log("Details event:", row);
   router.push({name: "studentDetails", params: {id: row.globalid}});
 };
 const addEvent = () => {
-  console.log("Add event");
   router.push({name: "addStudent"});
-  // Add navigation or modal logic her
 };
 
 const EditEvent = (row) => {
-  console.log("Edit event:", row);
   router.push({
     name: "studentDetails",
     params: {id: row.globalid},
@@ -157,7 +149,6 @@ const EditEvent = (row) => {
 };
 
 const onSearchEvent = (search) => {
-  console.log("Search event:", search);
   if (!search || search.trim() === "") {
     searchValue.value = "";
     // If search is empty, load all notes
@@ -195,7 +186,6 @@ const performSearch = () => {
 };
 const updatePag = (rowsPerPage) => {
   pagination.value.rowsPerPage = rowsPerPage;
-  console.log("Update pagination:", rowsPerPage);
 };
 
 const getPagFun = ([apiCall, page, paginationData]) => {
@@ -210,7 +200,6 @@ const fireCall = ([apiCall, page, paginationData]) => {
   getAllStudents(page);
 };
 const filterData = (data) => {
-  console.log(data);
   if (data.type === "status") {
     statusFilter.value = data.val || "";
   }

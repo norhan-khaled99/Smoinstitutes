@@ -1,7 +1,7 @@
 <template>
   <tableComp
     pageTitle="Transactions"
-    :tableRows="tableRows"
+    :tableRows="allTransactions"
     :tableColumns="columns"
     :tablePagination="pagination"
     :showAdd="true"
@@ -9,20 +9,19 @@
     :actions="true"
     :ShowActionsdropDown="true"
     :showFilters="true"
-    :showTypeFilter="true"
+    :showTypeFilterInTransation="true"
     :typeOptions="transTypeOptions"
     typePlaceholder="Trans Type"
-    searchPlaceholder="Search Transactions..."
     :transactions="true"
+    :searchInput="false"
     @addNew="addTransaction"
-    @searchEvent="onSearch"
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
     @viewReport="viewReport"
-    @DetailsEvent="viewDetails"
-    @EditEvent="editTransaction"
-    @reverseTransaction="reverseTransaction"
-    @openDialogDeleteEvent="deleteTransaction"
+    @getPagFun="getPagFun"
+    @sortApi="fireSortCall"
+    @callApi="fireCall"
+    @DetailsEvent="viewTransactionData"
     emptyStateTitle="No transactions found"
     emptyStateDescription="Get started by adding a new transaction."
     emptyStateButtonLabel="Add Transaction"
@@ -36,25 +35,70 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch} from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
 import AddTransaction from "../components/addTransaction.vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import services from "../service/service.js";
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 10,
+  rowsPerPage: 20,
   rowsNumber: 100,
 });
+const $q = useQuasar();
+const router = useRouter();
+const typeOfFilter = ref("");
+const valueOfFilter = ref("");
+const searchQuery = ref("");
 
-const transTypeOptions = ref([
-  { id: 1, name: "Course deduction" },
-  { id: 2, name: "Course registration" },
-  { id: 3, name: "Funds Transfer" },
-  { id: 4, name: "Transaction Reversal" },
-]);
+const allTransactions = ref([]);
+const getAllTransactions = (page = 1) => {
+  $q.loading.show();
+
+  services
+    .getAllTransactions(page, typeOfFilter.value, valueOfFilter.value, searchQuery.value).then((res) => {
+      allTransactions.value = res.data.results;
+
+      // Update pagination with API response
+      pagination.value.rowsNumber = res.data.count || 0;
+      pagination.value.page = page;
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.res?.data?.result || "An error occurred.",
+      });
+    });
+};
+
+
+const transTypeOptions = ref([]);
+const getAllTransTypeOptions = () => {
+  services.getAllTransTypeOptions().then((res) => {
+      transTypeOptions.value = res.data.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching shifts:", error);
+    });
+};
 
 const columns = [
+  {
+    name: "Paper No.",
+    label: "Paper No.",
+    field: "paper_no",
+    align: "left",
+    sortable: false,
+  },
   {
     name: "amount",
     label: "Amount",
@@ -65,14 +109,16 @@ const columns = [
   {
     name: "transfer",
     label: "Transfer (From - To)",
-    field: "transferFrom", // Used for basic sorting if needed, but display is custom
+    field: "transferFrom",
     align: "left",
+    sortable: false,
   },
   {
     name: "categoryId",
     label: "Category ID",
-    field: "categoryId",
+    field: (row) => row.category_id.name,
     align: "left",
+    sortable: false,
   },
   {
     name: "date",
@@ -84,8 +130,9 @@ const columns = [
   {
     name: "transType",
     label: "Trans Type",
-    field: "transType",
+    field: (row) => row.jtype.name,
     align: "left",
+    sortable: false,
   },
   {
     name: "actions",
@@ -94,108 +141,7 @@ const columns = [
   },
 ];
 
-const tableRows = ref([
-  {
-    id: 1,
-    paperNo: "251221",
-    amount: "4000.0",
-    transferFrom: "Yara Abdullah Ahmed Ali",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6372 Intro B",
-    date: "11-01-2026",
-    transType: "Course deduction",
-  },
-  {
-    id: 2,
-    paperNo: "251220",
-    amount: "40000.0",
-    transferFrom: "Ahmed Sameer Mohshen Hussien",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6383 Intro A",
-    date: "11-01-2026",
-    transType: "Course registration",
-  },
-  {
-    id: 3,
-    paperNo: "251219",
-    amount: "40000.0",
-    transferFrom: "Nedal Abdulsalam Saleh",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6378 Access A",
-    date: "11-01-2026",
-    transType: "Funds Transfer",
-  },
-  {
-    id: 4,
-    paperNo: "251218",
-    amount: "40000.0",
-    transferFrom: "Students Discounts - (5)",
-    transferTo: "To Reyadh Hassan Khaled Saeed",
-    categoryId: "6372 Intro B",
-    date: "11-01-2026",
-    transType: "Course registration",
-  },
-  {
-    id: 5,
-    paperNo: "251217",
-    amount: "40000.0",
-    transferFrom: "Yara Abdullah Ahmed Ali",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6378 Access A",
-    date: "11-01-2026",
-    transType: "Course deduction",
-  },
-  {
-    id: 6,
-    paperNo: "251216",
-    amount: "40000.0",
-    transferFrom: "Students Discounts - (5)",
-    transferTo: "To Maimona Abdo Mohammed",
-    categoryId: "6383 Intro A",
-    date: "11-01-2026",
-    transType: "Transaction Reversal",
-  },
-  {
-    id: 7,
-    paperNo: "251215",
-    amount: "40000.0",
-    transferFrom: "Norhan Abdullah Ahmed Ali",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6372 Intro B",
-    date: "11-01-2026",
-    transType: "Funds Transfer",
-  },
-  {
-    id: 8,
-    paperNo: "251214",
-    amount: "40000.0",
-    transferFrom: "Mohammed Gubran Mohammed",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6378 Access A",
-    date: "11-01-2026",
-    transType: "Course registration",
-  },
-  {
-    id: 9,
-    paperNo: "251213",
-    amount: "40000.0",
-    transferFrom: "Awad Ahmed Awad Abdullah",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6372 Intro B",
-    date: "11-01-2026",
-    transType: "Transaction Reversal",
-  },
-  {
-    id: 10,
-    paperNo: "251212",
-    amount: "40000.0",
-    transferFrom: "Arwa Abdullah Ahmed Ali",
-    transferTo: "To Students Income - (4)",
-    categoryId: "6383 Intro A",
-    date: "11-01-2026",
-    transType: "Course deduction",
-  },
-]);
+
 
 const showViewTransaction = ref(false);
 const selectedTransaction = ref({});
@@ -220,20 +166,28 @@ const viewReport = () => {
   console.log("View Report");
 };
 
-const viewDetails = (row) => {
-  selectedTransaction.value = row;
-  showViewTransaction.value = true;
+const viewTransactionData = (data) => {
+  selectedTransaction.value = data
+  showViewTransaction.value = true
+}
+
+
+const getPagFun = ([apiCall, page, paginationData]) => {
+  getAllTransactions(page);
 };
 
-const editTransaction = (row) => {
-  console.log("Edit Transaction", row);
+const fireCall = ([apiCall, page, paginationData]) => {
+  getAllTransactions(page);
 };
 
-const reverseTransaction = (row) => {
-  console.log("Reverse Transaction", row);
+const fireSortCall = ([apiCall, sorting]) => {
+  getAllTransactions(1);
 };
 
-const deleteTransaction = (row) => {
-  console.log("Delete Transaction", row);
-};
+
+onMounted(() => {
+  getAllTransactions();
+  getAllTransTypeOptions();
+});
+
 </script>

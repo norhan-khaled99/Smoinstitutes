@@ -35,7 +35,7 @@
                 >Amount <span class="text-negative">*</span></label
               >
               <q-input
-                v-model="formData.amount"
+                v-model="form.amount"
                 dense
                 outlined
                 placeholder="0.00"
@@ -48,12 +48,12 @@
             <div class="form-group">
               <label class="form-label">Category id</label>
               <q-select
-                v-model="formData.categoryId"
+                v-model="form.categoryId"
                 :options="categoryOptions"
                 dense
                 outlined
                 :label="
-                  formData.categoryId == undefined || formData.categoryId == ''
+                  form.categoryId == undefined || form.categoryId == ''
                     ? 'Select Category'
                     : ''
                 "
@@ -65,28 +65,60 @@
               />
             </div>
           </div>
+
           <div class="col-6">
             <div class="form-group">
               <label class="form-label"
                 >From Account <span class="text-negative">*</span></label
               >
               <q-select
-                v-model="formData.fromAccount"
-                :options="accountOptions"
+                v-model="form.fromAccount"
+                :options="fromAccountOptions"
                 dense
                 outlined
                 :label="
-                  formData.fromAccount == undefined ||
-                  formData.fromAccount == ''
+                  form.fromAccount == undefined || form.fromAccount == ''
                     ? 'Select Account'
                     : ''
                 "
                 class="custom-select"
-                option-label="name"
+                option-label="label"
                 option-value="id"
                 emit-value
                 map-options
-              />
+                fill-input
+                use-input
+                :input-value="fromAccountSearch"
+                @update:input-value="(val) => (fromAccountSearch = val)"
+                @update:model-value="() => (fromAccountSearch = '')"
+                input-debounce="400"
+                :loading="fromAccountLoading"
+                @filter="filterFromAccounts"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <div class="icon-wrapper">
+                        <q-icon
+                          :name="getIcon(scope.opt.mainacctype)"
+                          size="20px"
+                          color="grey-6"
+                        />
+                      </div>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
             </div>
           </div>
           <div class="col-6">
@@ -95,34 +127,66 @@
                 >To Account <span class="text-negative">*</span></label
               >
               <q-select
-                v-model="formData.toAccount"
-                :options="accountOptions"
+                v-model="form.toAccount"
+                :options="toAccountOptions"
                 dense
                 outlined
                 :label="
-                  formData.toAccount == undefined || formData.toAccount == ''
+                  form.toAccount == undefined || form.toAccount == ''
                     ? 'Select Account'
                     : ''
                 "
                 class="custom-select"
-                option-label="name"
+                option-label="label"
                 option-value="id"
                 emit-value
                 map-options
-              />
+                fill-input
+                use-input
+                :input-value="toAccountSearch"
+                @update:input-value="(val) => (toAccountSearch = val)"
+                @update:model-value="() => (toAccountSearch = '')"
+                input-debounce="400"
+                :loading="toAccountLoading"
+                @filter="filterToAccounts"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <div class="icon-wrapper">
+                        <q-icon
+                          :name="getIcon(scope.opt.mainacctype)"
+                          size="20px"
+                          color="grey-6"
+                        />
+                      </div>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
             </div>
           </div>
           <div class="col-12">
             <div class="form-group">
               <label class="form-label">Transaction Type</label>
               <q-select
-                v-model="formData.transactionType"
+                v-model="form.transactionType"
                 :options="transactionTypeOptions"
                 dense
                 outlined
                 :label="
-                  formData.transactionType == undefined ||
-                  formData.transactionType == ''
+                  form.transactionType == undefined ||
+                  form.transactionType == ''
                     ? 'Select Transaction Type'
                     : ''
                 "
@@ -138,7 +202,7 @@
             <div class="form-group">
               <label class="form-label">Details</label>
               <q-input
-                v-model="formData.details"
+                v-model="form.details"
                 dense
                 outlined
                 type="textarea"
@@ -151,25 +215,21 @@
         </div>
 
         <div class="popup-actions">
-          <q-btn
-            label="Cancel"
-            v-close-popup
-            class="btn-cancel"
-            flat
-            no-caps
-          />
+          <q-btn label="Cancel" v-close-popup class="btn-cancel" flat no-caps />
           <q-btn
             label="Save & Add Another"
             @click="saveAndAddAnother"
             class="btn-save-add"
             outline
             no-caps
+            flat
           />
           <q-btn
             label="Save & Close"
             @click="saveAndClose"
             class="btn-save-close"
             no-caps
+            flat
           />
         </div>
       </q-card-section>
@@ -178,13 +238,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-
+import { ref, computed, onMounted, watch } from "vue";
+import { useQuasar } from "quasar";
+import TransactionService from "../service/service";
 const model = defineModel();
+const $q = useQuasar();
 
-// Generate paper number (you can customize this logic)
 const generatedPaperNo = ref("251229");
-
+const fromAccountOptions = ref([]);
+const toAccountOptions = ref([]);
 // Current date and time
 const currentDateTime = computed(() => {
   const now = new Date();
@@ -199,7 +261,7 @@ const currentDateTime = computed(() => {
 });
 
 // Form data
-const formData = ref({
+const form = ref({
   amount: null,
   categoryId: null,
   fromAccount: null,
@@ -215,11 +277,88 @@ const categoryOptions = ref([
   { id: 3, name: "6378 Access A" },
 ]);
 
-const accountOptions = ref([
-  { id: 1, name: "Students Income - (4)" },
-  { id: 2, name: "Students Discounts - (5)" },
-  { id: 3, name: "Cash Account - (1)" },
-]);
+const fromAccountLoading = ref(false);
+const toAccountLoading = ref(false);
+const fromAccountSearch = ref("");
+const toAccountSearch = ref("");
+
+const searchAccounts = async (val, update, optionsRef, loadingRef) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      optionsRef.value = [];
+    });
+    return;
+  }
+
+  loadingRef.value = true;
+  try {
+    const response = await TransactionService.getAllAccounts(val);
+    update(() => {
+      const data = response.data;
+      optionsRef.value = Array.isArray(data) ? data : data.data || [];
+    });
+  } catch (e) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: e.response?.data?.result || "An error occurred.",
+    });
+  } finally {
+    loadingRef.value = false;
+  }
+};
+
+const filterFromAccounts = (val, update) => {
+  searchAccounts(val, update, fromAccountOptions, fromAccountLoading);
+};
+
+const filterToAccounts = (val, update) => {
+  searchAccounts(val, update, toAccountOptions, toAccountLoading);
+};
+
+watch(
+  () => form.value.fromAccount,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== null && newVal !== "") {
+      fromAccountSearch.value = "";
+    }
+  },
+);
+
+watch(
+  () => form.value.toAccount,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== null && newVal !== "") {
+      toAccountSearch.value = "";
+    }
+  },
+);
+
+const getIcon = (type) => {
+  switch (type) {
+    case 1:
+      return "fa-solid fa-receipt"; // Expenses
+    case 2:
+      return "fa-solid fa-money-bill-wave"; // Income fees
+    case 3:
+      return "fa-solid fa-cash-register"; // Cash box
+    case 4:
+      return "fa-solid fa-graduation-cap"; // Student
+    case 5:
+      return "fa-cart-shopping"; // Purchase
+    case 6:
+      return "fa-building-columns"; // Bank accounts
+    case 7:
+      return "fa-solid fa-user-group"; // Staff
+    case 8:
+      return "fa-solid fa-circle-minus"; // Deductions
+    default:
+      return "fa-solid fa-coins"; // Default
+  }
+};
 
 const transactionTypeOptions = ref([
   { id: 1, name: "Course deduction" },
@@ -230,10 +369,10 @@ const transactionTypeOptions = ref([
 
 // Methods
 const saveAndAddAnother = () => {
-  console.log("Save and Add Another", formData.value);
+  console.log("Save and Add Another", form.value);
   // Add your save logic here
   // Reset form
-  formData.value = {
+  form.value = {
     amount: null,
     categoryId: null,
     fromAccount: null,
@@ -246,25 +385,44 @@ const saveAndAddAnother = () => {
 };
 
 const saveAndClose = () => {
-  console.log("Save and Close", formData.value);
+  console.log("Save and Close", form.value);
   // Add your save logic here
   model.value = false;
 };
+
+onMounted(() => {
+  // Initial load
+});
 </script>
 
 <style lang="scss" scoped>
 .custom-popup {
   width: 39.5rem !important;
+  .form-grouo {
+    margin-bottom: 0.5rem;
+  }
 
   .btn-cancel,
   .btn-save-close {
-    max-width:196.5px;
+    max-width: 196.5px;
   }
 
   .btn-save-add {
     max-width: 167px;
   }
+  .form-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .icon-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $grey-6 !important;
+  }
 }
-
-
 </style>

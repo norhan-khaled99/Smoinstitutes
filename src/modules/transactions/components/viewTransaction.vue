@@ -22,8 +22,8 @@
           </q-btn>
         </div>
         <div class="popup-subtitle row q-gutter-sm items-center">
-          <span>Paper No. ({{ transaction.paperNo }})</span>
-          <span class="q-ml-lg">Date of process : {{ transaction.date }}</span>
+          <span>Paper No. ({{ transaction.paper_no }})</span>
+          <span class="q-ml-lg">Date of process : {{ formatDate(transaction.date) }}</span>
         </div>
 
         <div class="popup-divider"></div>
@@ -39,7 +39,7 @@
             <div class="form-group">
               <label class="form-group-label">Category id</label>
               <p class="transaction-label">
-                {{ transaction.categoryId }}
+                {{ transaction.category_id.name }}
               </p>
             </div>
           </div>
@@ -47,7 +47,7 @@
             <div class="form-group">
               <label class="form-group-label">From Account</label>
               <p class="transaction-label">
-                {{ transaction.transferFrom }}
+                {{ transaction.from_account.name }}
               </p>
             </div>
           </div>
@@ -55,7 +55,7 @@
             <div class="form-group">
               <label class="form-group-label">To Account</label>
               <p class="transaction-label">
-                {{ transaction.transferTo }}
+                {{ transaction.to_account.name }}
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@
             <div class="form-group">
               <label class="form-group-label">Transaction Type</label>
               <p class="form-group-value">
-                {{ transaction.transType }}
+                {{ transaction.jtype.name }}
               </p>
             </div>
           </div>
@@ -73,7 +73,7 @@
               <p class="form-group-value">
                 {{
                   transaction.details ||
-                  `${transaction.transType} fee for ${transaction.categoryId}`
+                  `${transaction.jtype.name} fee for ${transaction.category_id.name}`
                 }}
               </p>
             </div>
@@ -103,6 +103,19 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const formatDate = (date) => {
+  return date
+    ? new Date(date.replace(" ", "T")).toLocaleString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "";
+};
 </script>
 
 <style lang="scss">

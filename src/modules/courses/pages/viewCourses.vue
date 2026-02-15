@@ -204,19 +204,19 @@
       </div>
     </div>
 
-    <q-dialog v-model="pdfDialog" persistent maximized>
-      <q-card>
-        <q-bar>
+    <q-dialog v-model="pdfDialog" persistent>
+      <q-card class="pdf-card">
+        <q-bar class="pdf-bar">
           <div>Preview</div>
           <q-space />
-          <q-btn dense flat icon="close" v-close-popup />
+          <q-btn dense flat icon="close" v-close-popup class="pdf-close-btn" aria-label="Close preview" />
         </q-bar>
 
-        <q-card-section class="q-pa-none">
+        <q-card-section class="q-pa-none pdf-card-section">
           <iframe
             v-if="pdfUrl"
             :src="pdfUrl"
-            style="width: 100%; height: calc(100vh - 50px); border: 0"
+            style="width: 100%; height: calc(100% - 56px); border: 0"
           />
         </q-card-section>
       </q-card>
@@ -570,5 +570,41 @@ onMounted(() => {
     font-size: 14px;
     color: #1f2937;
   }
+}
+
+.pdf-card {
+  width: 90vw;
+  max-width: 1000px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+
+.pdf-card-section {
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.pdf-bar {
+  background-color: #2f5d6a;
+  color: #ffffff;
+}
+
+.pdf-bar :deep(.q-btn) {
+  min-width: 44px;
+  height: 44px;
+}
+
+.pdf-bar :deep(.q-icon) {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.pdf-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
