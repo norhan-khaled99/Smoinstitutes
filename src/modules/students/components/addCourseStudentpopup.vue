@@ -105,7 +105,6 @@ const onClose = () => {
 };
 
 const saveAndAdd = () => {
-  console.log("Save and Add Another:", form.value);
   StudentService.registerCourse(form.value.course.id, {
     student_id: `${props.studentId}`,
     discount: form.value.discount,
@@ -123,10 +122,7 @@ const saveAndAdd = () => {
     });
   });
 
-  // Automatically hide after 3 seconds, user can also close manually
-  /* setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000); */
+ 
 
   // Reset form for "Add Another"
   form.value = {
@@ -136,7 +132,6 @@ const saveAndAdd = () => {
 };
 
 const saveAndClose = async () => {
-  console.log("Save and Close:", form.value);
    await StudentService.registerCourse(form.value.course.id, {
     student_id: `${props.studentId}`,
     discount: form.value.discount,

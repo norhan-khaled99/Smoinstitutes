@@ -77,8 +77,8 @@ class StudentService {
     return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=${search}`);
   }
 
-  getAllNotes(id) {
-    return axiosInstance.get(`api/v1/profiles/person-notes/?person=${id}`);
+  getAllNotes(id, page) {
+    return axiosInstance.get(`/api/v1/profiles/person-notes/?person=${id}&page=${page}`);
   }
 
   addNotes(value) {

@@ -221,7 +221,6 @@ const onSearchEvent = (searchValue) => {
 };
 
 const handleFilterChange = ({type, val}) => {
-  console.log(type);
   if (type === 'course') {
     selectedCourse.value = val;
   } else if (type === 'jtype') {

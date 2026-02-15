@@ -15,7 +15,6 @@
     @openDialogDeleteEvent="openDialogDeleteEvent"
     :showFilters="true"
     @addNew="addEvent"
-    @EditEvent="EditEvent"
     @DetailsEvent="DetailsEvent"
     @addDiscount="addDiscount"
     searchPlaceholder="Search courses..."
@@ -24,7 +23,6 @@
     @clearFilters="clearFilter"
     @updatePag="updatePag"
     @getPagFun="getPagFun"
-    @sortApi="fireSortCall"
     @callApi="fireCall"
     emptyStateTitle="No courses found"
     emptyStateDescription="Get started by assigning a course."
@@ -267,10 +265,7 @@ const handleSaveDiscount = (data) => {
   // Add save discount logic here
 };
 
-const EditEvent = (row) => {
-  console.log("Edit event:", row);
-  // Add edit logic here
-};
+
 const clearFilter = () => {
   selectedStatus.value = "";
   selectedBalance.value = "";
@@ -299,10 +294,6 @@ const getPagFun = ([apiCall, page, paginationData]) => {
   pagination.value.page = page;
 };
 
-const fireSortCall = ([apiCall, sortBy]) => {
-  console.log("Sort API call:", { apiCall, sortBy });
-  // Add sort logic here if needed
-};
 
 const fireCall = ([apiCall, page, paginationData]) => {
   pagination.value.page = page;

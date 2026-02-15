@@ -3,7 +3,7 @@
     <div class="header">
       <h2 class="title">Student Notes</h2>
       <q-btn class="add-note-btn q-px-md" flat @click="addNote">
-        <q-icon name="add_circle_outline" class="q-mr-sm" size="18px"/>
+        <q-icon name="add_circle_outline" class="q-mr-sm" size="18px" />
         Add Note
       </q-btn>
     </div>
@@ -90,10 +90,17 @@
                   fill="#1565C0"
                 />
               </svg>
-              <span class="note-type-label" v-if="note.note_type==='warn'">Warning Note</span>
-              <span class="note-type-label" v-if="note.note_type==='important'">Important Note</span>
-              <span class="note-type-label" v-if="note.note_type==='info'">Information Note</span>
-
+              <span class="note-type-label" v-if="note.note_type === 'warn'"
+                >Warning Note</span
+              >
+              <span
+                class="note-type-label"
+                v-if="note.note_type === 'important'"
+                >Important Note</span
+              >
+              <span class="note-type-label" v-if="note.note_type === 'info'"
+                >Information Note</span
+              >
             </div>
             <p class="note-description q-mt-sm">{{ note.note }}</p>
             <div class="note-footer text-caption q-mt-sm">
@@ -105,15 +112,85 @@
       </div>
     </div>
 
-    <addNotePopup v-model="showAddPopup" v-if="props.student" :student="props.student" @save="handleSaveNote"/>
+    <div class="row justify-center q-mt-md items-center" v-if="maxPages > 1">
+      <q-btn
+        flat
+        round
+        dense
+        class="q-mr-sm"
+        :disable="pagination.page <= 1"
+        @click="getAllNotes(pagination.page - 1)"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 19L9 12L15 5"
+            stroke="#666D80"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </q-btn>
+
+      <q-pagination
+        v-model="pagination.page"
+        :max="maxPages"
+        :max-pages="6"
+        icon-first="skip_previous"
+        icon-last="skip_next"
+        :direction-links="false"
+        @update:model-value="getAllNotes"
+        color="grey-8"
+        active-color="grey-6"
+        active-text-color="white"
+        class="custom-pagination"
+      />
+
+      <q-btn
+        flat
+        round
+        dense
+        class="q-ml-sm"
+        :disable="pagination.page >= maxPages"
+        @click="getAllNotes(pagination.page + 1)"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 19L15 12L9 5"
+            stroke="#666D80"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </q-btn>
+    </div>
+    <addNotePopup
+      v-model="showAddPopup"
+      v-if="props.student"
+      :student="props.student"
+      @save="handleSaveNote"
+    />
   </div>
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import { onMounted, ref, computed } from "vue";
 import addNotePopup from "./addNotePopup.vue";
 import Service from "../services/service";
-import {useQuasar} from "quasar";
+import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 const showAddPopup = ref(false);
@@ -125,19 +202,16 @@ const props = defineProps({
 });
 
 const notes = ref([]);
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 20,
+  rowsNumber: 0,
+});
 
-const getIcon = (type) => {
-  switch (type) {
-    case "Warning":
-      return "report_problem";
-    case "Important":
-      return "error_outline";
-    case "Information":
-      return "info_outline";
-    default:
-      return "help_outline";
-  }
-};
+const maxPages = computed(() => {
+  const total = Number(pagination.value.rowsNumber) || 0;
+  return Math.ceil(total / pagination.value.rowsPerPage) || 1;
+});
 
 const addNote = () => {
   showAddPopup.value = true;
@@ -170,14 +244,16 @@ const handleSaveNote = (newNote) => {
     });
 };
 
-const getAllNotes = () => {
-   $q.loading.show();
-  Service.getAllNotes(props.student.globalid)
+const getAllNotes = (page = 1) => {
+  pagination.value.page = page;
+  $q.loading.show();
+  Service.getAllNotes(props.student.globalid, page)
     .then((response) => {
       if (response.status === 200) {
         notes.value = response.data.results;
+        pagination.value.rowsNumber = response.data.count;
       }
-       $q.loading.hide();
+      $q.loading.hide();
     })
     .catch((error) => {
       $q.notify({
@@ -193,5 +269,15 @@ const getAllNotes = () => {
 };
 onMounted(() => {
   getAllNotes();
-})
+});
 </script>
+
+<style scoped lang="scss">
+.custom-pagination {
+  :deep(.q-btn--active) {
+    color: #2f5d6a !important;
+    background-color: #dddde5 !important;
+    font-weight: bold;
+  }
+}
+</style>
