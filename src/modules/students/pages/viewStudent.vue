@@ -123,7 +123,7 @@
       <q-separator color="grey-2" />
       <q-tab-panels v-model="tab" animated class="text-left">
         <q-tab-panel name="overview">
-          <overview ref="overviewRef" :is-editing="isEditing" />
+          <overview ref="overviewRef" :is-editing="isEditing" :payment-options="paymentData" @view-transactions="handleViewTransactions" @add-payment="handleAddPayment"/>
         </q-tab-panel>
 
         <q-tab-panel name="courses">
@@ -144,6 +144,16 @@
       </q-tab-panels>
     </div>
   </q-page>
+
+  <TransactionPopup
+    v-model="isTransactionPopupOpen"
+    :type="currentTransactionType"
+    :currentTransaction="currentTransactionData"
+    :studentName="studentData.full_name + ' ( ID : ' + studentData.student_id + ' )'"
+    v-if="currentTransactionData && studentData"
+    :student="studentData"
+    @save="onSaveTransaction"
+  />
   <q-dialog v-model="pdfDialog" persistent>
       <q-card class="pdf-card">
         <q-bar class="pdf-bar">
@@ -173,8 +183,14 @@ import attendanceList from "../components/attendanceList.vue";
 import overview from "../components/overview.vue";
 import {useQuasar} from "quasar";
 import StudentService from "../services/service";
+import TransactionPopup from "../components/TransactionPopup.vue";
+import { uid } from "quasar";
 
 const $q = useQuasar();
+const isTransactionPopupOpen = ref(false);
+const currentTransactionType = ref("Income");
+const currentTransactionData = ref({});
+
 const route = useRoute();
 const tab = ref("overview");
 const isEditing = ref(false);
@@ -228,6 +244,90 @@ const getStudentDetails = () => {
 
   })
 }
+
+const handleViewTransactions = () => {
+  tab.value = 'transaction';
+};
+
+const handleAddPayment = (option) => {
+  currentTransactionType.value = option.name;
+  currentTransactionData.value = option;
+  isTransactionPopupOpen.value = true;
+};
+
+const onSaveTransaction = (data) => {
+  const random = uid();
+  let promise;
+  const payload = {};
+
+  if (data.type === 'Income') {
+    Object.assign(payload, {
+      paper_no: data.voucherNumber,
+      to_account: data.toAccount ? data.toAccount : studentData.value.globalid,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+    });
+    promise = StudentService.addIncomePayment(payload, random);
+  } else if (data.type === 'Expense') {
+    Object.assign(payload, {
+      paper_no: data.voucherNumber,
+      from_account: studentData.value.globalid,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+    });
+    promise = StudentService.addExpensePayment(payload, random);
+  } else if (data.type === 'Service') {
+    Object.assign(payload, {
+      student: data.toAccount ? data.toAccount : studentData.value.globalid,
+      service: data.service ? data.serviceId : null,
+      amount: data.amount,
+      details: data.details,
+    });
+    promise = StudentService.addServicePayment(payload, random);
+  } else if (data.type === 'Funds Transfer') {
+    Object.assign(payload, {
+      from_account: studentData.value.globalid,
+      to_account: data.toAccount ? data.toAccount : null,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+      jtype: data.type_id,
+    });
+    promise = StudentService.addGenericPayment(payload, random);
+  }
+
+  if (promise) {
+    $q.loading.show();
+    promise.then((response) => {
+      if (response.status === 200 || response.status === 201) {
+        $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: response.data.result || "Payment added successfully.",
+        });
+        isTransactionPopupOpen.value = false;
+        // Ideally reload transaction list if we were on that tab, or just refresh student details to update balance
+        getStudentDetails();
+      }
+    }).catch((error) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    }).finally(() => {
+      $q.loading.hide();
+    });
+  }
+};
 const pdfDialog = ref(false);
 const pdfUrl = ref(null);
 const handleAction = async (action) => {
