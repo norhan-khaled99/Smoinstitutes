@@ -7,7 +7,6 @@
       :tablePagination="pagination"
       :showAdd="true"
       addBtnLabel="Add Student"
-      :actions="true"
       :showBalanceFilter="true"
       :balanceOptions="balanceOptions"
       :showStatusFilter="true"

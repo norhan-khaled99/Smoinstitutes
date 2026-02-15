@@ -5,7 +5,6 @@
     :tablePagination="pagination"
     :showAddButton="true"
     addBtnLabel="Add Course"
-    :actions="true"
     :studentCourse="true"
     :showBalanceFilter="true"
     :balanceOptions="balanceOptions"

@@ -6,7 +6,6 @@
     :tablePagination="pagination"
     :showAdd="true"
     addBtnLabel="Add Staff"
-    :actions="true"
     :staff="true"
     :showFilters="true"
     :ShowActionsdropDown="true"

@@ -6,7 +6,6 @@
     :showAddButtonDropdown="true"
     addBtnLabel="Add Payment"
     :addDropdownOptions="addDropdownOptions"
-    :actions="true"
     :showCourseFilter="true"
     :courseOptions="courseOptions"
     :showTypeFilterInTransation="true"

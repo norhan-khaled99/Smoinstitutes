@@ -7,7 +7,6 @@
     :showAdd="true"
     addBtnLabel="Add Note"
     :showAddButton="false"
-    :actions="true"
     :Notes="true"
     :showFilters="false"
     :ShowActionsdropDown="true"

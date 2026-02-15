@@ -6,7 +6,6 @@
     :tablePagination="pagination"
     :showAdd="true"
     addBtnLabel="Add Book Stock"
-    :actions="true"
     :showFilters="true"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search books stock..."

@@ -6,12 +6,10 @@
     :tablePagination="pagination"
     :showAdd="true"
     addBtnLabel="Add Transaction"
-    :actions="true"
     :ShowActionsdropDown="true"
     :showFilters="true"
     :showTypeFilterInTransation="true"
     :typeOptions="transTypeOptions"
-    typePlaceholder="Trans Type"
     :transactions="true"
     :searchInput="false"
     @addNew="addTransaction"
@@ -35,7 +33,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch} from "vue";
+import { ref, onMounted, watch } from "vue";
+import { axiosInstance } from "app/http-common";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
 import AddTransaction from "../components/addTransaction.vue";
@@ -50,16 +49,20 @@ const pagination = ref({
 });
 const $q = useQuasar();
 const router = useRouter();
-const typeOfFilter = ref("");
-const valueOfFilter = ref("");
-const searchQuery = ref("");
+const filters = ref({});
 
 const allTransactions = ref([]);
 const getAllTransactions = (page = 1) => {
   $q.loading.show();
 
-  services
-    .getAllTransactions(page, typeOfFilter.value, valueOfFilter.value, searchQuery.value).then((res) => {
+  let query = `?page=${page}`;
+  if (filters.value.jtype) query += `&jtype=${filters.value.jtype}`;
+  if (filters.value.fromNo) query += `&paper_no__gte=${filters.value.fromNo}`;
+  if (filters.value.toNo) query += `&paper_no__lte=${filters.value.toNo}`;
+
+  axiosInstance
+    .get(`/api/v1/finance/transactions/${query}`)
+    .then((res) => {
       allTransactions.value = res.data.results;
 
       // Update pagination with API response
@@ -75,15 +78,16 @@ const getAllTransactions = (page = 1) => {
         textColor: "black-1",
         icon: "img:/images/Error.png",
         position: "bottom-right",
-        message: error.res?.data?.result || "An error occurred.",
+        message: error.response?.data?.result || "An error occurred.",
       });
     });
 };
 
-
 const transTypeOptions = ref([]);
 const getAllTransTypeOptions = () => {
-  services.getAllTransTypeOptions().then((res) => {
+  services
+    .getAllTransTypeOptions()
+    .then((res) => {
       transTypeOptions.value = res.data.data;
     })
     .catch((error) => {
@@ -141,8 +145,6 @@ const columns = [
   },
 ];
 
-
-
 const showViewTransaction = ref(false);
 const selectedTransaction = ref({});
 const showAddTransaction = ref(false);
@@ -155,11 +157,13 @@ const onSearch = (val) => {
 };
 
 const onFilterChange = ({ type, val }) => {
-  console.log("Filter Change:", type, val);
+  filters.value[type] = val;
+  getAllTransactions(1);
 };
 
 const clearFilters = () => {
-  console.log("Clear filters");
+  filters.value = {};
+  getAllTransactions(1);
 };
 
 const viewReport = () => {
@@ -167,27 +171,24 @@ const viewReport = () => {
 };
 
 const viewTransactionData = (data) => {
-  selectedTransaction.value = data
-  showViewTransaction.value = true
-}
+  selectedTransaction.value = data;
+  showViewTransaction.value = true;
+};
 
-
-const getPagFun = ([apiCall, page, paginationData]) => {
+const getPagFun = (page) => {
   getAllTransactions(page);
 };
 
-const fireCall = ([apiCall, page, paginationData]) => {
+const fireCall = (page) => {
   getAllTransactions(page);
 };
 
-const fireSortCall = ([apiCall, sorting]) => {
+const fireSortCall = () => {
   getAllTransactions(1);
 };
-
 
 onMounted(() => {
   getAllTransactions();
   getAllTransTypeOptions();
 });
-
 </script>

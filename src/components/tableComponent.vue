@@ -728,8 +728,10 @@
                         </q-select>
                       </div>
 
-
-                      <div class="filter-item-wrapper" v-if="showTypeFilterInTransation">
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showTypeFilterInTransation"
+                      >
                         <q-select
                           outlined
                           v-model="typeFilter"
@@ -1297,7 +1299,7 @@
               </q-td>
             </template>
 
-            <template v-slot:body-cell-actions="props" v-if="actions">
+            <template v-slot:body-cell-actions="props">
               <q-td :props="props" class="actions">
                 <q-btn
                   flat
@@ -1381,9 +1383,9 @@
                         <q-item-section>Certificate</q-item-section>
                       </q-item>
 
-                      <q-item clickable class="action-menu-item" v-if="student">
+                      <!-- <q-item clickable class="action-menu-item" v-if="student">
                         <q-item-section>Reports</q-item-section>
-                      </q-item>
+                      </q-item> -->
                     </q-list>
                   </q-menu>
                 </q-btn>
@@ -1438,10 +1440,6 @@ export default {
       default: false,
     },
     ShowActionsdropDown: {
-      type: Boolean,
-      default: false,
-    },
-    actions: {
       type: Boolean,
       default: false,
     },

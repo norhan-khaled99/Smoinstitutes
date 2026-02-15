@@ -22,7 +22,6 @@
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
     @searchEvent="onSearch"
-    :actions="true"
   >
     <!-- Custom Account Type Slot -->
     <template #body-cell-accountType="{ row }">

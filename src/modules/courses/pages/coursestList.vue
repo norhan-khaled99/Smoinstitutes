@@ -7,7 +7,6 @@
     :showAdd="true"
     :courses="true"
     addBtnLabel="Add Course"
-    :actions="true"
     :showFilters="true"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search Courses..."
