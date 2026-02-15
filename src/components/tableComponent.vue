@@ -1158,6 +1158,26 @@
                 </div>
               </q-td>
             </template>
+            <template v-slot:body-cell-stu_transaction_type="props">
+              <q-td :props="props">
+                <div
+                  :class="props.row.jtype.name"
+                  class="type-cell row items-center no-wrap"
+                >
+                  <svg
+                    width="6"
+                    height="6"
+                    viewBox="0 0 6 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="q-mr-xs"
+                  >
+                    <circle cx="3" cy="3" r="3" fill="currentColor" />
+                  </svg>
+                  {{ props.row.jtype.name }}
+                </div>
+              </q-td>
+            </template>
 
             <template v-slot:body-cell-status="props">
               <q-td :props="props">

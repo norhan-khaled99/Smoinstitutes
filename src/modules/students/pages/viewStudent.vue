@@ -129,7 +129,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="transaction">
-          <transactionList v-if="studentData" :studnet="studentData" :transactionList="transactionData" :course-options="courseData"/>
+          <transactionList v-if="studentData" :student="studentData" :paymentOptions="paymentData" :course-options="courseData"/>
         </q-tab-panel>
 
         <q-tab-panel name="notes">
@@ -165,7 +165,7 @@ const studentData = ref({
   student_id: "",
   status: "",
 });
-const transactionData = ref([]);
+const paymentData = ref([]);
 const courseData = ref([]);
 const toggleEdit = () => {
   isEditing.value = !isEditing.value;
@@ -192,7 +192,7 @@ const getStudentDetails = () => {
     .then((res) => {
       if (res.status === 200) {
         studentData.value = res.data.data.student;
-        transactionData.value = res.data.data.payment_list;
+        paymentData.value = res.data.data.payment_list;
         courseData.value = res.data.data.courses;
       }
     }).catch((err) => {

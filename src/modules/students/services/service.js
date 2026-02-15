@@ -41,8 +41,40 @@ class StudentService {
     return axiosInstance.post(`/api/v1/courses/profile/${id}/cancel-registration/`, data);
   }
 
-  getAllTransactions(id) {
+  getAllTransactionsType(id) {
     return axiosInstance.get(`/api/v1/auth/lookups/jtypes/dropdown/?q=tr`);
+  }
+
+  getAllTransactions(id, type, course, page = 1, search = "") {
+    return axiosInstance.get(`/api/v1/finance/transactions/?account=${id}&jtype=${type}&course_id=${course}&page=${page}&q=${search}`);
+  }
+
+  searchForService(search) {
+    return axiosInstance.get(`/api/v1/profiles/accounts/service-dropdown/?q=${search}`);
+  }
+
+  searchForAccount(search) {
+    return axiosInstance.get(`/api/v1/profiles/accounts/search-dropdown/?q=${search}`);
+  }
+
+  addIncomePayment(date , random) {
+    return axiosInstance.post(`/api/v1/finance/income/`, date , {headers : {'Idempotency-Key': random}});
+  }
+
+  addExpensePayment(date , random ) {
+    return axiosInstance.post(`/api/v1/finance/expense/`, date, {headers : {'Idempotency-Key': random}})
+  }
+
+  addServicePayment(date , random ) {
+    return axiosInstance.post(`/api/v1/finance/service/`, date, {headers : {'Idempotency-Key': random}})
+  }
+
+  addGenericPayment(date , random) {
+    return axiosInstance.post(`/api/v1/finance/generic/`, date, {headers : {'Idempotency-Key': random}})
+  }
+
+  searchForCourse(search) {
+    return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=${search}`);
   }
 }
 

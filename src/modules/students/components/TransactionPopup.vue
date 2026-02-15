@@ -31,6 +31,7 @@
               <label>Amount <span>*</span></label>
               <q-input
                 v-model="form.amount"
+                :disable="!!props.currentTransaction.amount"
                 placeholder="Enter amount..."
                 outlined
                 dense
@@ -49,6 +50,7 @@
                 outlined
                 dense
                 class="custom-input"
+                :disable="!!props.currentTransaction.paper_no"
               />
             </div>
           </div>
@@ -58,19 +60,27 @@
             <div class="form-group">
               <label>Course Name</label>
               <q-select
-                v-model="form.course"
+                v-model="form.courseId"
                 :options="courseOptions"
+                option-value="id"
                 option-label="name"
-                :label="
-                  form.course == undefined || form.course == ''
-                    ? 'Select Course'
-                    : ''
-                "
+                clearable
+                hide-selected
                 outlined
                 dense
                 emit-value
                 map-options
+                fill-input
+                use-input
+                :input-value="courseSearch"
+                @update:input-value="(val) => (courseSearch = val)"
+                @update:model-value="() => (courseSearch = '')"
+                input-debounce="400"
+                :loading="courseLoading"
+                @filter="searchForCourses"
+                placeholder="Select Course After Searching..."
                 class="custom-select"
+                :disable="!!props.currentTransaction.category_id"
               />
             </div>
           </div>
@@ -82,15 +92,22 @@
                 v-model="form.toAccount"
                 :options="accountOptions"
                 option-label="name"
-                :label="
-                  form.toAccount == undefined || form.toAccount == ''
-                    ? 'Select Account'
-                    : ''
-                "
+                option-value="id"
+                clearable
+                hide-selected
                 outlined
                 dense
                 emit-value
                 map-options
+                fill-input
+                use-input
+                :input-value="accountSearch"
+                @update:input-value="(val) => (accountSearch = val)"
+                @update:model-value="() => (accountSearch = '')"
+                input-debounce="400"
+                :loading="accountLoading"
+                @filter="searchForAccount"
+                placeholder="Select Account After Searching..."
                 class="custom-select"
               />
             </div>
@@ -101,19 +118,27 @@
             <div class="form-group">
               <label>Service <span>*</span></label>
               <q-select
-                v-model="form.service"
+                v-model="form.serviceId"
                 :options="serviceOptions"
+                option-value="id"
                 option-label="name"
-                :label="
-                  form.service == undefined || form.service == ''
-                    ? 'Select Service'
-                    : ''
-                "
+                clearable
+                hide-selected
                 outlined
                 dense
                 emit-value
                 map-options
+                fill-input
+                use-input
+                :input-value="serviceSearch"
+                @update:input-value="(val) => (serviceSearch = val)"
+                @update:model-value="() => (serviceSearch = '')"
+                input-debounce="400"
+                :loading="serviceLoading"
+                @filter="searchForService"
+                placeholder="Select Account After Searching..."
                 class="custom-select"
+                :disable="!!props.currentTransaction.service_id"
               />
             </div>
           </div>
@@ -136,8 +161,8 @@
         </div>
 
         <div class="popup-actions justify-end q-mt-lg">
-          <q-btn label="Cancel" v-close-popup flat class="btn-cancel" no-caps />
-          <q-btn label="Save" class="btn-save-close" no-caps @click="onSave" />
+          <q-btn label="Cancel" v-close-popup flat class="btn-cancel" no-caps/>
+          <q-btn label="Save" class="btn-save-close" no-caps @click="onSave"/>
         </div>
       </q-card-section>
     </q-card>
@@ -145,7 +170,8 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import {computed, onMounted, ref, watch} from "vue";
+import Service from "../services/service";
 
 const props = defineProps({
   modelValue: {
@@ -156,33 +182,26 @@ const props = defineProps({
     type: String,
     default: "Income", // 'Income', 'Expense', 'Service', 'Funds Transfer'
   },
+  currentTransaction: {
+    type: Object,
+    default: {},
+  },
   studentName: {
     type: String,
     default: "Moaz Essam (ID : 251221)",
   },
-  courseOptions: {
-    type: Array,
-    default: () => [
-      { name: "Intro A", id: 1 },
-      { name: "Intro B", id: 2 },
-      { name: "ICDL", id: 3 },
-    ],
-  },
-  serviceOptions: {
-    type: Array,
-    default: () => [
-      { name: "Service A", id: 1 },
-      { name: "Service B", id: 2 },
-    ],
-  },
-  accountOptions: {
-    type: Array,
-    default: () => [
-      { name: "Account A", id: 1 },
-      { name: "Account B", id: 2 },
-    ],
-  },
 });
+const courseSearch = ref("");
+const courseLoading = ref(false);
+const courseOptions = ref([]);
+
+const accountSearch = ref("");
+const accountLoading = ref(false);
+const accountOptions = ref([]);
+
+const serviceSearch = ref("");
+const serviceLoading = ref(false);
+const serviceOptions = ref([]);
 
 const emit = defineEmits(["update:modelValue", "save"]);
 
@@ -212,12 +231,14 @@ const courseColClass = computed(() =>
 );
 
 const form = ref({
-  amount: "",
-  voucherNumber: "",
-  course: null,
-  service: null,
-  toAccount: null,
-  details: "",
+  amount: props.currentTransaction.amount || "",
+  voucherNumber: props.currentTransaction.paper_no || "",
+  course: props.currentTransaction.category_name || null,
+  courseId: props.currentTransaction.category_id || null,
+  service: props.currentTransaction.service || null,
+  serviceId: props.currentTransaction.service_id || null,
+  toAccount: props.currentTransaction.to_account || null,
+  details: props.currentTransaction.details || "",
 });
 
 // Reset form when type changes or dialog opens
@@ -226,28 +247,223 @@ watch(
   (val) => {
     if (val) {
       form.value = {
-        amount: "",
-        voucherNumber: "",
-        course: null,
-        service: null,
-        toAccount: null,
-        details: "",
+        amount: props.currentTransaction.amount || "",
+        voucherNumber: props.currentTransaction.paper_no || "",
+        course: props.currentTransaction.category_name || null,
+        courseId: props.currentTransaction.category_id || null,
+        service: props.currentTransaction.service || null,
+        serviceId: props.currentTransaction.service_id || null,
+        toAccount: props.currentTransaction.to_account || null,
+        details: props.currentTransaction.details || "",
       };
+
+      // Reset & Initialize Options
+      courseOptions.value = [];
+      accountOptions.value = [];
+      serviceOptions.value = [];
+
+      if (props.currentTransaction.category_id && props.currentTransaction.category_name) {
+        courseOptions.value = [{
+          id: props.currentTransaction.category_id,
+          name: props.currentTransaction.category_name
+        }];
+      }
+
+      if (props.currentTransaction.service_id && props.currentTransaction.service) { // Assuming service name is in 'service' prop
+        serviceOptions.value = [{
+          id: props.currentTransaction.service_id,
+          name: props.currentTransaction.service
+        }];
+      }
+
     }
   },
 );
 
 const onSave = () => {
   // You can add validation here
-  emit("save", { ...form.value, type: props.type });
+  emit("save", {...form.value, type: props.type, type_id: props.currentTransaction.type_id});
   isOpen.value = false;
 };
+
+const searchForCourses = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      courseOptions.value = [];
+    });
+    return;
+  }
+
+  courseLoading.value = true;
+
+  try {
+    const res = await Service.searchForCourse(val);
+
+    update(() => {
+      const mapped = res.data.data.map((course) => ({
+        id: course.value,
+        name: course.label,
+      }));
+
+      courseOptions.value = [
+        ...new Map(mapped.map((item) => [item.id, item])).values(),
+      ];
+    });
+  } catch (e) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: e.res?.data?.result || "An error occurred.",
+    });
+  } finally {
+    courseLoading.value = false;
+  }
+};
+
+const searchForAccount = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      accountOptions.value = [];
+    });
+    return;
+  }
+
+  accountLoading.value = true;
+
+  try {
+    const res = await Service.searchForAccount(val);
+
+    update(() => {
+      const mapped = res.data.data.map((account) => ({
+        id: account.id,
+        name: account.label,
+      }));
+
+      accountOptions.value = [
+        ...new Map(mapped.map((item) => [item.id, item])).values(),
+      ];
+    });
+  } catch (e) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: e.res?.data?.result || "An error occurred.",
+    });
+  } finally {
+    accountLoading.value = false;
+  }
+};
+
+const searchForService = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      serviceOptions.value = [];
+    });
+    return;
+  }
+
+  serviceLoading.value = true;
+
+  try {
+    const res = await Service.searchForService(val);
+
+    update(() => {
+      const mapped = res.data.data.map((service) => ({
+        id: service.id,
+        name: service.label,
+      }));
+
+      serviceOptions.value = [
+        ...new Map(mapped.map((item) => [item.id, item])).values(),
+      ];
+    });
+  } catch (e) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: e.res?.data?.result || "An error occurred.",
+    });
+  } finally {
+    serviceLoading.value = false;
+  }
+};
+
+watch(
+  () => form.value.courseId,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== null && newVal !== "") {
+      courseSearch.value = "";
+    }
+  },
+);
+
+watch(
+  () => form.value.toAccount,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== null && newVal !== "") {
+      accountSearch.value = "";
+    }
+  },
+);
+
+watch(
+  () => form.value.serviceId,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== null && newVal !== "") {
+      serviceSearch.value = "";
+    }
+  },
+);
+
+onMounted(() => {
+  form.value.amount = props.currentTransaction.amount || "";
+  form.value.voucherNumber = props.currentTransaction.paper_no || "";
+  form.value.course = props.currentTransaction.category_name || null;
+  form.value.courseId = props.currentTransaction.category_id || null;
+  form.value.service = props.currentTransaction.service || null;
+  form.value.serviceId = props.currentTransaction.service_id || null;
+  form.value.toAccount = props.currentTransaction.to_account || null;
+  form.value.details = props.currentTransaction.details || "";
+
+  // Initialize options so q-select displays name instead of ID
+  if (props.currentTransaction.category_id && props.currentTransaction.category_name) {
+    courseOptions.value = [{
+      id: props.currentTransaction.category_id,
+      name: props.currentTransaction.category_name
+    }];
+  }
+
+  if (props.currentTransaction.service_id && props.currentTransaction.service) { // Assuming service name is in 'service' prop
+    serviceOptions.value = [{
+      id: props.currentTransaction.service_id,
+      name: props.currentTransaction.service
+    }];
+  }
+
+  // For account, check if we have account data in props.currentTransaction (e.g. to_account_name if available, or just rely on ID if name not passed)
+  // Assuming currentTransaction might have to_account object or similar. If not available, we can't show name.
+   if (props.currentTransaction.to_account) {
+    // If to_account is the ID, we need the name. If it's not passed, we might show ID.
+    // Checking props structure from service.js or user info.
+    // If to_account is just ID, we can't help much without name.
+  }
+})
 </script>
 
 <style lang="scss" scoped>
 .custom-popup {
   width: 35rem;
 }
+
 .form-group {
   margin-bottom: 0;
 }

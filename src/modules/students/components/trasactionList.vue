@@ -9,7 +9,7 @@
     :actions="true"
     :showCourseFilter="true"
     :courseOptions="courseOptions"
-    :showTypeFilter="true"
+    :showTypeFilterInTransation="true"
     :typeOptions="typeOptions"
     :ShowActionsdropDown="true"
     :showFilters="true"
@@ -32,44 +32,49 @@
   <TransactionPopup
     v-model="isTransactionPopupOpen"
     :type="currentTransactionType"
+    :currentTransaction="currentTransactionData"
+    v-if="currentTransactionData"
     @save="onSaveTransaction"
   />
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from "vue";
+import {onMounted, ref, watch} from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import TransactionPopup from "./TransactionPopup.vue";
 import StudentService from "../services/service";
+import {uid, useQuasar} from "quasar";
 
+const $q = useQuasar();
 const isTransactionPopupOpen = ref(false);
 const currentTransactionType = ref("Income");
+const currentTransactionData = ref({});
 
 // Filter state
 const searchQuery = ref("");
 const selectedCourse = ref(null);
 const selectedType = ref(null);
-const allTransactions = ref([]);
-
+const serviceOptions = ref([]);
+const accountOptions = ref([]);
 const columns = [
   {
     name: "voucherNumber",
     label: "Voucher Number",
-    field: (row) => row.category_id,
+    field: (row) => row.paper_no,
     align: "left",
     sortable: false,
   },
   {
     name: "course",
     label: "Course",
-    field: (row) => row.category_name,
+    field: (row) => row.category_id?.name || row.category_name,
     align: "left",
     sortable: false,
   },
   {
-    name: "type",
+    name: "stu_transaction_type",
     label: "Type",
-    field: (row) => row.type,
+    field: (row) => row.jtype?.name || row.type,
     align: "left",
     sortable: false,
   },
@@ -83,7 +88,7 @@ const columns = [
   {
     name: "date",
     label: "Transaction Date",
-    field: (row) => row.transaction_date,
+    field: (row) => row.date,
     align: "left",
     sortable: false,
   },
@@ -95,7 +100,11 @@ const columns = [
 ];
 
 const props = defineProps({
-  transactionList: {
+  student: {
+    type: Object,
+    default: {},
+  },
+  paymentOptions: {
     type: Array,
     default: [],
   },
@@ -114,118 +123,127 @@ const pagination = ref({
 const courseOptions = ref([]);
 const typeOptions = ref([]);
 const addDropdownOptions = ref([
-   { name: "Income", id: 1 },
-  { name: "Expense", id: 2 },
-  { name: "Service", id: 3 },
-  { name: "Funds Transfer", id: 4 },
+  {name: "Income", id: 1},
+  {name: "Expense", id: 2},
+  {name: "Service", id: 3},
+  {name: "Funds Transfer", id: 4},
 ]);
 
-// Computed property for filtered transactions
-const filteredTransactions = computed(() => {
-  let filtered = [...allTransactions.value];
-
-  // Apply search filter
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter((transaction) =>
-      transaction.category_id?.toString().toLowerCase().includes(query) ||
-      transaction.category_name?.toLowerCase().includes(query) ||
-      transaction.type?.toLowerCase().includes(query) ||
-      transaction.amount?.toString().includes(query) ||
-      transaction.transaction_date?.toLowerCase().includes(query)
-    );
-  }
-
-  // Apply course filter
-  if (selectedCourse.value) {
-    filtered = filtered.filter((transaction) => {
-       if (transaction.course_id === selectedCourse.value) return true;
-       // Fallback: match by name
-       const selectedOption = courseOptions.value.find(opt => opt.id === selectedCourse.value);
-       return selectedOption && transaction.category_name === selectedOption.name;
-    });
-  }
-
-  // Apply type filter
-  if (selectedType.value) {
-      filtered = filtered.filter((transaction) => {
-        const typeOption = typeOptions.value.find(opt => opt.id === selectedType.value);
-        return typeOption ? transaction.type === typeOption.name : false;
-      });
-  }
-
-  return filtered;
-});
-
-// Update pagination total when filtered transactions change
-watch(filteredTransactions, (newFiltered) => {
-  pagination.value.rowsNumber = newFiltered.length;
-  // If current page is out of bounds, reset to page 1
-  const maxPage = Math.ceil(newFiltered.length / pagination.value.rowsPerPage);
-  if (pagination.value.page > maxPage && maxPage > 0) {
-    pagination.value.page = 1;
-  }
-});
-
-// Watch for changes in props to update local state
-watch(() => props.transactionList, (newVal) => {
-  allTransactions.value = newVal;
-}, { immediate: true });
-
-// Computed property for paginated transactions (table rows)
-const tableRows = computed(() => {
-    const filtered = filteredTransactions.value;
-    const start = (pagination.value.page - 1) * pagination.value.rowsPerPage;
-    const end = start + pagination.value.rowsPerPage;
-    return filtered.slice(start, end);
-});
+const tableRows = ref([]);
 
 const handleAddPayment = (option) => {
   currentTransactionType.value = option.name;
+  currentTransactionData.value = option;
   isTransactionPopupOpen.value = true;
 };
 
 const onSaveTransaction = (data) => {
-  console.log("Saved Transaction:", data);
-  // Implement API call or local update here
+  const random = uid();
+  let promise;
+  const payload = {};
+
+  if (data.type === 'Income') {
+    Object.assign(payload, {
+      paper_no: data.voucherNumber,
+      to_account: data.toAccount ? data.toAccount : props.student.globalid,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+    });
+    promise = StudentService.addIncomePayment(payload, random);
+  } else if (data.type === 'Expense') {
+    Object.assign(payload, {
+      paper_no: data.voucherNumber,
+      from_account: props.student.globalid,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+    });
+    promise = StudentService.addExpensePayment(payload, random);
+  } else if (data.type === 'Service') {
+    Object.assign(payload, {
+      student: data.toAccount ? data.toAccount : props.student.globalid,
+      service: data.service ? data.serviceId : null,
+      amount: data.amount,
+      details: data.details,
+    });
+    promise = StudentService.addServicePayment(payload, random);
+  } else if (data.type === 'Funds Transfer') {
+    Object.assign(payload, {
+      from_account: props.student.globalid,
+      to_account: data.toAccount ? data.toAccount : null,
+      amount: data.amount,
+      category_id: data.course ? data.courseId : null,
+      details: data.details,
+      jtype: data.type_id,
+    });
+    promise = StudentService.addGenericPayment(payload, random);
+  }
+
+  if (promise) {
+    $q.loading.show();
+    promise.then((response) => {
+      if (response.status === 200 || response.status === 201) {
+        $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/success.png",
+          position: "bottom-right",
+          message: response.data.result || "Payment added successfully.",
+        });
+        isTransactionPopupOpen.value = false;
+        getTransactions(pagination.value.page);
+      }
+    }).catch((error) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    }).finally(() => {
+      $q.loading.hide();
+    });
+  }
 };
 
 const onAddNewTransaction = () => {
-  // Default action for empty state if needed, or open default popup
   currentTransactionType.value = "Income";
   isTransactionPopupOpen.value = true;
 };
 
 const onSearchEvent = (searchValue) => {
   searchQuery.value = searchValue;
-  pagination.value.page = 1; // Reset to first page on search
+  getTransactions(1);
 };
 
-const handleFilterChange = ({ type, val }) => {
+const handleFilterChange = ({type, val}) => {
   console.log(type);
   if (type === 'course') {
     selectedCourse.value = val;
-  } else if (type === 'account_type') {
+  } else if (type === 'jtype') {
     selectedType.value = val;
   }
-  pagination.value.page = 1;
+  getTransactions(1);
 };
 
 const clearFilter = () => {
   selectedCourse.value = null;
   selectedType.value = null;
   searchQuery.value = "";
-  // tableComp usually handles clearing its own search input display,
-  // relying on us to clear the data filter.
+  getTransactions(1);
 };
 
 const updatePag = (rowsPerPage) => {
   pagination.value.rowsPerPage = rowsPerPage;
-  pagination.value.page = 1;
+  getTransactions(1);
 };
 
 const getPagFun = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
+  getTransactions(page);
 };
 
 const fireSortCall = ([apiCall, sortBy]) => {
@@ -233,29 +251,69 @@ const fireSortCall = ([apiCall, sortBy]) => {
 };
 
 const fireCall = ([apiCall, page, paginationData]) => {
-  pagination.value.page = page;
+  getTransactions(page);
 };
 
-const getAllTransactionsTypes = () => {
-  allTransactions.value = props.transactionList;
-  courseOptions.value = props.courseOptions.map(course => ({
-          id: course.course_id,
-          name: course.course_name,
-        }));
-  StudentService.getAllTransactions(12)
+const getTransactions = (page = 1) => {
+  $q.loading.show();
+  const accountId = props.student.globalid || "";
+  const typeId = selectedType.value || "";
+  const courseId = selectedCourse.value || "";
+  const search = searchQuery.value || "";
+
+  StudentService.getAllTransactions(accountId, typeId, courseId, page, search)
+    .then((response) => {
+      if (response.status === 200) {
+        tableRows.value = response.data.results;
+        pagination.value.rowsNumber = response.data.count || 0;
+        pagination.value.page = page;
+        $q.loading.hide();
+      }
+    }).catch((error) => {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: error.response?.data?.result || "An error occurred.",
+    });
+    $q.loading.hide();
+  });
+
+};
+
+const initializeData = () => {
+  addDropdownOptions.value = props.paymentOptions.map(item => ({
+    ...item,
+    name: item.type
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '),
+    id: item.type_id
+  }));
+  StudentService.getAllTransactionsType(12)
     .then((response) => {
       if (response.status === 200) {
         typeOptions.value = response.data.data.map(transaction => ({
-          name: transaction.label,
+          label: transaction.label,
           id: transaction.id,
         }));
       }
     }).catch((error) => {
-    console.error(error);
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: error.response?.data?.result || "An error occurred.",
+    });
   });
+  getTransactions(1);
 }
 
 onMounted(() => {
-  getAllTransactionsTypes()
+  initializeData();
 })
 </script>
