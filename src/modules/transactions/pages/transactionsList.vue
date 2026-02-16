@@ -13,7 +13,7 @@
     :transactions="true"
     :searchInput="false"
     @addNew="addTransaction"
-    @filterChange="onFilterChange"
+    @filterTransaction="onFilterChange"
     @clearFilters="clearFilters"
     @viewReport="viewReport"
     @getPagFun="getPagFun"
@@ -34,11 +34,9 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { axiosInstance } from "app/http-common";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
 import AddTransaction from "../components/addTransaction.vue";
-import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../service/service.js";
 
@@ -48,20 +46,25 @@ const pagination = ref({
   rowsNumber: 100,
 });
 const $q = useQuasar();
-const router = useRouter();
-const filters = ref({});
-
 const allTransactions = ref([]);
+
+const fromFilter = ref("");
+const toFilter = ref("");
+const typeFilter = ref("");
+
+
+const typeOfFilter = ref("");
+const valueOfFilter = ref("");
+const searchQuery = ref("");
 const getAllTransactions = (page = 1) => {
   $q.loading.show();
-
-  let query = `?page=${page}`;
-  if (filters.value.jtype) query += `&jtype=${filters.value.jtype}`;
-  if (filters.value.fromNo) query += `&paper_no__gte=${filters.value.fromNo}`;
-  if (filters.value.toNo) query += `&paper_no__lte=${filters.value.toNo}`;
-
-  axiosInstance
-    .get(`/api/v1/finance/transactions/${query}`)
+  services
+    .getAllTransactions(
+      page,
+      typeOfFilter.value,
+      valueOfFilter.value,
+      searchQuery.value
+    )
     .then((res) => {
       allTransactions.value = res.data.results;
 
@@ -156,13 +159,18 @@ const onSearch = (val) => {
   console.log("Search:", val);
 };
 
-const onFilterChange = ({ type, val }) => {
-  filters.value[type] = val;
-  getAllTransactions(1);
+const onFilterChange = (from, to, type) => {
+  fromFilter.value = from;
+  toFilter.value = to;
+  typeFilter.value = type;
+
+ console.log("from", fromFilter.value)
+ console.log("to", toFilter.value)
+ console.log("type", typeFilter.value )
+  // getAllTransactions(1);
 };
 
 const clearFilters = () => {
-  filters.value = {};
   getAllTransactions(1);
 };
 
@@ -175,15 +183,15 @@ const viewTransactionData = (data) => {
   showViewTransaction.value = true;
 };
 
-const getPagFun = (page) => {
+const getPagFun = ([apiCall, page]) => {
   getAllTransactions(page);
 };
 
-const fireCall = (page) => {
+const fireCall = ([apiCall, page]) => {
   getAllTransactions(page);
 };
 
-const fireSortCall = () => {
+const fireSortCall = ([apiCall, sorting]) => {
   getAllTransactions(1);
 };
 

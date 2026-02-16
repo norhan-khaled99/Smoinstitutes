@@ -7,12 +7,12 @@
     :showFilters="true"
     searchPlaceholder="Search Course finances..."
     :transactions="true"
-    :showStatusFilterInCourse="true"
+    :showStatusFilterInCourseFinance="true"
     :statusOptions="statusOptions"
     :showShiftFilter="true"
     :shiftOptions="shiftOptions"
     @searchEvent="onSearch"
-    @filterChange="onFilterChange"
+    @filterTransaction="FilterCourseFinance"
     @clearFilters="clearFilters"
     @getPagFun="getPagFun"
     @viewReport="viewReport"
@@ -31,15 +31,13 @@
 </template>
 
 <script setup>
-import { ref , onMounted, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import CourseFinancePopup from "./viewCourseFinancePopup.vue";
-import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../service/service.js";
 
 const $q = useQuasar();
-const router = useRouter();
 const searchQuery = ref("");
 const typeOfFilter = ref("");
 const valueOfFilter = ref("");
@@ -123,11 +121,28 @@ const columns = [
   },
 ];
 
+const fromNo = ref("");
+const toNo = ref("");
+const statusFilter = ref("");
+const shiftFilter = ref("");
+const FilterCourseFinance = (from, to, type, status, shift) => {
+  fromNo.value = from;
+  toNo.value = to;
+  statusFilter.value = status;
+  shiftFilter.value = shift;
+  console.log("Filter Course Finance:", { fromNo: fromNo.value, toNo: toNo.value, statusFilter: statusFilter.value, shiftFilter: shiftFilter.value });
+};
 const allCourseFinance = ref([]);
 const getAllCourseFinance = (page = 1) => {
   $q.loading.show();
 
-  services.getAllCourseFinance(page, typeOfFilter.value, valueOfFilter.value, searchQuery.value)
+  services
+    .getAllCourseFinance(
+      page,
+      typeOfFilter.value,
+      valueOfFilter.value,
+      searchQuery.value,
+    )
     .then((res) => {
       allCourseFinance.value = res.data.results;
 
@@ -149,20 +164,20 @@ const getAllCourseFinance = (page = 1) => {
     });
 };
 
-
 const viewCourseFinancePopup = ref(false);
 const selectedCourse = ref({});
 // Filter options
 const statusOptions = ref([
-  { name: "Active" , value: "Active"},
-  { name: "Pending" , value: "Pending"},
-  { name: "Finished" , value: "Finished"},
+  { name: "Active", value: "Active" },
+  { name: "Pending", value: "Pending" },
+  { name: "Finished", value: "Finished" },
 ]);
-
 
 const shiftOptions = ref([]);
 const getAllShifts = () => {
-  services.getAllShifts().then((res) => {
+  services
+    .getAllShifts()
+    .then((res) => {
       shiftOptions.value = res.data.data.value.SHIFT_CHOICES;
     })
     .catch((error) => {
@@ -170,11 +185,10 @@ const getAllShifts = () => {
     });
 };
 
-
 // Event handlers
 const onSearch = (val) => {
   searchQuery.value = val;
-   getAllCourseFinance(1)
+  getAllCourseFinance(1);
 };
 
 const onFilterChange = (type, val) => {
@@ -194,9 +208,6 @@ const viewCourseReport = (row) => {
   viewCourseFinancePopup.value = true;
 };
 
-
-
-
 const getPagFun = ([apiCall, page, paginationData]) => {
   getAllCourseFinance(page);
 };
@@ -213,5 +224,4 @@ onMounted(() => {
   getAllCourseFinance();
   getAllShifts();
 });
-
 </script>

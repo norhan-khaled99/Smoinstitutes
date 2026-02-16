@@ -157,7 +157,9 @@
                           dense
                           placeholder="From No."
                           class="filter-input"
-                          @update:model-value="onFilterChange('fromNo', fromNo)"
+                          @update:model-value="
+                            onFilterTransaction('fromNo', fromNo)
+                          "
                         />
                       </div>
                       <div class="filter-item-wrapper" v-if="transactions">
@@ -167,7 +169,9 @@
                           dense
                           placeholder="To No."
                           class="filter-input"
-                          @update:model-value="onFilterChange('toNo', toNo)"
+                          @update:model-value="
+                            onFilterTransaction('toNo', toNo)
+                          "
                         />
                       </div>
                       <!-- Department Filter -->
@@ -254,6 +258,51 @@
                               @click.stop.prevent="
                                 statusFilter = null;
                                 onFilterChange('status', null);
+                              "
+                            />
+                          </template>
+                        </q-select>
+                      </div>
+
+                      <div
+                        class="filter-item-wrapper"
+                        v-if="showStatusFilterInCourseFinance"
+                      >
+                        <q-select
+                          outlined
+                          v-model="statusFilter"
+                          dense
+                          :options="statusOptions"
+                          option-label="name"
+                          option-value="value"
+                          fill-input
+                          emit-value
+                          map-options
+                          use-input
+                          hide-selected
+                          input-debounce="0"
+                          class="filter-select"
+                          :placeholder="statusFilter ? '' : 'All Status'"
+                          @update:model-value="
+                            onFilterTransaction('status', statusFilter)
+                          "
+                        >
+                          <template v-slot:no-option>
+                            <q-item>
+                              <q-item-section class="text-black">
+                                No results
+                              </q-item-section>
+                            </q-item>
+                          </template>
+
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="statusFilter"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                statusFilter = null;
+                                onFilterTransaction('status', null);
                               "
                             />
                           </template>
@@ -747,9 +796,7 @@
                           input-debounce="0"
                           class="filter-select"
                           :placeholder="typeFilter ? '' : 'All Types'"
-                          @update:model-value="
-                            onFilterChange('jtype', typeFilter)
-                          "
+                          @update:model-value="onFilterTransaction"
                         >
                           <template v-slot:append>
                             <q-icon
@@ -758,7 +805,7 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 typeFilter = null;
-                                onFilterChange('jtype', null);
+                                onFilterTransaction();
                               "
                             />
                           </template>
@@ -1668,6 +1715,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showStatusFilterInCourseFinance: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const searchResult = ref("");
@@ -1699,6 +1750,17 @@ export default {
 
     const onFilterChange = (type, val) => {
       emit("filterChange", { type, val });
+    };
+
+    const onFilterTransaction = () => {
+      emit(
+        "filterTransaction",
+        fromNo.value,
+        toNo.value,
+        typeFilter.value,
+        statusFilter.value,
+        shiftFilter.value,
+      );
     };
 
     const clearFilters = () => {
@@ -1899,6 +1961,7 @@ export default {
       scoreInputs,
       focusNext,
       formatNumber,
+      onFilterTransaction,
     };
   },
 };

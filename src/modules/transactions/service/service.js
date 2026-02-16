@@ -6,7 +6,7 @@ class TransactionService {
   getAllTransactions(page, type, value, searchQuery) {
     if (type && value) {
       return axiosInstance.get(
-        `/api/v1/profiles/accounts/search/?${type}=${value}&page=${page}`,
+        `/api/v1/finance/transactions/?${type}=${value}&page=${page}`,
       );
     }
     else if (searchQuery) {
