@@ -1,16 +1,14 @@
 <template>
   <div class="scrollable-container">
+    {{ staffDataCourses }}
     <tableComp
       pageTitle=""
-      :tableRows="allCourses"
+      :tableRows="coursesDataValue"
       :tableColumns="columns"
-      :tablePagination="pagination"
+      :displayPagination="false"
+      :tablePagination="{ rowsPerPage: 0 }"
+      :searchInput="false"
       :showAdd="false"
-      searchPlaceholder="Search Courses..."
-      @searchEvent="onSearch"
-      @getPagFun="getPagFun"
-      @sortApi="fireSortCall"
-      @callApi="fireCall"
       emptyStateTitle="No courses found"
       emptyStateDescription="This staff member has no courses assigned."
       emptyStateButtonLabel=""
@@ -25,8 +23,12 @@ import { useQuasar } from "quasar";
 import services from "src/modules/courses/services/service.js";
 
 const props = defineProps({
-
+  coursesDataValue: {
+    type: Array,
+    default: () => []
+  },
 });
+
 
 const $q = useQuasar();
 
@@ -40,14 +42,14 @@ const columns = [
   {
     name: "courseSerial",
     label: "Course Serial",
-    field: (row) => row.courseserial,
+    field: (row) => row.course_serial,
     align: "left",
     sortable: false,
   },
   {
     name: "level",
     label: "Level",
-    field: (row) => row.level_name,
+    field: (row) => row.level,
     align: "left",
     sortable: false,
     classes: "bold-text",
@@ -56,8 +58,8 @@ const columns = [
     name: "startDate",
     label: "Start Date",
     field: (row) => {
-      if (!row.startdate) return "";
-      const [y, m, d] = row.startdate.split("-");
+      if (!row.start_date) return "";
+      const [y, m, d] = row.start_date.split("-");
       return `${d}-${m}-${y}`;
     },
 
@@ -65,82 +67,29 @@ const columns = [
     sortable: false,
   },
   {
-    name: "shift",
-    label: "Shift",
-    field: (row) => row.shift,
+    name: "end_date",
+    label: "End Date",
+    field: (row) => {
+      if (!row.end_date) return "";
+      const [y, m, d] = row.end_date.split("-");
+      return `${d}-${m}-${y}`;
+    },
+
     align: "left",
     sortable: false,
   },
   {
-    name: "teacher",
-    label: "Teacher Name",
-    field: (row) => row.teacher_name,
-    align: "left",
-    sortable: false,
-  },
-  {
-    name: "status",
-    label: "Status",
-    field: (row) => row.status,
-    align: "left",
-    sortable: false,
-  },
-  {
-    name: "scoreRatio",
-    label: "Score Ratio",
-    field: (row) => row.score_ratio,
+    name: "course_name",
+    label: "Course Name",
+    field: (row) => row.course_name,
     align: "left",
     sortable: false,
   },
 ];
 
-const allCourses = ref([]);
-const getAllCourses = (page = 1) => {
-  $q.loading.show();
 
-  services
-    .getAllCourses(page, searchQuery.value)
-    .then((res) => {
-      allCourses.value = res.data.data.results;
-
-      pagination.value.rowsNumber = res.data.data.count || 0;
-      pagination.value.page = page;
-      $q.loading.hide();
-    })
-    .catch((error) => {
-      $q.loading.hide();
-
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.res?.data?.result || "An error occurred.",
-      });
-    });
-};
-
-const getPagFun = ([apiCall, page, paginationData]) => {
-  getAllCourses(page);
-};
-
-const fireCall = ([apiCall, page, paginationData]) => {
-  getAllCourses(page);
-};
-
-const fireSortCall = ([apiCall, sorting]) => {
-  getAllCourses(1);
-};
-
-const searchQuery = ref("");
-const onSearch = (val) => {
-  searchQuery.value = val;
-  getAllCourses(1);
-};
 
 onMounted(() => {
-    getAllCourses();
 });
 </script>
 

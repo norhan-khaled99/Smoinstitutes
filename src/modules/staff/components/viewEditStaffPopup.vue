@@ -528,7 +528,8 @@
         </div>
 
         <div v-if="activeTab === 'courses'">
-          <staffCoursesList />
+            {{ staffData.courses }}
+          <staffCoursesList :coursesDataValue="props.coursesDataValue" />
         </div>
         <!-- </q-scroll-area> -->
 
@@ -556,6 +557,10 @@ const props = defineProps({
   initialEditMode: {
     type: Boolean,
     default: false,
+  },
+  coursesDataValue: {
+    type: Array,
+    default: () => []
   },
 });
 

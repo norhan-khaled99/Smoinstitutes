@@ -30,6 +30,7 @@
   <editStaffPopup
     v-model="showEditPopup"
     :staffInfo="selectedStaff"
+    :coursesDataValue="coursesDataValue"
     :initialEditMode="popupEditMode"
     @save="handleSaveStaff"
   />
@@ -208,6 +209,7 @@ const editEvent = async (row) => {
   showEditPopup.value = true;
 };
 
+const coursesDataValue = ref([])
 const getStaffData = () => {
   $q.loading.show();
   if (selectedStaff.value.staff_id) {
@@ -215,6 +217,7 @@ const getStaffData = () => {
       .getStaffData(selectedStaff.value.globalid)
       .then((res) => {
         selectedStaff.value = res.data.data.staff;
+        coursesDataValue.value = res.data.data.courses;
         if (selectedStaff.value.gender) {
           selectedStaff.value.gender = selectedStaff.value.gender.toString();
         }
