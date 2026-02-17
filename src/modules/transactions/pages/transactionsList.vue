@@ -29,7 +29,7 @@
     v-model="showViewTransaction"
     :transaction="selectedTransaction"
   />
-  <AddTransaction v-model="showAddTransaction" />
+  <AddTransaction v-model="showAddTransaction" @save="handleSaveTransaction"  />
 </template>
 
 <script setup>
@@ -52,19 +52,12 @@ const fromFilter = ref("");
 const toFilter = ref("");
 const typeFilter = ref("");
 
-
 const typeOfFilter = ref("");
 const valueOfFilter = ref("");
-const searchQuery = ref("");
 const getAllTransactions = (page = 1) => {
   $q.loading.show();
   services
-    .getAllTransactions(
-      page,
-      typeOfFilter.value,
-      valueOfFilter.value,
-      searchQuery.value
-    )
+    .getAllTransactions(page,fromFilter.value,toFilter.value,typeFilter.value)
     .then((res) => {
       allTransactions.value = res.data.results;
 
@@ -155,22 +148,44 @@ const addTransaction = () => {
   showAddTransaction.value = true;
 };
 
-const onSearch = (val) => {
-  console.log("Search:", val);
-};
-
 const onFilterChange = (from, to, type) => {
   fromFilter.value = from;
   toFilter.value = to;
   typeFilter.value = type;
 
- console.log("from", fromFilter.value)
- console.log("to", toFilter.value)
- console.log("type", typeFilter.value )
-  // getAllTransactions(1);
+  if (from && !to) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of To",
+    });
+    return;
+  }
+
+  if (to && !from) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of From",
+    });
+    return;
+  }
+
+  if (type || (from && to)) {
+    getAllTransactions(1);
+  }
 };
 
 const clearFilters = () => {
+  fromFilter.value = "";
+  toFilter.value = "";
+  typeFilter.value = "";
   getAllTransactions(1);
 };
 
@@ -195,8 +210,37 @@ const fireSortCall = ([apiCall, sorting]) => {
   getAllTransactions(1);
 };
 
+const handleSaveTransaction = (data) =>{
+  $q.loading.show();
+
+  services.addTransaction(data).then((res) => {
+      $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: "Added Successfully",
+        });
+        getAllTransactions(1);
+      $q.loading.hide();
+    })
+    .catch((error) => {
+      $q.loading.hide();
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: error.response?.data?.result || "An error occurred.",
+      });
+    });
+}
+
 onMounted(() => {
   getAllTransactions();
   getAllTransTypeOptions();
+
 });
 </script>
