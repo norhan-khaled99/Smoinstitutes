@@ -828,7 +828,7 @@
                           class="filter-select"
                           :placeholder="shiftFilter ? '' : 'Shift'"
                           @update:model-value="
-                            onFilterChange('shift', shiftFilter)
+                            onFilterTransaction('shift', shiftFilter)
                           "
                         >
                           <template v-slot:append>
@@ -838,7 +838,7 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 shiftFilter = null;
-                                onFilterChange('shift', null);
+                                onFilterTransaction('shift', null);
                               "
                             />
                           </template>
