@@ -125,13 +125,7 @@ const fromNo = ref("");
 const toNo = ref("");
 const statusFilter = ref("");
 const shiftFilter = ref("");
-const FilterCourseFinance = (from, to, type, status, shift) => {
-  fromNo.value = from;
-  toNo.value = to;
-  statusFilter.value = status;
-  shiftFilter.value = shift;
-  console.log("Filter Course Finance:", { fromNo: fromNo.value, toNo: toNo.value, statusFilter: statusFilter.value, shiftFilter: shiftFilter.value });
-};
+
 const allCourseFinance = ref([]);
 const getAllCourseFinance = (page = 1) => {
   $q.loading.show();
@@ -139,9 +133,11 @@ const getAllCourseFinance = (page = 1) => {
   services
     .getAllCourseFinance(
       page,
-      typeOfFilter.value,
-      valueOfFilter.value,
-      searchQuery.value,
+      fromNo.value,
+      toNo.value,
+      statusFilter.value,
+      shiftFilter.value,
+      searchQuery.value
     )
     .then((res) => {
       allCourseFinance.value = res.data.results;
@@ -191,12 +187,51 @@ const onSearch = (val) => {
   getAllCourseFinance(1);
 };
 
-const onFilterChange = (type, val) => {
-  console.log("Filter Change:", type, val);
+
+const FilterCourseFinance = (from,to,status,shift) => {
+  fromNo.value = from;
+  toNo.value = to;
+  statusFilter.value = status;
+  shiftFilter.value = shift;
+
+  if (from && !to) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of To",
+    });
+    return;
+  }
+
+  if (to && !from) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of From",
+    });
+    return;
+  }
+
+  if (status || shift || (from && to)) {
+    getAllCourseFinance(1);
+  }
+
+
 };
 
+
 const clearFilters = () => {
-  console.log("Filters cleared");
+  fromNo.value = "";
+  toNo.value = "";
+  statusFilter.value = "";
+  shiftFilter.value = "";
+  getAllCourseFinance(1);
 };
 
 const viewReport = () => {
