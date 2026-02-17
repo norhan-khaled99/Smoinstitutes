@@ -29,7 +29,13 @@
     v-model="showViewTransaction"
     :transaction="selectedTransaction"
   />
-  <AddTransaction v-model="showAddTransaction" @save="handleSaveTransaction"  />
+  <AddTransaction v-model="showAddTransaction" @save="handleSaveTransaction" />
+  <viewTransactionReportPopup
+    v-model="showTransactionReport"
+    :fromFilter="fromFilter"
+    :toFilter="toFilter"
+    :typeFilter="typeFilter"
+  />
 </template>
 
 <script setup>
@@ -37,6 +43,7 @@ import { ref, onMounted, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
 import AddTransaction from "../components/addTransaction.vue";
+import viewTransactionReportPopup from "../components/viewTransactionReportPopup.vue";
 import { useQuasar } from "quasar";
 import services from "../service/service.js";
 
@@ -144,6 +151,7 @@ const columns = [
 const showViewTransaction = ref(false);
 const selectedTransaction = ref({});
 const showAddTransaction = ref(false);
+const showTransactionReport = ref(false);
 const addTransaction = () => {
   showAddTransaction.value = true;
 };
@@ -190,8 +198,39 @@ const clearFilters = () => {
 };
 
 const viewReport = () => {
-  console.log("View Report");
+  if (fromFilter.value && !toFilter.value) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of To",
+    });
+    return;
+  }
+
+  if (toFilter.value && !fromFilter.value) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of From",
+    });
+    return;
+  }
+
+  if (typeFilter.value || (fromFilter.value && toFilter.value)) {
+      handleAction(fromFilter.value, toFilter.value, typeFilter.value);
+  }
+
 };
+
+const handleAction = () => {
+  showTransactionReport.value = true;
+}
 
 const viewTransactionData = (data) => {
   selectedTransaction.value = data;
