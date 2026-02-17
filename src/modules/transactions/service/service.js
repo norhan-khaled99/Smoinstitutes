@@ -1,5 +1,5 @@
 import { axiosInstance } from "app/http-common";
-import { v4 as uuidv4 } from 'uuid'; 
+import { v4 as uuidv4 } from 'uuid';
 
 
 class TransactionService {
@@ -39,6 +39,17 @@ class TransactionService {
         'Idempotency-Key': idempotencyKey
       }
     });
+  }
+
+  executeAction(from, to, type) {
+    let query = ``;
+    if (from) query += `&from=${encodeURIComponent(from)}`;
+    if (to) query += `&to=${encodeURIComponent(to)}`;
+    if (type) query += `&jtype=${encodeURIComponent(type)}`;
+
+
+    const config = { responseType: 'arraybuffer' };
+    return axiosInstance.get(`api/v1/reports/transactions/?${query}`, config);
   }
 
 
