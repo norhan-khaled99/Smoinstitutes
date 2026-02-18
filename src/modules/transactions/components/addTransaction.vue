@@ -86,16 +86,13 @@
                   :options="fromAccountOptions"
                   dense
                   outlined
-                  :label="
-                    form.from_account == undefined || form.from_account == ''
-                      ? 'Select Account'
-                      : ''
-                  "
+                  placeholder="Select Account"
                   class="custom-select"
                   option-label="label"
                   option-value="id"
                   emit-value
                   map-options
+                  hide-selected
                   fill-input
                   use-input
                   :input-value="fromAccountSearch"
@@ -104,6 +101,7 @@
                   input-debounce="400"
                   :loading="fromAccountLoading"
                   @filter="filterFromAccounts"
+                  clearable
                 >
                   <template v-slot:before-options>
                     <div
@@ -160,8 +158,14 @@
                           />
                         </div>
                       </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ scope.opt.label }}</q-item-label>
+
+                        <q-item-section>
+                        <q-item-label class="text-weight-bold text-dark">{{
+                          scope.opt.label
+                        }}</q-item-label>
+                        <q-item-label caption class="text-grey-7">{{
+                          scope.opt.mainaccountname
+                        }}</q-item-label>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -177,19 +181,16 @@
                   v-model="form.to_account"
                   :rules="rules.required"
                   :options="toAccountOptions"
-                  dense
+                  dense clearable
                   outlined
-                  :label="
-                    form.to_account == undefined || form.to_account == ''
-                      ? 'Select Account'
-                      : ''
-                  "
+                  placeholder="Select Account"
                   class="custom-select"
                   option-label="label"
                   option-value="id"
                   emit-value
                   map-options
                   fill-input
+                  hide-selected
                   use-input
                   :input-value="toAccountSearch"
                   @update:input-value="(val) => (toAccountSearch = val)"
@@ -423,7 +424,8 @@ const filterFromAccounts = async (val, update) => {
     fromAccountLoading.value = true;
     try {
       const response = await services.getAllAccounts(val);
-      const data = response.data;
+      const data = response.data.data;
+      console.log(data);
       allFromAccounts.value = data;
       update(() => {
         applyFromAccountFilter();
@@ -476,7 +478,7 @@ const filterToAccounts = async (val, update) => {
     toAccountLoading.value = true;
     try {
       const response = await services.getAllAccounts(val);
-      const data = response.data;
+      const data = response.data.data;
       allToAccounts.value = data;
       update(() => {
         applyToAccountFilter();
@@ -676,14 +678,11 @@ onMounted(() => {
   }
 }
 
-  .form-group {
-    margin-bottom: 0rem !important;
-  }
+.form-group {
+  margin-bottom: 0rem !important;
+}
 
-  .q-field--with-bottom{
-    margin-bottom: 0rem !important;
-  }
-
-
-
+.q-field--with-bottom {
+  margin-bottom: 0rem !important;
+}
 </style>
