@@ -422,7 +422,7 @@
 </template>
 
 <script setup>
-import {reactive, watch, defineExpose, onMounted, ref} from "vue";
+import {watch, defineExpose, onMounted, ref} from "vue";
 import StudentService from "../services/service";
 import {useRoute} from "vue-router";
 import {useQuasar} from "quasar";

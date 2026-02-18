@@ -11,8 +11,6 @@
       :balanceOptions="balanceOptions"
       :showStatusFilter="true"
       :statusOptions="statusOptions"
-      :showYearFilter="true"
-      :yearOptions="yearOptions"
       :ShowActionsdropDown="true"
       :showFilters="true"
       :student="true"
@@ -107,11 +105,6 @@ const balanceOptions = ref([
   {name: "Positive", id: "positive"},
 ]);
 
-const yearOptions = ref([
-  {name: "2023", id: 2023},
-  {name: "2024", id: 2024},
-  {name: "2025", id: 2025},
-]);
 
 const statusFilter = ref("");
 const balanceFilter = ref("");

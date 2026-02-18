@@ -153,25 +153,21 @@
                       <div class="filter-item-wrapper" v-if="transactions">
                         <q-input
                           outlined
-                          v-model="fromNo"
-                          dense
+                          v-model="fromNo" clearable
+                          dense type="number" min="0"
                           placeholder="From No."
                           class="filter-input"
-                          @update:model-value="
-                            onFilterTransaction('fromNo', fromNo)
-                          "
+                          @change="onFilterTransaction"
                         />
                       </div>
                       <div class="filter-item-wrapper" v-if="transactions">
                         <q-input
-                          outlined
+                          outlined type="number"
                           v-model="toNo"
-                          dense
+                          dense min="0" clearable
                           placeholder="To No."
                           class="filter-input"
-                          @update:model-value="
-                            onFilterTransaction('toNo', toNo)
-                          "
+                          @change="onFilterTransaction"
                         />
                       </div>
                       <!-- Department Filter -->

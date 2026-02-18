@@ -39,8 +39,6 @@ import services from "../service/service.js";
 
 const $q = useQuasar();
 const searchQuery = ref("");
-const typeOfFilter = ref("");
-const valueOfFilter = ref("");
 
 const pagination = ref({
   page: 1,
