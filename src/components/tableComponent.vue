@@ -153,22 +153,50 @@
                       <div class="filter-item-wrapper" v-if="transactions">
                         <q-input
                           outlined
-                          v-model="fromNo" clearable
-                          dense type="number" min="0"
+                          v-model="fromNo"
+                          dense
+                          type="number"
+                          min="0"
                           placeholder="From No."
                           class="filter-input"
                           @change="onFilterTransaction"
-                        />
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="fromNo !== null && fromNo !== ''"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                fromNo = null;
+                                onFilterTransaction();
+                              "
+                            />
+                          </template>
+                        </q-input>
                       </div>
                       <div class="filter-item-wrapper" v-if="transactions">
                         <q-input
-                          outlined type="number"
+                          outlined
+                          type="number"
                           v-model="toNo"
-                          dense min="0" clearable
+                          dense
+                          min="0"
                           placeholder="To No."
                           class="filter-input"
                           @change="onFilterTransaction"
-                        />
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="toNo !== null && toNo !== ''"
+                              name="cancel"
+                              class="cursor-pointer"
+                              @click.stop.prevent="
+                                toNo = null;
+                                onFilterTransaction();
+                              "
+                            />
+                          </template>
+                        </q-input>
                       </div>
                       <!-- Department Filter -->
 
@@ -772,6 +800,8 @@
                           </template>
                         </q-select>
                       </div>
+
+                      {{ typeFilter }}
 
                       <div
                         class="filter-item-wrapper"

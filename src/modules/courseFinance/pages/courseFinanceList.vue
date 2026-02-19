@@ -186,11 +186,12 @@ const onSearch = (val) => {
 };
 
 
-const FilterCourseFinance = (from,to,status,shift) => {
+const FilterCourseFinance = (from,to,type,status,shift) => {
   fromNo.value = from;
   toNo.value = to;
   statusFilter.value = status;
   shiftFilter.value = shift;
+
 
   if (from && !to) {
     $q.notify({

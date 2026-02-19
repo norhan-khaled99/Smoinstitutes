@@ -64,7 +64,12 @@ const valueOfFilter = ref("");
 const getAllTransactions = (page = 1) => {
   $q.loading.show();
   services
-    .getAllTransactions(page,fromFilter.value,toFilter.value,typeFilter.value)
+    .getAllTransactions(
+      page,
+      fromFilter.value,
+      toFilter.value,
+      typeFilter.value,
+    )
     .then((res) => {
       allTransactions.value = res.data.results;
 
@@ -185,7 +190,7 @@ const onFilterChange = (from, to, type) => {
     return;
   }
 
-  if (type || (from && to)) {
+  if (type || (from && to) || (!type && !from && !to)) {
     getAllTransactions(1);
   }
 };
@@ -223,14 +228,13 @@ const viewReport = () => {
   }
 
   if (typeFilter.value || (fromFilter.value && toFilter.value)) {
-      handleAction(fromFilter.value, toFilter.value, typeFilter.value);
+    handleAction(fromFilter.value, toFilter.value, typeFilter.value);
   }
-
 };
 
 const handleAction = () => {
   showTransactionReport.value = true;
-}
+};
 
 const viewTransactionData = (data) => {
   selectedTransaction.value = data;
@@ -249,19 +253,21 @@ const fireSortCall = ([apiCall, sorting]) => {
   getAllTransactions(1);
 };
 
-const handleSaveTransaction = (data) =>{
+const handleSaveTransaction = (data) => {
   $q.loading.show();
 
-  services.addTransaction(data).then((res) => {
+  services
+    .addTransaction(data)
+    .then((res) => {
       $q.notify({
-          badgeStyle: "display:none",
-          classes: "custom-Notify",
-          textColor: "black-1",
-          icon: "img:/images/SuccessIcon.png",
-          position: "bottom-right",
-          message: "Added Successfully",
-        });
-        getAllTransactions(1);
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/SuccessIcon.png",
+        position: "bottom-right",
+        message: "Added Successfully",
+      });
+      getAllTransactions(1);
       $q.loading.hide();
     })
     .catch((error) => {
@@ -275,11 +281,10 @@ const handleSaveTransaction = (data) =>{
         message: error.response?.data?.result || "An error occurred.",
       });
     });
-}
+};
 
 onMounted(() => {
   getAllTransactions();
   getAllTransTypeOptions();
-
 });
 </script>
