@@ -239,15 +239,6 @@ const clearFilters = () => {
 
 const viewReport = () => {
 
-
-   alert("To view the report, please apply at least one filter (Status, Shift, or From-To range).");
-
-   console.log("Status Filter:", statusFilter.value);
-   console.log("Shift Filter:", shiftFilter.value);
-   console.log("From No:", fromNo.value);
-   console.log("To No:", toNo.value);
-
-
   if (fromNo.value && !toNo.value) {
     $q.notify({
       badgeStyle: "display:none",
