@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import viewTransaction from "../components/viewTransaction.vue";
 import AddTransaction from "../components/addTransaction.vue";
@@ -229,6 +229,16 @@ const viewReport = () => {
 
   if (typeFilter.value || (fromFilter.value && toFilter.value)) {
     handleAction(fromFilter.value, toFilter.value, typeFilter.value);
+  } else {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter at least one filter to view the report",
+    });
+    return;
   }
 };
 

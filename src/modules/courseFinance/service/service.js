@@ -24,6 +24,17 @@ class CourseFinanceService {
     return axiosInstance.get(`/api/v1/reports/courses/${id}/finance/`, config);
   }
 
+  executeFilters(from, to, status, shift) {
+    let query = ``;
+    if (from) query += `&courseserial_from=${encodeURIComponent(from)}`;
+    if (to) query += `&courseserial_to=${encodeURIComponent(to)}`;
+    if (status) query += `&status=${encodeURIComponent(status)}`;
+    if (shift) query += `&shift=${encodeURIComponent(shift)}`;
+
+    const config = { responseType: 'arraybuffer' };
+    return axiosInstance.get(`api/v1/reports/course-finance-main/?${query}`, config);
+  }
+
   // getAllTransTypeOptions() {
   //   return axiosInstance.get(`/api/v1/auth/lookups/jtypes/dropdown/`);
   // }
