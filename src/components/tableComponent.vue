@@ -801,7 +801,6 @@
                         </q-select>
                       </div>
 
-                      {{ typeFilter }}
 
                       <div
                         class="filter-item-wrapper"

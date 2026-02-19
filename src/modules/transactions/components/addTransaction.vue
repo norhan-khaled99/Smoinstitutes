@@ -425,7 +425,6 @@ const filterFromAccounts = async (val, update) => {
     try {
       const response = await services.getAllAccounts(val);
       const data = response.data.data;
-      console.log(data);
       allFromAccounts.value = data;
       update(() => {
         applyFromAccountFilter();
