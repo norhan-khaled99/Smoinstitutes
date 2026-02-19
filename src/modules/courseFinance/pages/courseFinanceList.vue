@@ -28,6 +28,13 @@
     :course="selectedCourse"
     @close="viewCourseFinancePopup = false"
   />
+  <CourseFinanceReportPopup
+    v-model="showCourseFinanceReport"
+    :fromFilter="fromNo"
+    :toFilter="toNo"
+    :statusFilter="statusFilter"
+    :shiftFilter="shiftFilter"
+  />
 </template>
 
 <script setup>
@@ -36,6 +43,7 @@ import tableComp from "src/components/tableComponent.vue";
 import CourseFinancePopup from "./viewCourseFinancePopup.vue";
 import { useQuasar } from "quasar";
 import services from "../service/service.js";
+import CourseFinanceReportPopup from "../components/viewCourseFinanceReportPopup.vue";
 
 const $q = useQuasar();
 const searchQuery = ref("");
@@ -135,7 +143,7 @@ const getAllCourseFinance = (page = 1) => {
       toNo.value,
       statusFilter.value,
       shiftFilter.value,
-      searchQuery.value
+      searchQuery.value,
     )
     .then((res) => {
       allCourseFinance.value = res.data.results;
@@ -160,6 +168,7 @@ const getAllCourseFinance = (page = 1) => {
 
 const viewCourseFinancePopup = ref(false);
 const selectedCourse = ref({});
+const showCourseFinanceReport = ref(false);
 // Filter options
 const statusOptions = ref([
   { name: "Active", value: "Active" },
@@ -185,8 +194,7 @@ const onSearch = (val) => {
   getAllCourseFinance(1);
 };
 
-
-const FilterCourseFinance = (from,to,status,shift) => {
+const FilterCourseFinance = (from, to, status, shift) => {
   fromNo.value = from;
   toNo.value = to;
   statusFilter.value = status;
@@ -219,10 +227,7 @@ const FilterCourseFinance = (from,to,status,shift) => {
   if (status || shift || (from && to)) {
     getAllCourseFinance(1);
   }
-
-
 };
-
 
 const clearFilters = () => {
   fromNo.value = "";
@@ -233,7 +238,57 @@ const clearFilters = () => {
 };
 
 const viewReport = () => {
-  console.log("View Report clicked");
+
+
+   alert("To view the report, please apply at least one filter (Status, Shift, or From-To range).");
+
+   console.log("Status Filter:", statusFilter.value);
+   console.log("Shift Filter:", shiftFilter.value);
+   console.log("From No:", fromNo.value);
+   console.log("To No:", toNo.value);
+
+
+  if (fromNo.value && !toNo.value) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of To",
+    });
+    return;
+  }
+
+  if (toNo.value && !fromNo.value) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter Number Of From",
+    });
+    return;
+  }
+
+  if (statusFilter.value || shiftFilter.value || (fromNo.value && toNo.value)) {
+    handleAction();
+  } else {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please enter at least one filter to view the report",
+    });
+    return;
+  }
+};
+
+const handleAction = () => {
+  showCourseFinanceReport.value = true;
 };
 
 const viewCourseReport = (row) => {
