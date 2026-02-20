@@ -126,13 +126,41 @@
                           no-caps
                           unelevated
                           size="13px"
-                          @click="fromAccountTab = tab"
+                          @click.stop.prevent="setFromAccountTab(tab)"
+                          @mousedown.stop.prevent
                         />
                       </div>
                     </div>
                   </template>
 
                   <template v-slot:no-option>
+                    <div
+                      class="q-pa-sm sticky-top bg-white"
+                      @click.stop
+                      @mousedown.stop.prevent
+                    >
+                      <div class="row bg-grey-2 q-pa-xs filter-tabs-container">
+                        <q-btn
+                          v-for="tab in ['All', 'Financial', 'People']"
+                          :key="tab"
+                          :label="tab"
+                          :color="
+                            fromAccountTab === tab ? 'white' : 'transparent'
+                          "
+                          :text-color="
+                            fromAccountTab === tab ? 'primary' : 'grey-7'
+                          "
+                          class="col shadow-0 filter-tab-btn"
+                          :class="{ 'active-tab': fromAccountTab === tab }"
+                          dense
+                          no-caps
+                          unelevated
+                          size="13px"
+                          @click.stop.prevent="setFromAccountTab(tab)"
+                          @mousedown.stop.prevent
+                        />
+                      </div>
+                    </div>
                     <q-item>
                       <q-item-section class="text-grey">
                         No results
@@ -159,7 +187,7 @@
                         </div>
                       </q-item-section>
 
-                        <q-item-section>
+                      <q-item-section>
                         <q-item-label class="text-weight-bold text-dark">{{
                           scope.opt.label
                         }}</q-item-label>
@@ -181,7 +209,8 @@
                   v-model="form.to_account"
                   :rules="rules.required"
                   :options="toAccountOptions"
-                  dense clearable
+                  dense
+                  clearable
                   outlined
                   placeholder="Select Account"
                   class="custom-select"
@@ -223,7 +252,8 @@
                           no-caps
                           unelevated
                           size="13px"
-                          @click="toAccountTab = tab"
+                          @click.stop.prevent="setToAccountTab(tab)"
+                          @mousedown.stop.prevent
                         />
                       </div>
                     </div>
@@ -262,6 +292,33 @@
                     </q-item>
                   </template>
                   <template v-slot:no-option>
+                    <div
+                      class="q-pa-sm sticky-top bg-white"
+                      @click.stop
+                      @mousedown.stop.prevent
+                    >
+                      <div class="row bg-grey-2 q-pa-xs filter-tabs-container">
+                        <q-btn
+                          v-for="tab in ['All', 'Financial', 'People']"
+                          :key="tab"
+                          :label="tab"
+                          :color="
+                            toAccountTab === tab ? 'white' : 'transparent'
+                          "
+                          :text-color="
+                            toAccountTab === tab ? 'primary' : 'grey-7'
+                          "
+                          class="col shadow-0 filter-tab-btn"
+                          :class="{ 'active-tab': toAccountTab === tab }"
+                          dense
+                          no-caps
+                          unelevated
+                          size="13px"
+                          @click.stop.prevent="setToAccountTab(tab)"
+                          @mousedown.stop.prevent
+                        />
+                      </div>
+                    </div>
                     <q-item>
                       <q-item-section class="text-grey">
                         No results
@@ -415,6 +472,11 @@ const applyFromAccountFilter = () => {
   }
 };
 
+const setFromAccountTab = (tab) => {
+  fromAccountTab.value = tab;
+  applyFromAccountFilter();
+};
+
 watch(fromAccountTab, () => {
   applyFromAccountFilter();
 });
@@ -466,6 +528,11 @@ const applyToAccountFilter = () => {
       peopleTypes.includes(item.mainacctype),
     );
   }
+};
+
+const setToAccountTab = (tab) => {
+  toAccountTab.value = tab;
+  applyToAccountFilter();
 };
 
 watch(toAccountTab, () => {
