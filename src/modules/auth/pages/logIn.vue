@@ -213,7 +213,6 @@ export default {
       );
       data.value = JSON.parse(jsonPayload);
     };
-    // // fun of login
     const login = () => {
       const emailRegex =
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -221,9 +220,9 @@ export default {
       if (
         !form.value.username ||
         !form.value.password ||
-        !emailRegex.test(form.value.username) ||
-        form.value.username !== "Test_Admin@local" ||
-        form.value.password !== "AAAbbb123"
+        !emailRegex.test(form.value.username)
+        // form.value.username !== "Test_Admin@local" ||
+        // form.value.password !== "AAAbbb123"
       ) {
         hasError.value = true;
       } else {
@@ -238,15 +237,16 @@ export default {
               $q.loading.hide();
           })
           .catch((error) => {
-            $q.loading.hide();
             $q.notify({
               badgeStyle: "display:none",
               classes: "custom-Notify",
               textColor: "black-1",
               icon: "img:/images/Error.png",
               position: "bottom-right",
-              message: error.response?.data?.result || "An error occurred.",
+              message: error.response.data.message,
             });
+            $q.loading.hide();
+
           });
       }
     };

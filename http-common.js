@@ -26,7 +26,11 @@ export const axiosInstance = createAxiosInstance();
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const isAuthTokenEndpoint =
+      error.config &&
+      (error.config.url || "").includes("/api/v1/auth/token");
+
+    if (error.response && error.response.status === 401 && !isAuthTokenEndpoint) {
       localStorage.clear();
       window.location.href = "/login";
       Notify.create({
@@ -35,6 +39,7 @@ axiosInstance.interceptors.response.use(
         message: "Check your Authentication",
       });
     }
+
     return Promise.reject(error);
   }
 );

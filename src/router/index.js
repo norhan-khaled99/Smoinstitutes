@@ -13,7 +13,7 @@ export default route(function () {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
- 
+
   Router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('accessToken')
 
