@@ -41,6 +41,7 @@
             :rows="tableRows"
             v-model:pagination="pagination"
             @request="onRequest"
+            @row-click="handleRowClick"
           >
             <!--Start pagination  -->
             <template v-slot:pagination v-if="displayPagination">
@@ -800,7 +801,6 @@
                           </template>
                         </q-select>
                       </div>
-
 
                       <div
                         class="filter-item-wrapper"
@@ -1740,6 +1740,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    viewReport: {
+      type: Boolean,
+      default: false,
+    },
     showStatusFilterInCourseFinance: {
       type: Boolean,
       default: false,
@@ -1749,7 +1753,6 @@ export default {
     const searchResult = ref("");
     const pagination = ref({});
     const sorting = ref("");
-    const searchFilter = ref("");
     const departmentFilter = ref(null);
     const statusFilter = ref(null);
     const balanceFilter = ref(null);
@@ -1789,7 +1792,7 @@ export default {
     };
 
     const clearFilters = () => {
-      searchFilter.value = "";
+      searchResult.value = "";
       departmentFilter.value = null;
       statusFilter.value = null;
       balanceFilter.value = null;
@@ -1859,6 +1862,10 @@ export default {
 
     const details = (id) => {
       emit("DetailsEvent", id);
+    };
+
+    const handleRowClick = (evt, row) => {
+      emit("DetailsEvent", row);
     };
 
     const viewCourseReport = (row) => {
@@ -1955,7 +1962,6 @@ export default {
       pagesNumber,
       addNew,
       EditEvent,
-      searchFilter,
       departmentFilter,
       statusFilter,
       balanceFilter,
@@ -1987,6 +1993,7 @@ export default {
       focusNext,
       formatNumber,
       onFilterTransaction,
+      handleRowClick,
     };
   },
 };

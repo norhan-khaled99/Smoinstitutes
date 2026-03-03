@@ -400,6 +400,12 @@
       border-bottom: none;
     }
 
+    tr {
+      &:nth-child(even) {
+        background: #f8f8f9;
+      }
+    }
+
 
     .transaction-reversal {
       color: #B45309;

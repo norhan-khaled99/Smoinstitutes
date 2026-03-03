@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.clear();
-      window.location.href = "/login";
+      window.location.href = "/ui/login";
       Notify.create({
         type: "negative",
         position: "bottom-right",
@@ -36,5 +36,5 @@ axiosInstance.interceptors.response.use(
       });
     }
     return Promise.reject(error);
-  }
+  },
 );

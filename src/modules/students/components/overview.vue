@@ -9,17 +9,50 @@
 
           <div class="row q-col-gutter-md">
             <!-- Full Name -->
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-12">
               <div class="form-group">
                 <p class="field-label">Full Name</p>
-                <q-input
-                  v-if="isEditing"
-                  v-model="studentData.full_name"
-                  outlined
-                  dense
-                  class="edit-input"
-                />
-                <p v-else class="field-value">{{ studentData.full_name }}</p>
+                <div class="row q-col-gutter-sm">
+                  <div class="col-12 col-md-4">
+                    <q-input
+                      v-if="isEditing"
+                      v-model="studentData.first_name"
+                      outlined
+                      dense
+                      placeholder="First Name"
+                      class="edit-input"
+                    />
+                    <p v-else class="field-value">
+                      {{ studentData.first_name }}
+                    </p>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input
+                      v-if="isEditing"
+                      v-model="studentData.middle_names"
+                      outlined
+                      placeholder="Middle Name"
+                      dense
+                      class="edit-input"
+                    />
+                    <p v-else class="field-value">
+                      {{ studentData.middle_names }}
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <q-input
+                      v-if="isEditing"
+                      v-model="studentData.last_name"
+                      outlined
+                      dense
+                      class="edit-input"
+                    />
+                    <p v-else class="field-value">
+                      {{ studentData.last_name }}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -42,7 +75,7 @@
             <!-- Date of Birth -->
             <div class="col-12 col-md-6">
               <div class="form-group">
-                <p class="field-label">Date Of Birth</p>
+                <p class="field-label">Year Of Birth</p>
                 <q-input
                   v-if="isEditing"
                   v-model="studentData.d_o_b"
@@ -160,6 +193,50 @@
                 <p v-else class="field-value">{{ studentData.address }}</p>
               </div>
             </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <p class="field-label">Nationality</p>
+
+                <q-input
+                  v-if="isEditing"
+                  v-model="studentData.first_name"
+                  outlined
+                  dense
+                  placeholder="First Name"
+                  class="edit-input"
+                />
+                <p v-else class="field-value">{{ studentData.first_name }}</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="col-12 col-md-4 form-group">
+                <p class="field-label">Education Level</p>
+                <q-input
+                  v-if="isEditing"
+                  v-model="studentData.middle_names"
+                  outlined
+                  placeholder="Middle Name"
+                  dense
+                  class="edit-input"
+                />
+                <p v-else class="field-value">{{ studentData.middle_names }}</p>
+              </div>
+
+              </div>
+
+              <div class="col-12 col-md-6 form-group">
+                <p class="field-label">Verfied Information</p>
+                <q-input
+                  v-if="isEditing"
+                  v-model="studentData.last_name"
+                  outlined
+                  dense
+                  class="edit-input"
+                />
+                <p v-else class="field-value">{{ studentData.last_name }}</p>
+              </div>
+
           </div>
         </div>
 
@@ -212,7 +289,11 @@
         <div class="profile-card">
           <!-- Profile Image -->
           <div class="profile-image">
-            <q-img :src="studentData.picture" width="300" height="300"/>
+            <q-img
+              :src="studentData.picture"
+              width="300"
+              style="max-height: 300px"
+            />
             <q-file
               v-model="studentData.picture"
               ref="fileInput"
@@ -220,7 +301,13 @@
               accept=".jpg, .png, .gif"
               @update:model-value="uploadPhoto"
             />
-            <q-btn v-if="isEditing" flat class="change-photo-btn" no-caps @click="$refs.fileInput.pickFiles()">
+            <q-btn
+              v-if="isEditing"
+              flat
+              class="change-photo-btn"
+              no-caps
+              @click="$refs.fileInput.pickFiles()"
+            >
               <div class="row items-center justify-center no-wrap">
                 <span>Change Photo</span>
                 <svg
@@ -250,11 +337,17 @@
             <div class="balance-info">
               <span class="balance-label">Balance</span>
               <span class="balance-amount positive"
-              >{{ studentData.balance }} <span class="currency">EGP</span></span
+                >{{ studentData.balance }}
+                <span class="currency">EGP</span></span
               >
             </div>
             <div class="balance-actions">
-              <q-btn flat label="View Payments" class="view-payments-btn" @click="$emit('view-transactions')"/>
+              <q-btn
+                flat
+                label="View Payments"
+                class="view-payments-btn"
+                @click="$emit('view-transactions')"
+              />
               <q-btn-dropdown
                 flat
                 label="Add Payment"
@@ -340,14 +433,16 @@
                 </g>
                 <defs>
                   <clipPath id="clip0_2677_13396">
-                    <rect width="16" height="16" fill="white"/>
+                    <rect width="16" height="16" fill="white" />
                   </clipPath>
                 </defs>
               </svg>
 
               <div class="stat-info">
                 <span class="stat-label">Attendance Rate</span>
-                <span class="stat-value">{{ studentData.attendance_rate }}%</span>
+                <span class="stat-value"
+                  >{{ studentData.attendance_rate }}%</span
+                >
               </div>
             </div>
 
@@ -369,7 +464,7 @@
 
               <div class="stat-info">
                 <span class="stat-label">Notes Count</span>
-                <span class="stat-value"> {{studentData.notes_coun }} </span>
+                <span class="stat-value"> {{ studentData.notes_coun }} </span>
               </div>
             </div>
 
@@ -411,7 +506,9 @@
 
               <div class="stat-info">
                 <span class="stat-label">Balance Status</span>
-                <span class="stat-value">{{ studentData.balance>=0? 'Paid' : 'Unpaid'}}</span>
+                <span class="stat-value">{{
+                  studentData.balance >= 0 ? "Paid" : "Unpaid"
+                }}</span>
               </div>
             </div>
           </div>
@@ -422,11 +519,10 @@
 </template>
 
 <script setup>
-import {watch, defineExpose, onMounted, ref} from "vue";
+import { watch, defineExpose, onMounted, ref } from "vue";
 import StudentService from "../services/service";
-import {useRoute} from "vue-router";
-import {useQuasar} from "quasar";
-
+import { useRoute } from "vue-router";
+import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 const route = useRoute();
@@ -441,23 +537,30 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['view-transactions', 'add-payment']);
+const emit = defineEmits(["view-transactions", "add-payment"]);
 
 const addDropdownOptions = ref([]);
 
-watch(() => props.paymentOptions, (newVal) => {
-  addDropdownOptions.value = newVal.map(item => ({
-    ...item,
-    name: item.type
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
-    id: item.type_id
-  }));
-}, { immediate: true });
+watch(
+  () => props.paymentOptions,
+  (newVal) => {
+    addDropdownOptions.value = newVal.map((item) => ({
+      ...item,
+      name: item.type
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+      id: item.type_id,
+    }));
+  },
+  { immediate: true },
+);
 
 const studentData = ref({
-  full_name: "",
+  // full_name: "",
+  first_name: "",
+  middle_names: "",
+  last_name: "",
   gender_name: "",
   d_o_b: "",
   email: "",
@@ -473,9 +576,9 @@ const studentData = ref({
   picture: "",
   student_id: "",
   balance: "",
-  coursesLength:0,
-  attendance_rate:0,
-  notes_count:0
+  coursesLength: 0,
+  attendance_rate: 0,
+  notes_count: 0,
 });
 
 // Store the actual file object separately from the preview URL
@@ -494,16 +597,16 @@ const uploadPhoto = (file) => {
 
 // Convert date from API format (YYYY-MM-DD) to display format (DD/MM/YYYY)
 const formatDateForDisplay = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) return "";
 
   // If already in DD/MM/YYYY format, return as is
-  if (dateString.includes('/')) {
+  if (dateString.includes("/")) {
     return dateString;
   }
 
   // Convert YYYY-MM-DD to DD/MM/YYYY
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-    const [year, month, day] = dateString.split('-');
+    const [year, month, day] = dateString.split("-");
     return `${day}/${month}/${year}`;
   }
 
@@ -518,92 +621,19 @@ const getStudentDetails = () => {
         studentData.value = res.data.data.student;
         // Convert date from API format to display format
         if (studentData.value.d_o_b) {
-          studentData.value.d_o_b = formatDateForDisplay(studentData.value.d_o_b);
+          studentData.value.d_o_b = formatDateForDisplay(
+            studentData.value.d_o_b,
+          );
         }
-        studentData.value.assignedCourses = res.data.data.courses.map(c => c.course_name).join(", ");
+        studentData.value.assignedCourses = res.data.data.courses
+          .map((c) => c.course_name)
+          .join(", ");
         studentData.value.coursesLength = res.data.data.courses.length;
         $q.loading.hide();
       }
       $q.loading.hide();
-    }).catch((err) => {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: err.response?.data?.result || "An error occurred.",
-    });
-    $q.loading.hide();
-  })
-}
-
-const formatDateToAPI = (dateString) => {
-  if (!dateString) return '';
-
-  // If already in YYYY-MM-DD format, return as is
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-    return dateString;
-  }
-
-  // Handle DD/MM/YYYY format
-  if (dateString.includes('/')) {
-    const parts = dateString.split('/');
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      // Validate parts exist and are numbers
-      if (day && month && year) {
-        const yyyy = year.padStart(4, '0');
-        const mm = month.padStart(2, '0');
-        const dd = day.padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-      }
-    }
-  }
-
-  return '';
-};
-
-const handleFormData = () => {
-  const formData = new FormData();
-
-  // Add all form fields
-  if (studentData.value.full_name) formData.append('full_name', studentData.value.full_name);
-  if (studentData.value.gender_name) formData.append('gender_name', studentData.value.gender_name);
-  if (studentData.value.d_o_b) {
-    const formattedDate = formatDateToAPI(studentData.value.d_o_b);
-    if (formattedDate) formData.append('d_o_b', formattedDate);
-  }
-  if (studentData.value.email) formData.append('email', studentData.value.email);
-  if (studentData.value.mobile) formData.append('mobile', studentData.value.mobile);
-  if (studentData.value.phone) formData.append('phone', studentData.value.phone);
-  if (studentData.value.parentphone1) formData.append('parentphone1', studentData.value.parentphone1);
-  if (studentData.value.parentphone2) formData.append('parentphone2', studentData.value.parentphone2);
-  if (studentData.value.city) formData.append('city', studentData.value.city);
-  if (studentData.value.address) formData.append('address', studentData.value.address);
-
-  // Add new photo if changed (only if it's a File object)
-  if (pictureFile.value instanceof File) {
-    formData.append('picture', pictureFile.value);
-  }
-  return formData;
-};
-
-const handleSave = ()=>{
-  const data = handleFormData();
-    StudentService.updateStudent(route.params.id, data)
-      .then((res) => {
-        if (res.status === 200) {
-          $q.notify({
-            badgeStyle: "display:none",
-            classes: "custom-Notify",
-            textColor: "black-1",
-            icon: "img:/images/SuccessIcon.png",
-            position: "bottom-right",
-            message: "Student Updated successfully.",
-          });
-        }
-      }).catch((err) => {
+    })
+    .catch((err) => {
       $q.notify({
         badgeStyle: "display:none",
         classes: "custom-Notify",
@@ -612,19 +642,110 @@ const handleSave = ()=>{
         position: "bottom-right",
         message: err.response?.data?.result || "An error occurred.",
       });
-    })
+      $q.loading.hide();
+    });
+};
 
-}
-const handleCancel = () =>{
+const formatDateToAPI = (dateString) => {
+  if (!dateString) return "";
+
+  // If already in YYYY-MM-DD format, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return dateString;
+  }
+
+  // Handle DD/MM/YYYY format
+  if (dateString.includes("/")) {
+    const parts = dateString.split("/");
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      // Validate parts exist and are numbers
+      if (day && month && year) {
+        const yyyy = year.padStart(4, "0");
+        const mm = month.padStart(2, "0");
+        const dd = day.padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    }
+  }
+
+  return "";
+};
+
+const handleFormData = () => {
+  const formData = new FormData();
+
+  // Add all form fields
+  if (studentData.value.first_name)
+    formData.append("first_name", studentData.value.first_name);
+  if (studentData.value.middle_names)
+    formData.append("middle_names", studentData.value.middle_names);
+  if (studentData.value.last_name)
+    formData.append("last_name", studentData.value.last_name);
+
+  if (studentData.value.gender_name)
+    formData.append("gender_name", studentData.value.gender_name);
+  if (studentData.value.d_o_b) {
+    const formattedDate = formatDateToAPI(studentData.value.d_o_b);
+    if (formattedDate) formData.append("d_o_b", formattedDate);
+  }
+  if (studentData.value.email)
+    formData.append("email", studentData.value.email);
+  if (studentData.value.mobile)
+    formData.append("mobile", studentData.value.mobile);
+  if (studentData.value.phone)
+    formData.append("phone", studentData.value.phone);
+  if (studentData.value.parentphone1)
+    formData.append("parentphone1", studentData.value.parentphone1);
+  if (studentData.value.parentphone2)
+    formData.append("parentphone2", studentData.value.parentphone2);
+  if (studentData.value.city) formData.append("city", studentData.value.city);
+  if (studentData.value.address)
+    formData.append("address", studentData.value.address);
+
+  // Add new photo if changed (only if it's a File object)
+  if (pictureFile.value instanceof File) {
+    formData.append("picture", pictureFile.value);
+  }
+  return formData;
+};
+
+const handleSave = () => {
+  const data = handleFormData();
+  StudentService.updateStudent(route.params.id, data)
+    .then((res) => {
+      if (res.status === 200) {
+        $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: "Student Updated successfully.",
+        });
+      }
+    })
+    .catch((err) => {
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify",
+        textColor: "black-1",
+        icon: "img:/images/Error.png",
+        position: "bottom-right",
+        message: err.response?.data?.result || "An error occurred.",
+      });
+    });
+};
+const handleCancel = () => {
   getStudentDetails();
-}
+};
 
 defineExpose({
   handleSave,
-  handleCancel
+  handleCancel,
 });
 
 onMounted(() => {
-  getStudentDetails()
-})
+  getStudentDetails();
+});
 </script>

@@ -176,6 +176,7 @@
                   v-model="form.d_o_b"
                   placeholder="YYYY-MM-DD"
                   dense
+                  color="grey-6"
                 >
                   <template v-slot:append>
                     <div>
@@ -222,12 +223,16 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-date v-model="form.d_o_b" mask="YYYY-MM-DD">
+                        <q-date
+                          v-model="form.d_o_b"
+                          mask="YYYY-MM-DD"
+                          color="grey-6"
+                        >
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
                               label="Close"
-                              color="primary"
+                              color="grey-6"
                               flat
                             />
                           </div>
@@ -470,12 +475,7 @@
             <div class="col-12 col-md-6">
               <div class="form-group documents-files">
                 <p class="field-label">CV</p>
-                <q-file
-                  outlined
-                  v-model="form.cv"
-                  dense
-                  label="No file chosen"
-                >
+                <q-file outlined v-model="form.cv" dense label="No file chosen">
                   <template v-slot:prepend>
                     <div class="file-prepend">Choose file</div>
                   </template>
@@ -537,7 +537,8 @@ const getInstitution = () => {
 };
 const cityOptions = ref([]);
 const getAllCites = () => {
-  services.getAllCites()
+  services
+    .getAllCites()
     .then((res) => {
       cityOptions.value = res.data.data.value.CITY_CHOICES;
     })
@@ -564,7 +565,6 @@ const degreeOptions = ref([
   { id: "DIP", name: "Diploma" },
   { id: "OTH", name: "Other" },
 ]);
-
 
 const showImage = ref("");
 const uploadPhoto = (file) => {
@@ -607,7 +607,7 @@ const addStaff = (data) => {
 };
 
 const saveStaff = async (stayOrReturn) => {
-   const isValid = await formRef.value.validate();
+  const isValid = await formRef.value.validate();
 
   if (!isValid) return;
 
@@ -619,16 +619,12 @@ const saveStaff = async (stayOrReturn) => {
     }
   });
 
-   if(stayOrReturn)
-   {
-      await addStaff(fd);
-      router.back();
-   }
-   else
-   {
-      await addStaff(fd);
-   }
-
+  if (stayOrReturn) {
+    await addStaff(fd);
+    router.back();
+  } else {
+    await addStaff(fd);
+  }
 };
 
 const cancel = () => {

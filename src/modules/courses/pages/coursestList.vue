@@ -261,6 +261,7 @@ const onFilterChange = ({ type, val }) => {
 };
 
 const clearFilters = () => {
+  searchQuery.value=""
   typeOfFilter.value = "";
   valueOfFilter.value = "";
   getAllCourses(1);

@@ -46,11 +46,13 @@
       border-radius: 0.5rem;
       min-width: 8.75rem;
     }
+
     .save-btn-dropdown {
       padding: 2px 0;
       background-color: #2f5d6a;
       color: white;
     }
+
     .save-btn {
       background-color: #2f5d6a;
       color: white;
@@ -209,6 +211,7 @@
     color: #2f5d6a;
   }
 }
+
 .q-field__control {
   background-color: #f9fafb !important;
   border: 1px solid #e5e9f0 !important;
@@ -324,14 +327,17 @@
 
       .profile-image {
         width: 18.75rem;
+        max-height: 300px;
         height: auto;
         border-radius: 0.5rem;
         margin-bottom: 20px;
         text-align: center;
+        overflow: hidden;
 
         img {
           width: 100%;
           height: auto;
+          max-height: 300px;
           object-fit: cover;
           display: block;
         }
@@ -525,6 +531,3 @@
 .main-page {
   background-color: #f9fafb;
 }
-
-
-

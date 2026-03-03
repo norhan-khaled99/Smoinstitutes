@@ -12,6 +12,7 @@
     :typeOptions="typeOptions"
     :ShowActionsdropDown="true"
     :showFilters="true"
+    :viewReport="true"
     searchPlaceholder="Search Transaction..."
     @addDropdownAction="handleAddPayment"
     @searchEvent="onSearchEvent"

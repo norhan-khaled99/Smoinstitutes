@@ -7,6 +7,7 @@
     :showFilters="true"
     searchPlaceholder="Search Course finances..."
     :transactions="true"
+    :viewReport="true"
     :showStatusFilterInCourseFinance="true"
     :statusOptions="statusOptions"
     :showShiftFilter="true"
@@ -230,6 +231,7 @@ const FilterCourseFinance = (from, to, type, status, shift) => {
 };
 
 const clearFilters = () => {
+  searchQuery.value = "";
   fromNo.value = "";
   toNo.value = "";
   statusFilter.value = "";

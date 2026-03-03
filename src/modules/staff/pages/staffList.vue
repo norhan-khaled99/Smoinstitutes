@@ -97,9 +97,9 @@ const columns = [
     sortable: false,
   },
   {
-    name: "current_Salary",
+    name: "balanceDisplay",
     label: "Balance",
-    field: (row) => row.current_salary,
+    field: (row) => row.balance,
     align: "left",
     sortable: false,
   },
@@ -107,6 +107,13 @@ const columns = [
     name: "courses_ratio",
     label: "Courses Ratio",
     field: (row) => row.courses_ratio,
+    align: "left",
+    sortable: false,
+  },
+  {
+    name: "status",
+    label: "Status",
+    field: (row) => row.status,
     align: "left",
     sortable: false,
   },
@@ -190,6 +197,7 @@ const onFilterChange = ({ type, val }) => {
 };
 
 const clearFilters = () => {
+   searchQuery.value="";
   typeOfFilter.value = "";
   valueOfFilter.value = "";
   getAllStaff(1);
@@ -307,4 +315,3 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped></style>

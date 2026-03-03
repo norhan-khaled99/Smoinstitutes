@@ -188,6 +188,7 @@
       bordered
       :width="264"
       :mini="miniState"
+      :breakpoint="600"
       class="main_sidebar"
     >
       <div class="column justify-between full-height no-wrap">
@@ -341,7 +342,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted, watch } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useRoute, useRouter } from "vue-router";
 import authServices from "../modules/auth/services/service.js";
@@ -460,11 +461,24 @@ export default defineComponent({
     const router = useRouter();
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
-    const searchText = ref("");
     const $q = useQuasar();
+
+    // Auto-mini on tablet/medium screen sizes
+    watch(
+      () => $q.screen.width,
+      (width) => {
+        if (width < 1024 && width >= 600) {
+          miniState.value = true;
+        } else if (width >= 1024) {
+          miniState.value = false;
+        }
+      },
+      { immediate: true },
+    );
+    const searchText = ref("");
     const logout = () => {
       localStorage.clear();
-      router.push("/login");
+      router.push("/ui/login");
     };
 
     const userName = ref("");

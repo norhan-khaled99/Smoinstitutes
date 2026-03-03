@@ -202,6 +202,7 @@ const filterData = (data) => {
 }
 
 const clearFilter = () => {
+  searchValue.value = "";
   statusFilter.value = "";
   balanceFilter.value = "";
   getAllStudents(1);

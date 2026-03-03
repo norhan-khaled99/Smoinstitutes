@@ -95,24 +95,25 @@
                   v-model="form.startdate"
                   :rules="rules.required"
                   outlined
+                  color="grey-6"
                   dense
                   placeholder="YYYY-MM-DD"
                   class="custom-input"
                   readonly
                 >
                   <template v-slot:append>
-                    <q-icon name="event" class="cursor-pointer">
+                    <q-icon name="event" color="grey-6" class="cursor-pointer">
                       <q-popup-proxy
                         cover
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-date v-model="form.startdate" mask="YYYY-MM-DD">
+                        <q-date v-model="form.startdate" color="grey-6" mask="YYYY-MM-DD">
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
                               label="Close"
-                              color="primary"
+                              color="grey-6"
                               flat
                             />
                           </div>
@@ -236,7 +237,7 @@ const initialForm = {
   courseserial: "",
   level: "",
   teacher: "",
-  startdate: "1-1-1990",
+  startdate: new Date().toISOString().split("T")[0],
   shift: "",
   days: "",
   fee: "",

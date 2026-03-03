@@ -17,6 +17,7 @@
     :byUserOptions="byUserOptions"
     @addNew="addBook"
     :bookStock="true"
+    :viewReport="true"
     @DetailsEvent="onViewDetails"
     @searchEvent="onSearch"
     @filterChange="onFilterChange"
@@ -246,6 +247,7 @@ const onFilterChange = ({ type, val }) => {
 };
 
 const clearFilters = () => {
+  searchQuery.value=""
   typeOfFilter.value = "";
   valueOfFilter.value = "";
   getAllBookStock(1);

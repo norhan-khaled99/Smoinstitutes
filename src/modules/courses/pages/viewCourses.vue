@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="course-header-section row items-center justify-between">
-      <div class="course-data">
+      <div class="course-data ">
         <div class="row items-center">
           <p class="course-name">
             {{ courceData.courseserial }} {{ courceData.level_name }}
@@ -25,7 +25,7 @@
       <div class="row items-center q-gutter-md">
         <q-btn
           flat
-          @click="editCourse"
+          @click="isEditing ? editCourse() : (isEditing = true)"
           v-if="courceData.status !== 'Finished'"
           no-caps
           class="edit-course-btn"
@@ -51,8 +51,9 @@
               </clipPath>
             </defs>
           </svg>
-          Edit Course
+          {{ isEditing ? "Save Changes" : "Edit Course" }}
         </q-btn>
+
 
         <q-btn-dropdown
           flat
@@ -109,7 +110,8 @@
         <div class="info-item col-12 col-sm-6 col-md-4">
           <div class="label">Teacher</div>
           <q-select
-            v-model="courceData.teacher_name"
+            v-if="isEditing"
+            v-model="courceData.teacher"
             :options="teacherOptions"
             option-label="label"
             option-value="id"
@@ -125,10 +127,12 @@
             @filter="serachForTeacher"
             placeholder="Select Teacher After Searching..."
           />
+          <p v-else class="value">{{ courceData.teacher_name }}</p>
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Shift</div>
           <q-select
+            v-if="isEditing"
             v-model="courceData.shift"
             :options="shiftOptions"
             outlined
@@ -140,10 +144,12 @@
             "
             class="custom-select"
           />
+          <p v-else class="value">{{ courceData.shift }}</p>
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Fee</div>
           <q-input
+            v-if="isEditing"
             v-model="courceData.fee"
             type="number"
             outlined
@@ -151,11 +157,13 @@
             placeholder="Enter Course Fee"
             class="custom-input"
           />
+          <p v-else class="value">{{ courceData.fee }}</p>
         </div>
         <div class="info-item col-6 col-sm-6 col-md-4">
           <div class="label">Start Date</div>
 
           <q-input
+            v-if="isEditing"
             v-model="courceData.startdate"
             outlined
             dense
@@ -179,11 +187,13 @@
               </q-icon>
             </template>
           </q-input>
+          <p v-else class="value">{{ courceData.startdate }}</p>
         </div>
 
         <div class="info-item col-3 col-md-4">
           <div class="label">Days</div>
           <q-input
+            v-if="isEditing"
             v-model="courceData.days"
             type="number"
             outlined
@@ -191,15 +201,18 @@
             placeholder="Enter Number of Days"
             class="custom-input"
           />
+          <p v-else class="value">{{ courceData.days }}</p>
         </div>
         <div class="info-item col-3 col-md-4">
           <div class="label">Score Ratio</div>
           <q-input
+            v-if="isEditing"
             v-model="courceData.score_ratio"
             outlined
             dense
             class="custom-input"
           />
+          <p v-else class="value">{{ courceData.score_ratio }}</p>
         </div>
       </div>
     </div>
@@ -209,7 +222,14 @@
         <q-bar class="pdf-bar">
           <div>Preview</div>
           <q-space />
-          <q-btn dense flat icon="close" v-close-popup class="pdf-close-btn" aria-label="Close preview" />
+          <q-btn
+            dense
+            flat
+            icon="close"
+            v-close-popup
+            class="pdf-close-btn"
+            aria-label="Close preview"
+          />
         </q-bar>
 
         <q-card-section class="q-pa-none pdf-card-section">
@@ -248,6 +268,9 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
+
+const isEditing = ref(false);
+const backupData = ref(null);
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
@@ -356,12 +379,11 @@ const onSearchEvent = (searchValue) => {
   );
 };
 
-
 const oldcourseData = ref([]);
 const onFilterChange = ({ type, val }) => {
   if (type !== "balance") return;
 
-  courceData.value.registrations = oldcourseData.value.filter(row => {
+  courceData.value.registrations = oldcourseData.value.filter((row) => {
     const balance = Number(row.course_balance);
 
     if (val === "neg") return balance < 0;
@@ -372,13 +394,9 @@ const onFilterChange = ({ type, val }) => {
   });
 };
 
-
 const clearFilters = () => {
   courceData.value.registrations = [...oldcourseData.value];
 };
-
-
-
 
 const originalRegistrations = ref([]);
 const courceData = ref([]);
@@ -412,7 +430,19 @@ const getAllShifts = () => {
     });
 };
 
+const cancelEdit = () => {
+  if (backupData.value) {
+    courceData.value = JSON.parse(JSON.stringify(backupData.value));
+  }
+  isEditing.value = false;
+};
+
 const editCourse = () => {
+  if (!isEditing.value) {
+    backupData.value = JSON.parse(JSON.stringify(courceData.value));
+    isEditing.value = true;
+    return;
+  }
   const missing = [];
   if (!courceData.value.level) missing.push("Level");
   if (!courceData.value.startdate) missing.push("Start Date");
@@ -457,7 +487,8 @@ const editCourse = () => {
         position: "bottom-right",
         message: "Course Updated Successfully",
       });
-      router.push({ name: "courses" });
+      isEditing.value = false;
+      getCourceData();
       $q.loading.hide();
     })
     .catch((error) => {

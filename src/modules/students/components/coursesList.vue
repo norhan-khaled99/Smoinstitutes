@@ -28,12 +28,25 @@
     emptyStateButtonLabel="Add Course"
   />
 
-  <addCourseStudentpopup v-model="showAddCoursePopup" :student-id="studentData.student_id" :student-name="studentData.full_name" v-if="studentData.globalid" @save="getAllCourses" @update:modelValue="getAllCourses"/>
+  <addCourseStudentpopup
+    v-model="showAddCoursePopup"
+    :student-id="studentData.student_id"
+    :student-name="studentData.full_name"
+    v-if="studentData.globalid"
+    @save="getAllCourses"
+    @update:modelValue="getAllCourses"
+  />
   <addDiscountPopup
     v-model="showAddDiscountPopup"
     :courseName="selectedCourse"
     :student="studentData"
     @save="handleSaveDiscount"
+  />
+  <cancelRegistrationPopup
+    v-model="showCancelPopup"
+    :courseName="selectedCourse"
+    :student="studentData"
+    @confirm="handleConfirmCancel"
   />
 </template>
 <script setup>
@@ -41,6 +54,7 @@ import { ref, onMounted, computed, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import addCourseStudentpopup from "./addCourseStudentpopup.vue";
 import addDiscountPopup from "./addDiscountPopup.vue";
+import cancelRegistrationPopup from "./cancelRegistrationPopup.vue";
 import StudentService from "../services/service";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
@@ -48,6 +62,7 @@ import { useQuasar } from "quasar";
 
 const showAddCoursePopup = ref(false);
 const showAddDiscountPopup = ref(false);
+const showCancelPopup = ref(false);
 const selectedCourse = ref("");
 const router = useRouter();
 const route = useRoute();
@@ -96,7 +111,7 @@ const columns = [
     sortable: false,
   },
   {
-    name: "score",
+    name: "Coursescore",
     label: "Score",
     field: (row) => row.score,
     align: "left",
@@ -164,16 +179,17 @@ const filteredCourses = computed(() => {
   // Apply search filter
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(course =>
-      course.course_name?.toLowerCase().includes(query) ||
-      course.course_serial?.toString().includes(query) ||
-      course.level?.toLowerCase().includes(query)
+    filtered = filtered.filter(
+      (course) =>
+        course.course_name?.toLowerCase().includes(query) ||
+        course.course_serial?.toString().includes(query) ||
+        course.level?.toLowerCase().includes(query),
     );
   }
 
   // Apply status filter
   if (selectedStatus.value) {
-    filtered = filtered.filter(course => {
+    filtered = filtered.filter((course) => {
       const status = getCourseStatus(course);
       return status === selectedStatus.value;
     });
@@ -181,8 +197,8 @@ const filteredCourses = computed(() => {
 
   // Apply balance filter
   if (selectedBalance.value) {
-    filtered = filtered.filter(course => {
-      if (typeof course.course_balance === 'undefined') return false;
+    filtered = filtered.filter((course) => {
+      if (typeof course.course_balance === "undefined") return false;
       const balanceCategory = getBalanceCategory(course.course_balance);
       return balanceCategory === selectedBalance.value;
     });
@@ -211,14 +227,31 @@ const tableRows = computed(() => {
 
 // Event handlers
 const openDialogDeleteEvent = (row) => {
-  StudentService.cancelCourseRegistration(row.course_id , {
-    regid: row.regid,
-  }).then((res)=>{
-    if (res.status === 200) {
-      getAllCourses();
-    }
-  }).catch((err)=>{
-    $q.notify({
+  selectedCourse.value = row;
+  showCancelPopup.value = true;
+};
+
+const handleConfirmCancel = (data) => {
+  $q.loading.show();
+  StudentService.cancelCourseRegistration(data.course_id, {
+    regid: data.regid,
+    reason: data.reason,
+    cancellation_date: data.date,
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        getAllCourses();
+        $q.notify({
+          type: "positive",
+          message: "Registration cancelled successfully",
+          position: "bottom-right",
+        });
+      }
+      $q.loading.hide();
+    })
+    .catch((err) => {
+      $q.loading.hide();
+      $q.notify({
         badgeStyle: "display:none",
         classes: "custom-Notify",
         textColor: "black-1",
@@ -226,8 +259,7 @@ const openDialogDeleteEvent = (row) => {
         position: "bottom-right",
         message: err.response?.data?.result || "An error occurred.",
       });
-  })
-
+    });
 };
 
 const DetailsEvent = (row) => {
@@ -244,15 +276,17 @@ const addDiscount = (row) => {
 };
 
 const handleSaveDiscount = (data) => {
-  StudentService.addCourseDiscount(selectedCourse.value.course_id , {
-    regid:selectedCourse.value.regid,
+  StudentService.addCourseDiscount(selectedCourse.value.course_id, {
+    regid: selectedCourse.value.regid,
     discount: data.amount,
-  }).then((res)=>{
-    if (res.status === 200) {
-      getAllCourses();
-    }
-  }).catch((err)=>{
-    $q.notify({
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        getAllCourses();
+      }
+    })
+    .catch((err) => {
+      $q.notify({
         badgeStyle: "display:none",
         classes: "custom-Notify",
         textColor: "black-1",
@@ -260,15 +294,15 @@ const handleSaveDiscount = (data) => {
         position: "bottom-right",
         message: err.response?.data?.result || "An error occurred.",
       });
-  })
+    });
   // Add save discount logic here
 };
 
-
 const clearFilter = () => {
+  searchQuery.value = "";
   selectedStatus.value = "";
   selectedBalance.value = "";
-}
+};
 
 const onSearchEvent = (searchValue) => {
   searchQuery.value = searchValue;
@@ -276,9 +310,9 @@ const onSearchEvent = (searchValue) => {
 };
 
 const handleFilterChange = ({ type, val }) => {
-  if (type === 'status') {
+  if (type === "status") {
     selectedStatus.value = val;
-  } else if (type === 'balance') {
+  } else if (type === "balance") {
     selectedBalance.value = val;
   }
   pagination.value.page = 1;
@@ -292,7 +326,6 @@ const updatePag = (rowsPerPage) => {
 const getPagFun = ([apiCall, page, paginationData]) => {
   pagination.value.page = page;
 };
-
 
 const fireCall = ([apiCall, page, paginationData]) => {
   pagination.value.page = page;
@@ -308,7 +341,8 @@ const getAllCourses = () => {
         pagination.value.rowsNumber = allCourses.value.length;
       }
       $q.loading.hide();
-    }).catch((err) => {
+    })
+    .catch((err) => {
       $q.notify({
         badgeStyle: "display:none",
         classes: "custom-Notify",

@@ -22,6 +22,10 @@
     @filterChange="onFilterChange"
     @clearFilters="clearFilters"
     @searchEvent="onSearch"
+      emptyStateTitle="No profiles found"
+      emptyStateDescription="Adjust your filters or add new profiles to get started."
+      emptyStateButtonLabel="Add Profile"
+
   >
     <!-- Custom Account Type Slot -->
     <template #body-cell-accountType="{ row }">
@@ -344,6 +348,7 @@ const onFilterChange = ({ type, val }) => {
 };
 
 const clearFilters = () => {
+  searchQuery.value = "";
   typeOfFilter.value = "";
   valueOfFilter.value = "";
   getAllProfiles(1);

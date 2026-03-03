@@ -11,7 +11,9 @@
       :showAdd="false"
       emptyStateTitle="No courses found"
       emptyStateDescription="This staff member has no courses assigned."
-      emptyStateButtonLabel=""
+      emptyStateButtonLabel="Add Course"
+      @addNew="AddCourse"
+
     />
   </div>
 </template>
@@ -37,6 +39,9 @@ const pagination = ref({
   rowsPerPage: 20,
   rowsNumber: 100,
 });
+const AddCourse = () => {
+ alert("Add Course clicked");
+};
 
 const columns = [
   {
