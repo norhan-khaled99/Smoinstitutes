@@ -10,7 +10,7 @@ class authServices {
 
   getUserData() {
     return axiosInstance.get(
-      "/api/v1/finance/user/balance/sss"
+      "/api/v1/finance/user/balance/"
     );
   }
 
@@ -18,6 +18,13 @@ class authServices {
   getLogo() {
     return axiosInstance.get(
       "/api/v1/auth/system/info/"
+    );
+  }
+
+
+   getUserBalance() {
+    return axiosInstance.get(
+      "/api/v1/finance/user/balance/"
     );
   }
 

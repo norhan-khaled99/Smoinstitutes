@@ -323,6 +323,40 @@ const addEvent = () => {
   router.push({ name: "addStudent" });
 };
 
+// const scoreChanged = (row) => {
+//   const index = courceData.value.registrations.findIndex(
+//     (r) => r.regid === row.regid,
+//   );
+
+//   if (index !== -1) {
+//     courceData.value.registrations[index].score = row.score;
+//   }
+
+//   const payload = {
+//     scores: courceData.value.registrations.map((r) => ({
+//       regid: r.regid,
+//       score: r.score !== "" ? Number(r.score) : null,
+//     })),
+//   };
+
+//   services
+//     .updateScores(payload, route.params.id)
+//     .then(() => {
+//       $q.notify({
+//         badgeStyle: "display:none",
+//         classes: "custom-Notify",
+//         textColor: "black-1",
+//         icon: "img:/images/SuccessIcon.png",
+//         position: "bottom-right",
+//         message: "Scores Updated Successfully",
+//       });
+//     })
+//     .catch((error) => {
+//        $q.loading.hide();
+//     });
+// };
+
+
 const scoreChanged = (row) => {
   const index = courceData.value.registrations.findIndex(
     (r) => r.regid === row.regid,
@@ -333,10 +367,12 @@ const scoreChanged = (row) => {
   }
 
   const payload = {
-    scores: courceData.value.registrations.map((r) => ({
-      regid: r.regid,
-      score: r.score !== "" ? Number(r.score) : null,
-    })),
+    scores: [
+      {
+        regid: row.regid,
+        score: row.score !== "" ? Number(row.score) : null,
+      },
+    ],
   };
 
   services
@@ -351,10 +387,11 @@ const scoreChanged = (row) => {
         message: "Scores Updated Successfully",
       });
     })
-    .catch((error) => {
-       $q.loading.hide();
+    .catch(() => {
+      $q.loading.hide();
     });
 };
+
 
 const onSearchEvent = (searchValue) => {
   if (!searchValue || searchValue.trim() === "") {

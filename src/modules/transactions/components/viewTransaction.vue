@@ -23,7 +23,9 @@
         </div>
         <div class="popup-subtitle row q-gutter-sm items-center">
           <span>Paper No. ({{ transaction.paper_no }})</span>
-          <span class="q-ml-lg">Date of process : {{ formatDate(transaction.date) }}</span>
+          <span class="q-ml-lg"
+            >Date of process : {{ formatDate(transaction.date) }}</span
+          >
         </div>
 
         <div class="popup-divider"></div>
@@ -32,7 +34,7 @@
           <div class="col-6">
             <div class="form-group">
               <label class="form-group-label">Amount</label>
-              <p class="form-group-value">{{ transaction.amount }} EGP</p>
+              <p class="form-group-value">{{ transaction.amount }} {{ usercurrency }}</p>
             </div>
           </div>
           <div class="col-6">
@@ -95,6 +97,9 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from "vue";
+import authServices from "../../auth/services/service.js";
+
 const model = defineModel();
 
 const props = defineProps({
@@ -116,6 +121,23 @@ const formatDate = (date) => {
       })
     : "";
 };
+
+const usercurrency = ref("");
+
+const getlogo = () => {
+  authServices
+    .getLogo()
+    .then((res) => {
+      usercurrency.value = res.data?.data?.company.currency || "";
+    })
+    .catch((error) => {
+      console.error("Error fetching logo:", error);
+    });
+};
+
+onMounted(() => {
+  getlogo();
+});
 </script>
 
 <style lang="scss">

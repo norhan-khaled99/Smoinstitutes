@@ -222,21 +222,19 @@
                 />
                 <p v-else class="field-value">{{ studentData.middle_names }}</p>
               </div>
+            </div>
 
-              </div>
-
-              <div class="col-12 col-md-6 form-group">
-                <p class="field-label">Verfied Information</p>
-                <q-input
-                  v-if="isEditing"
-                  v-model="studentData.last_name"
-                  outlined
-                  dense
-                  class="edit-input"
-                />
-                <p v-else class="field-value">{{ studentData.last_name }}</p>
-              </div>
-
+            <div class="col-12 col-md-6 form-group">
+              <p class="field-label">Verfied Information</p>
+              <q-input
+                v-if="isEditing"
+                v-model="studentData.last_name"
+                outlined
+                dense
+                class="edit-input"
+              />
+              <p v-else class="field-value">{{ studentData.last_name }}</p>
+            </div>
           </div>
         </div>
 
@@ -338,7 +336,7 @@
               <span class="balance-label">Balance</span>
               <span class="balance-amount positive"
                 >{{ studentData.balance }}
-                <span class="currency">EGP</span></span
+                <span class="currency">{{ usercurrency }}</span></span
               >
             </div>
             <div class="balance-actions">
@@ -521,6 +519,7 @@
 <script setup>
 import { watch, defineExpose, onMounted, ref } from "vue";
 import StudentService from "../services/service";
+import authServices from "../../auth/services/service.js";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 
@@ -536,6 +535,18 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const usercurrency = ref("");
+const getlogo = () => {
+  authServices
+    .getLogo()
+    .then((res) => {
+      usercurrency.value = res.data?.data?.company.currency || "";
+    })
+    .catch((error) => {
+      console.error("Error fetching logo:", error);
+    });
+};
 
 const emit = defineEmits(["view-transactions", "add-payment"]);
 
@@ -634,7 +645,7 @@ const getStudentDetails = () => {
       $q.loading.hide();
     })
     .catch((err) => {
-       $q.loading.hide();
+      $q.loading.hide();
     });
 };
 
@@ -718,7 +729,7 @@ const handleSave = () => {
       }
     })
     .catch((err) => {
-       $q.loading.hide();
+      $q.loading.hide();
     });
 };
 const handleCancel = () => {
@@ -732,5 +743,6 @@ defineExpose({
 
 onMounted(() => {
   getStudentDetails();
+  getlogo()
 });
 </script>

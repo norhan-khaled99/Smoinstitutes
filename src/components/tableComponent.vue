@@ -1045,7 +1045,7 @@
                     {{
                       (isBalanceVisible(props.row)
                         ? props.row.balance
-                        : "******") + " EGP"
+                        : "******") + usercurrency
                     }}
                   </span>
                   <q-btn
@@ -1106,7 +1106,7 @@
                     {{
                       (isBalanceVisible(props.row)
                         ? props.row.course_balance
-                        : "******") + " EGP"
+                        : "******") + usercurrency
                     }}
                   </span>
                   <q-btn
@@ -1484,6 +1484,7 @@
 <script>
 import { ref, onMounted, computed } from "vue";
 import emptyState from "./emptyState.vue";
+import authServices from "../modules/auth/services/service.js";
 
 export default {
   name: "tableComp",
@@ -1899,6 +1900,7 @@ export default {
 
     onMounted(() => {
       pagination.value = props.tablePagination;
+      getlogo();
     });
 
     const pagesNumber = computed(() => {
@@ -1926,6 +1928,18 @@ export default {
     const model = ref(15);
     const update = (item) => {
       emit("getPagFun", [props.apiCall, item.page, pagination.value]);
+    };
+
+    const usercurrency = ref("");
+    const getlogo = () => {
+      authServices
+        .getLogo()
+        .then((res) => {
+          usercurrency.value = res.data?.data?.company.currency || "";
+        })
+        .catch((error) => {
+          console.error("Error fetching logo:", error);
+        });
     };
 
     const visibleBalances = ref(new Set());
@@ -1969,6 +1983,8 @@ export default {
       createdAtFilter,
       createdByFilter,
       directionFilter,
+      getlogo,
+      usercurrency,
       levelFilter,
       byUserFilter,
       teacherFilter,

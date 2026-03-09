@@ -8,8 +8,8 @@ class TransactionService {
   getAllTransactions(page, from, to, type) {
     let query = `page=${page}`;
 
-    if (from) query += `&from=${encodeURIComponent(from)}`;
-    if (to) query += `&to=${encodeURIComponent(to)}`;
+    if (from) query += `&paper_no_from=${encodeURIComponent(from)}`;
+    if (to) query += `&paper_no_to=${encodeURIComponent(to)}`;
     if (type) query += `&jtype=${encodeURIComponent(type)}`;
 
     return axiosInstance.get(`/api/v1/finance/transactions/?${query}`);

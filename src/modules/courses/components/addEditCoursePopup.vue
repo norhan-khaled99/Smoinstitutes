@@ -315,20 +315,21 @@ const serachForLevels = async (val, update) => {
       levelOptions.value = res.data.data;
     });
   } catch (e) {
+     levelLoading.value = false;
   } finally {
     levelLoading.value = false;
   }
 };
 
-// Clear the search input when a level is selected
-watch(
-  () => form.value.level,
-  (newVal) => {
-    if (newVal !== undefined && newVal !== null && newVal !== "") {
-      levelSearch.value = "";
-    }
-  },
-);
+// // Clear the search input when a level is selected
+// watch(
+//   () => form.value.level,
+//   (newVal) => {
+//     if (newVal !== undefined && newVal !== null && newVal !== "") {
+//       levelSearch.value = "";
+//     }
+//   },
+// );
 
 const teacherOptions = ref([]);
 const teacherLoading = ref(false);
@@ -349,7 +350,7 @@ const serachForTeacher = async (val, update) => {
       teacherOptions.value = res.data.data;
     });
   } catch (e) {
-   
+      teacherLoading.value = false;
   } finally {
     teacherLoading.value = false;
   }

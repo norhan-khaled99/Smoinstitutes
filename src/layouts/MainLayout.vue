@@ -101,7 +101,7 @@
               <span class="q-mr-sm">{{
                 isBalanceVisible ? userBalance : "•••••"
               }}</span>
-              <span class="text-caption q-mr-xs">EGP</span>
+              <span class="text-caption q-mr-xs">{{ usercurrency }}</span>
               <svg
                 v-if="isBalanceVisible"
                 @click="isBalanceVisible = !isBalanceVisible"
@@ -121,7 +121,7 @@
               </svg>
               <svg
                 v-else
-                @click="isBalanceVisible = !isBalanceVisible"
+                @click="isBalanceVisible = !isBalanceVisible ; getUserBalance()"
                 class="cursor-pointer"
                 width="16"
                 height="16"
@@ -401,7 +401,7 @@ export default defineComponent({
     const site_title = ref("");
 
     const userName = ref("");
-    const userBalance = ref("");
+    const userBalance = ref("•••••");
     const isBalanceVisible = ref(false);
 
     const getUserData = () => {
@@ -409,7 +409,7 @@ export default defineComponent({
         .getUserData()
         .then((res) => {
           userName.value = res.data?.data?.full_name || "";
-          userBalance.value = res.data?.data?.balance || "";
+
 
           $q.loading.hide();
         })
@@ -418,13 +418,25 @@ export default defineComponent({
         });
     };
 
+    const usercurrency = ref("");
+
     const getlogo = () => {
       authServices.getLogo().then((res) => {
         logoUrl.value = res.data?.data?.company.logo;
         site_title.value = res.data?.data?.company.site_title;
+        usercurrency.value = res.data?.data?.company.currency || "";
         })
         .catch((error) => {
           console.error("Error fetching logo:", error);
+        });
+    };
+
+
+    const getUserBalance = () => {
+      authServices.getUserBalance().then((res) => {
+          userBalance.value = res.data?.data?.balance || "";
+        })
+        .catch((error) => {
         });
     };
 
@@ -466,6 +478,8 @@ export default defineComponent({
       parentLink,
       titleOfSubTitel,
       subTitleChildLink,
+      usercurrency,
+      getUserBalance,
       drawerWidth: 264,
       logout,
       toggleLeftDrawer() {
