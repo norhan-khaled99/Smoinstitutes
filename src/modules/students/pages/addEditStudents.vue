@@ -450,14 +450,7 @@ const saveStudent = async () => {
           router.push({name: "students"});
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     })
   }else {
     StudentService.addStudent(data)
@@ -474,14 +467,7 @@ const saveStudent = async () => {
           router.push({name: "students"});
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     })
   }
 };
@@ -527,14 +513,7 @@ const saveAndAddAnother = async () => {
              isEditable.value = false;
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     })
   }else {
     StudentService.addStudent(data)
@@ -565,14 +544,7 @@ const saveAndAddAnother = async () => {
              isEditable.value = false;
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+      $q.loading.hide();
     })
   }
 };
@@ -605,14 +577,7 @@ const saveAndAddCourses = async () => {
           router.push({name: "studentDetails" , params:{id:studentId.value} , query: { addCourses: 'true' }});
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     })
   } else {
     StudentService.addStudent(data)
@@ -630,14 +595,7 @@ const saveAndAddCourses = async () => {
            router.push({name: "studentDetails", params:{id:studentId.value} , query: { addCourses: 'true' }});
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     })
   }
   // Navigate to courses page or show course modal
@@ -670,14 +628,7 @@ const saveAndContinueEditing = async () => {
           studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+      $q.loading.hide();
     })
   } else {
     StudentService.addStudent(data)
@@ -694,14 +645,7 @@ const saveAndContinueEditing = async () => {
           studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     })
   }
 };
@@ -716,14 +660,7 @@ const getAllCities = () => {
       $q.loading.hide();
     }).catch((error) => {
     $q.loading.hide();
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: error.response?.data?.result || "An error occurred.",
-    });
+    
   });
 }
 

@@ -175,7 +175,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import rules from "src/config/rules";
@@ -250,6 +250,13 @@ export default {
           });
       }
     };
+
+  
+
+     onMounted(() => {
+
+    });
+
     /** end login integration**/
     return {
       form,

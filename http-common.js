@@ -30,14 +30,42 @@ axiosInstance.interceptors.response.use(
       error.config &&
       (error.config.url || "").includes("/api/v1/auth/token");
 
-    if (error.response && error.response.status === 401 && !isAuthTokenEndpoint) {
-      localStorage.clear();
-      window.location.href = "/ui/login";
-      Notify.create({
-        type: "negative",
-        position: "bottom-right",
-        message: "Check your Authentication",
-      });
+    if (error.response) {
+      const { status } = error.response;
+
+      if (status === 400) {
+        Notify.create({
+          type: "negative",
+          position: "bottom-right",
+          message: "Validation error",
+        });
+      } else if (status === 403) {
+        Notify.create({
+          type: "negative",
+          position: "bottom-right",
+          message: "Permission denied",
+        });
+      } else if (status === 404) {
+        Notify.create({
+          type: "negative",
+          position: "bottom-right",
+          message: "Object not found",
+        });
+      } else if (status === 500) {
+        Notify.create({
+          type: "negative",
+          position: "bottom-right",
+          message: "Server error",
+        });
+      } else if (status === 401 && !isAuthTokenEndpoint) {
+        localStorage.clear();
+        window.location.href = "/ui/login";
+        Notify.create({
+          type: "negative",
+          position: "bottom-right",
+          message: "Check your Authentication",
+        });
+      }
     }
 
     return Promise.reject(error);

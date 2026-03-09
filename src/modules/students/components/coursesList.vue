@@ -251,14 +251,7 @@ const handleConfirmCancel = (data) => {
     })
     .catch((err) => {
       $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+
     });
 };
 
@@ -286,14 +279,7 @@ const handleSaveDiscount = (data) => {
       }
     })
     .catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     });
   // Add save discount logic here
 };
@@ -343,14 +329,6 @@ const getAllCourses = () => {
       $q.loading.hide();
     })
     .catch((err) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: err.response?.data?.result || "An error occurred.",
-      });
       $q.loading.hide();
     });
 };

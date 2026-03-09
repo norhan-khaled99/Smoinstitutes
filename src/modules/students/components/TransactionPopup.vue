@@ -310,14 +310,7 @@ const searchForCourses = async (val, update) => {
       ];
     });
   } catch (e) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: e.res?.data?.result || "An error occurred.",
-    });
+     $q.loading.hide();
   } finally {
     courseLoading.value = false;
   }
@@ -347,14 +340,7 @@ const searchForAccount = async (val, update) => {
       ];
     });
   } catch (e) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: e.res?.data?.result || "An error occurred.",
-    });
+     $q.loading.hide();
   } finally {
     accountLoading.value = false;
   }
@@ -384,14 +370,7 @@ const searchForService = async (val, update) => {
       ];
     });
   } catch (e) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: e.res?.data?.result || "An error occurred.",
-    });
+   $q.loading.hide();
   } finally {
     serviceLoading.value = false;
   }

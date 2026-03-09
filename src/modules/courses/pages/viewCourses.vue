@@ -352,15 +352,7 @@ const scoreChanged = (row) => {
       });
     })
     .catch((error) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message:
-          error.response?.data?.errors?.__all__?.[0] || "An error occurred.",
-      });
+       $q.loading.hide();
     });
 };
 
@@ -493,14 +485,7 @@ const editCourse = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.errors?.__all__?.[0] || "An error occurred.",
-      });
+
     });
 };
 
@@ -535,15 +520,7 @@ const handleAction = async (action) => {
   } catch (error) {
     $q.loading.hide();
 
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message:
-        error.response?.data?.errors?.__all__?.[0] || "An error occurred.",
-    });
+
   }
 };
 watch(pdfDialog, (val) => {
@@ -572,14 +549,7 @@ const serachForTeacher = async (val, update) => {
       teacherOptions.value = res.data.data;
     });
   } catch (e) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: e.response?.data?.result || "An error occurred.",
-    });
+     $q.loading.hide();
   } finally {
     teacherLoading.value = false;
   }

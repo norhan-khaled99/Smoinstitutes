@@ -492,14 +492,7 @@ const filterFromAccounts = async (val, update) => {
         applyFromAccountFilter();
       });
     } catch (e) {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: e.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     } finally {
       fromAccountLoading.value = false;
     }
@@ -550,14 +543,7 @@ const filterToAccounts = async (val, update) => {
         applyToAccountFilter();
       });
     } catch (e) {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: e.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     } finally {
       toAccountLoading.value = false;
     }

@@ -197,14 +197,7 @@ const onSaveTransaction = (data) => {
         getTransactions(pagination.value.page);
       }
     }).catch((error) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+       $q.loading.hide();
     }).finally(() => {
       $q.loading.hide();
     });
@@ -270,15 +263,7 @@ const getTransactions = (page = 1) => {
         $q.loading.hide();
       }
     }).catch((error) => {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: error.response?.data?.result || "An error occurred.",
-    });
-    $q.loading.hide();
+     $q.loading.hide();
   });
 
 };
@@ -301,14 +286,7 @@ const initializeData = () => {
         }));
       }
     }).catch((error) => {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: error.response?.data?.result || "An error occurred.",
-    });
+    $q.loading.hide();
   });
   getTransactions(1);
 }

@@ -166,14 +166,7 @@ const performSearch = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+
     });
 };
 const updatePag = (rowsPerPage) => {
@@ -217,14 +210,7 @@ const getAllStudents = (page = 1) => {
     $q.loading.hide();
   }).catch((error) => {
     $q.loading.hide();
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: error.response?.data?.result || "An error occurred.",
-    });
+
   })
 }
 onMounted(() => {

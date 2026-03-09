@@ -234,14 +234,7 @@ const handleSaveNote = (newNote) => {
       }
     })
     .catch((error) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+      $q.loading.hide();
     });
 };
 
@@ -257,14 +250,7 @@ const getAllNotes = (page = 1) => {
       $q.loading.hide();
     })
     .catch((error) => {
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+      
       $q.loading.hide();
     });
 };

@@ -80,14 +80,7 @@ const getAllTransactions = (page = 1) => {
     })
     .catch((error) => {
       $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+      
     });
 };
 
@@ -282,14 +275,7 @@ const handleSaveTransaction = (data) => {
     })
     .catch((error) => {
       $q.loading.hide();
-      $q.notify({
-        badgeStyle: "display:none",
-        classes: "custom-Notify",
-        textColor: "black-1",
-        icon: "img:/images/Error.png",
-        position: "bottom-right",
-        message: error.response?.data?.result || "An error occurred.",
-      });
+      ;
     });
 };
 

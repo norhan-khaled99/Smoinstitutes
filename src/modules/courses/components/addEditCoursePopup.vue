@@ -315,14 +315,6 @@ const serachForLevels = async (val, update) => {
       levelOptions.value = res.data.data;
     });
   } catch (e) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: e.res?.data?.result || "An error occurred.",
-    });
   } finally {
     levelLoading.value = false;
   }
@@ -357,14 +349,7 @@ const serachForTeacher = async (val, update) => {
       teacherOptions.value = res.data.data;
     });
   } catch (e) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: e.response?.data?.result || "An error occurred.",
-    });
+   
   } finally {
     teacherLoading.value = false;
   }
