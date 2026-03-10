@@ -16,19 +16,28 @@ class BookStockServices {
   }
 
 
-  getAllBookStock(page, type, value , searchQuery) {
-    if (type && value) {
-      return axiosInstance.get(
-        `/api/v1/courses/books-stock/search/?${type}=${value}&page=${page}`,
-      );
+  getAllBookStock(page, filters = {}) {
+    const params = new URLSearchParams({ page: String(page) });
+    const { direction, level, byUser, searchQuery } = filters;
+
+    if (searchQuery) {
+      params.set("q", searchQuery);
     }
-    else if (searchQuery) {
-      return axiosInstance.get(
-        `/api/v1/courses/books-stock/?q=${searchQuery}&page=${page}`
-      );
-    }else {
-      return axiosInstance.get(`/api/v1/courses/books-stock/?page=${page}`);
+    if (direction != null && direction !== "") {
+      params.set("direction", direction);
     }
+    if (level != null && level !== "") {
+      params.set("level", level);
+    }
+    if (byUser != null && byUser !== "") {
+      params.set("by_user", byUser);
+    }
+
+    const query = params.toString();
+    const url = query
+      ? `/api/v1/courses/books-stock/?${query}`
+      : `/api/v1/courses/books-stock/?page=${page}`;
+    return axiosInstance.get(url);
   }
 
   addBookStock(value) {

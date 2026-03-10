@@ -11,8 +11,7 @@
       :showAdd="false"
       emptyStateTitle="No courses found"
       emptyStateDescription="This staff member has no courses assigned."
-      emptyStateButtonLabel="Add Course"
-      @addNew="AddCourse"
+      :showEmptyStateButton="false"
 
     />
   </div>

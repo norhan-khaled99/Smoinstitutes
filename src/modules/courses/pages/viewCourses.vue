@@ -253,6 +253,7 @@
       :balanceOptions="balanceOptions"
       :showFilters="true"
       :student="true"
+      :scoreStatuses="scoreStatuses"
       @addNew="addEvent"
       @scoreChanged="scoreChanged"
       @searchEvent="onSearchEvent"
@@ -263,12 +264,13 @@
       @clearFilters="clearFilters"
     />
   </q-page>
+  <addStudentCoursePopup v-model="addStudentDialog" />
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import tableComp from "src/components/tableComponent.vue";
-
+import addStudentCoursePopup from "../components/addStudentCoursePopup.vue";
 const isEditing = ref(false);
 const backupData = ref(null);
 import { useRouter } from "vue-router";
@@ -281,6 +283,8 @@ const router = useRouter();
 const $q = useQuasar();
 const route = useRoute();
 const loading = ref(false);
+const scoreStatuses = ref({});
+const addStudentDialog = ref(false);
 
 const columns = [
   {
@@ -320,7 +324,9 @@ const balanceOptions = ref([
 ]);
 
 const addEvent = () => {
-  router.push({ name: "addStudent" });
+
+  addStudentDialog.value = true;
+  // router.push({ name: "addStudent" });
 };
 
 // const scoreChanged = (row) => {
@@ -378,6 +384,12 @@ const scoreChanged = (row) => {
   services
     .updateScores(payload, route.params.id)
     .then(() => {
+      scoreStatuses.value = { ...scoreStatuses.value, [row.regid]: 'success' };
+      setTimeout(() => {
+        const updated = { ...scoreStatuses.value };
+        delete updated[row.regid];
+        scoreStatuses.value = updated;
+      }, 3000);
       $q.notify({
         badgeStyle: "display:none",
         classes: "custom-Notify",
@@ -388,6 +400,12 @@ const scoreChanged = (row) => {
       });
     })
     .catch(() => {
+      scoreStatuses.value = { ...scoreStatuses.value, [row.regid]: 'error' };
+      setTimeout(() => {
+        const updated = { ...scoreStatuses.value };
+        delete updated[row.regid];
+        scoreStatuses.value = updated;
+      }, 3000);
       $q.loading.hide();
     });
 };

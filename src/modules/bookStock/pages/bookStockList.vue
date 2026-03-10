@@ -9,18 +9,20 @@
     :showFilters="true"
     :ShowActionsdropDown="true"
     searchPlaceholder="Search books stock..."
+    :showBookStockFilter="true"
     :showDirectionFilter="true"
     :directionOptions="directionOptions"
     :showLevelFilter="true"
     :levelOptions="levelOptions"
     :showByUserFilter="true"
     :byUserOptions="byUserOptions"
+    :viewReport="true"
+    @viewReport="viewReport"
     @addNew="addBook"
     :bookStock="true"
-    :viewReport="true"
     @DetailsEvent="onViewDetails"
     @searchEvent="onSearch"
-    @filterChange="onFilterChange"
+    @filterBookStock="onFilterBookStock"
     @clearFilters="clearFilters"
     @updatePag="updatePag"
     @getPagFun="getPagFun"
@@ -45,7 +47,6 @@ import { onMounted, ref } from "vue";
 import tableComp from "src/components/tableComponent.vue";
 import addBookStock from "../components/addBookStock.vue";
 import bookStockDetailsPopup from "../components/bookStockDetailsPopup.vue";
-import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
 
@@ -53,7 +54,6 @@ const showAddBookPopup = ref(false);
 const showDetailsPopup = ref(false);
 const selectedRow = ref({});
 const $q = useQuasar();
-const router = useRouter();
 
 const pagination = ref({
   page: 1,
@@ -114,12 +114,27 @@ const columns = [
   },
 ];
 
+
+const viewReport = () => {
+ alert("viewReport")
+};
+
+const searchQuery = ref("");
+const directionFilter = ref(null);
+const levelFilter = ref(null);
+const byUserFilter = ref(null);
+
 const allBookStock = ref([]);
 const getAllBookStock = (page = 1) => {
   $q.loading.show();
 
   services
-    .getAllBookStock(page, typeOfFilter.value, valueOfFilter.value , searchQuery.value)
+    .getAllBookStock(page, {
+      direction: directionFilter.value,
+      level: levelFilter.value,
+      byUser: byUserFilter.value,
+      searchQuery: searchQuery.value,
+    })
     .then((res) => {
       allBookStock.value = res.data.data.results;
 
@@ -194,30 +209,50 @@ const handleSaveBook = (bookData) => {
     });
 };
 
-const searchQuery = ref("");
 const onSearch = (val) => {
   searchQuery.value = val;
   getAllBookStock(1);
 };
 
-const typeOfFilter = ref("");
-const valueOfFilter = ref("");
-const onFilterChange = ({ type, val }) => {
-  if (val != null) {
-    typeOfFilter.value = type;
-    valueOfFilter.value = val;
-    getAllBookStock(1);
-  } else {
-    typeOfFilter.value = "";
-    valueOfFilter.value = "";
+const onFilterBookStock = (direction, level, byUser) => {
+  directionFilter.value = direction;
+  levelFilter.value = level;
+  byUserFilter.value = byUser;
+
+  if (level && !byUser) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please select By user",
+    });
+    return;
+  }
+
+  if (byUser && !level) {
+    $q.notify({
+      badgeStyle: "display:none",
+      classes: "custom-Notify",
+      textColor: "black-1",
+      icon: "img:/images/Error.png",
+      position: "bottom-right",
+      message: "Please select Level",
+    });
+    return;
+  }
+
+  if ((direction &&level && byUser)) {
     getAllBookStock(1);
   }
 };
 
 const clearFilters = () => {
-  searchQuery.value=""
-  typeOfFilter.value = "";
-  valueOfFilter.value = "";
+  searchQuery.value = "";
+  directionFilter.value = null;
+  levelFilter.value = null;
+  byUserFilter.value = null;
   getAllBookStock(1);
 };
 

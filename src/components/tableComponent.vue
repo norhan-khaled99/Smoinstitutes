@@ -500,7 +500,9 @@
                           class="filter-select"
                           :placeholder="directionFilter ? '' : 'Direction'"
                           @update:model-value="
-                            onFilterChange('direction', directionFilter)
+                            showBookStockFilter
+                              ? onFilterBookStock()
+                              : onFilterChange('direction', directionFilter)
                           "
                         >
                           <template v-slot:append>
@@ -510,7 +512,9 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 directionFilter = null;
-                                onFilterChange('direction', null);
+                                showBookStockFilter
+                                  ? onFilterBookStock()
+                                  : onFilterChange('direction', null);
                               "
                             />
                           </template>
@@ -535,7 +539,9 @@
                           class="filter-select"
                           :placeholder="levelFilter ? '' : 'Level'"
                           @update:model-value="
-                            onFilterChange('level_id', levelFilter)
+                            showBookStockFilter
+                              ? onFilterBookStock()
+                              : onFilterChange('level_id', levelFilter)
                           "
                         >
                           <template v-slot:append>
@@ -545,7 +551,9 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 levelFilter = null;
-                                onFilterChange('level_id', null);
+                                showBookStockFilter
+                                  ? onFilterBookStock()
+                                  : onFilterChange('level_id', null);
                               "
                             />
                           </template>
@@ -570,7 +578,9 @@
                           class="filter-select"
                           :placeholder="byUserFilter ? '' : 'By user'"
                           @update:model-value="
-                            onFilterChange('by_user', byUserFilter)
+                            showBookStockFilter
+                              ? onFilterBookStock()
+                              : onFilterChange('by_user', byUserFilter)
                           "
                         >
                           <template v-slot:append>
@@ -580,7 +590,9 @@
                               class="cursor-pointer"
                               @click.stop.prevent="
                                 byUserFilter = null;
-                                onFilterChange('byUser', null);
+                                showBookStockFilter
+                                  ? onFilterBookStock()
+                                  : onFilterChange('byUser', null);
                               "
                             />
                           </template>
@@ -890,7 +902,7 @@
                     </q-btn>
                     <div
                       class="view-report cursor-pointer"
-                      v-if="transactions"
+                      v-if="viewReport"
                       @click="$emit('viewReport')"
                     >
                       View Report
@@ -1170,7 +1182,11 @@
                     dense
                     outlined
                     @blur="handleChangeScore(props.row)"
-                    class="score-input"
+                    :class="[
+                      'score-input',
+                      scoreStatuses[props.row.regid] === 'success' ? 'score-success' : '',
+                      scoreStatuses[props.row.regid] === 'error' ? 'score-error' : '',
+                    ]"
                     type="number"
                   />
                 </slot>
@@ -1745,7 +1761,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    
     showStatusFilterInCourseFinance: {
+      type: Boolean,
+      default: false,
+    },
+    scoreStatuses: {
+      type: Object,
+      default: () => ({}),
+    },
+    showBookStockFilter: {
       type: Boolean,
       default: false,
     },
@@ -1822,6 +1847,15 @@ export default {
         next.focus();
       }
     };
+    const onFilterBookStock = () => {
+      emit(
+        "filterBookStock",
+        directionFilter.value,
+        levelFilter.value,
+        byUserFilter.value,
+      );
+    };
+
     const handleChangeScore = (row) => {
       emit("scoreChanged", row);
     };
@@ -2009,6 +2043,7 @@ export default {
       focusNext,
       formatNumber,
       onFilterTransaction,
+      onFilterBookStock,
       handleRowClick,
     };
   },
@@ -2019,5 +2054,21 @@ export default {
   white-space: normal !important;
   word-break: break-word;
   max-width: 300px;
+}
+
+.score-input.score-success :deep(.q-field__control) {
+  border-color: #22c55e !important;
+  transition: border-color 0.3s ease;
+}
+.score-input.score-success :deep(.q-field__control::before) {
+  border-color: #22c55e !important;
+}
+
+.score-input.score-error :deep(.q-field__control) {
+  border-color: #ef4444 !important;
+  transition: border-color 0.3s ease;
+}
+.score-input.score-error :deep(.q-field__control::before) {
+  border-color: #ef4444 !important;
 }
 </style>
