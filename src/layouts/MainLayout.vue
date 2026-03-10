@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf" class="main_layout">
     <q-header class="bg-white text-grey-9 header_main" height-hint="70">
       <q-toolbar class="q-px-lg">
-        <div v-if="miniState" class="q-mr-md">
+        <div v-if="miniState" class="q-mr-md row items-center">
               <img   :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" width="141" height="40"/>
             <span > {{ site_title }}</span>
         </div>
@@ -159,9 +159,10 @@
       <div class="column justify-between full-height no-wrap">
         <div>
           <div class="logo" :class="{ 'mini-logo': miniState }">
-
-            <img  v-if="!miniState" :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" width="141" height="40"/>
-            <span v-if="!miniState" > {{ site_title }}</span>
+            <div v-if="!miniState" class="logo-content">
+              <img :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" width="175" height="40" />
+              <span class="site-title-text">{{ site_title }}</span>
+            </div>
             <svg
               @click="miniState = !miniState"
               class="cursor-pointer"
