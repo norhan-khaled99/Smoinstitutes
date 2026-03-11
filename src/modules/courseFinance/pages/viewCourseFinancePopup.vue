@@ -233,7 +233,7 @@ watch(pdfDialog, (val) => {
 }
 
 .pdf-bar {
-  background-color: #ef4444;
+  background-color: #2f5d6a;
   color: #ffffff;
 }
 

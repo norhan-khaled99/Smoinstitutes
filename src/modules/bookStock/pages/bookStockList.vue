@@ -40,6 +40,11 @@
   />
 
   <bookStockDetailsPopup v-model="showDetailsPopup" :row="selectedRow" />
+
+  <viewBookStockReportPopup
+    v-model="showTransactionReport"
+  />
+
 </template>
 
 <script setup>
@@ -49,10 +54,12 @@ import addBookStock from "../components/addBookStock.vue";
 import bookStockDetailsPopup from "../components/bookStockDetailsPopup.vue";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
+import viewBookStockReportPopup from "../components/viewBookStockReportPopup.vue";
 
 const showAddBookPopup = ref(false);
 const showDetailsPopup = ref(false);
 const selectedRow = ref({});
+const showTransactionReport = ref(false);
 const $q = useQuasar();
 
 const pagination = ref({
@@ -116,7 +123,7 @@ const columns = [
 
 
 const viewReport = () => {
- alert("viewReport")
+  showTransactionReport.value = true;
 };
 
 const searchQuery = ref("");

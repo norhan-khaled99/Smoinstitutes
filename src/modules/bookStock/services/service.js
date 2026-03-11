@@ -43,6 +43,14 @@ class BookStockServices {
   addBookStock(value) {
     return axiosInstance.post(`/api/v1/courses/books-stock/`, value);
   }
+
+
+  executeAction() {
+    const config = { responseType: 'arraybuffer' };
+    return axiosInstance.get(`/api/v1/reports/stock-report/`, config);
+  }
+
+
 }
 
 export default new BookStockServices();

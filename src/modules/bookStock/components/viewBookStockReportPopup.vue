@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import services from "../service/service.js";
+import services from "../services/service.js";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
@@ -36,18 +36,7 @@ const $q = useQuasar();
 const model = defineModel();
 
 const props = defineProps({
-  fromFilter: {
-    type: String,
-    default: "",
-  },
-  toFilter: {
-    type: String,
-    default: "",
-  },
-  typeFilter: {
-    type: String,
-    default: "",
-  },
+
 });
 
 const pdfUrl = ref(null);
@@ -56,11 +45,7 @@ const loadReport = async () => {
   try {
     $q.loading.show();
 
-    const res = await services.executeAction(
-      props.fromFilter,
-      props.toFilter,
-      props.typeFilter
-    );
+    const res = await services.executeAction();
 
     $q.loading.hide();
 
