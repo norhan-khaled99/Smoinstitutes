@@ -264,7 +264,7 @@
       @clearFilters="clearFilters"
     />
   </q-page>
-  <addStudentCoursePopup v-model="addStudentDialog" />
+  <addStudentCoursePopup v-model="addStudentDialog" @saveStudent="saveStudent" />
 </template>
 
 <script setup>
@@ -316,6 +316,29 @@ const columns = [
     sortable: false,
   },
 ];
+
+const saveStudent = (studentData) => {
+    $q.loading.show();
+    services
+      .addStudentToCourse(studentData, route.params.id)
+      .then(() => {
+        $q.notify({
+          badgeStyle: "display:none",
+          classes: "custom-Notify",
+          textColor: "black-1",
+          icon: "img:/images/SuccessIcon.png",
+          position: "bottom-right",
+          message: "Student added to course successfully!",
+        });
+        getCourceData();
+      })
+      .catch((error) => {
+          $q.loading.hide();
+      })
+      .finally(() => {
+        $q.loading.hide();
+      });
+};
 
 const balanceOptions = ref([
   { name: "Negative", id: "neg" },

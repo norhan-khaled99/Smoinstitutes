@@ -24,78 +24,134 @@
 
         <div class="popup-divider"></div>
 
-        <div class="form-group">
-          <label>Select Student</label>
-          <q-select
-            v-model="form.studentId"
-            :options="studentOptions"
-            option-value="id"
-            option-label="label"
-            outlined
-            dense
-            emit-value
-            map-options
-            placeholder="Choose a student"
-            class="custom-input"
-          />
-        </div>
+        <q-form ref="formRef" greedy class="form-content">
+          <div class="form-group">
+            <label>Select Student</label>
+            <q-select
+              v-model="form.student_id"
+              :options="studentOptions"
+              option-label="label"
+              option-value="id"
+              outlined
+              dense
+              emit-value
+              map-options
+              use-input
+              input-debounce="400"
+              class="custom-select"
+              :loading="studentLoading"
+              @filter="serachForStudent"
+              :placeholder="
+                searchvalueOFStudent || 'Select Student After Searching...'
+              "
+              :rules="rules.required"
+            />
+          </div>
 
-        <div class="form-group">
-          <label>Discount Amount</label>
-          <q-input
-            v-model.number="form.discountAmount"
-            type="number"
-            outlined
-            dense
-            placeholder="0"
-            class="custom-input"
-          />
-        </div>
+          <div class="form-group">
+            <label>Discount Amount</label>
+            <q-input
+              v-model.number="form.discount"
+              :rules="rules.required"
+              type="number"
+              outlined
+              dense
+              placeholder="0"
+              class="custom-input"
+            />
+          </div>
 
-        <div class="popup-actions justify-end q-mt-lg">
-          <q-btn label="Cancel" v-close-popup flat class="btn-cancel" no-caps @click="resetForm()" />
-          <q-btn
-            label="Save & Close"
-            class="btn-save-close"
-            no-caps
-            @click="saveStudent"
-          />
-        </div>
+          <div class="popup-actions justify-end q-mt-lg">
+            <q-btn
+              label="Cancel"
+              v-close-popup
+              flat
+              class="btn-cancel"
+              no-caps
+              @click="resetForm()"
+            />
+            <q-btn
+              label="Save & Close"
+              class="btn-save-close"
+              no-caps
+              @click.prevent="saveStudent()"
+            />
+          </div>
+        </q-form>
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import services from "../services/service.js";
+import rules from "src/config/rules.js";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 const model = defineModel();
+const $q = useQuasar();
+const router = useRouter();
+const formRef = ref(null);
 
-const props = defineProps({
-
-});
+const props = defineProps({});
 
 const emit = defineEmits(["save"]);
 
+const studentOptions = ref([]);
+const studentLoading = ref(false);
+const searchvalueOFStudent = ref("");
+const serachForStudent = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      studentOptions.value = [];
+    });
+    return;
+  }
 
-const studentOptions = ref([])
+  studentLoading.value = true;
+
+  try {
+    const res = await services.serachForStudent(val);
+
+    update(() => {
+      studentOptions.value = res.data.data;
+      searchvalueOFStudent.value = val;
+    });
+  } catch (e) {
+      studentLoading.value = false;
+  } finally {
+    studentLoading.value = false;
+  }
+};
 
 const form = ref({
-  studentId: null,
-  discountAmount: 0,
+  student_id: null,
+  discount: 0,
 });
 
-const saveStudent = () => {
+const saveStudent = async () => {
+  // Validate form before saving
+  const isValid = await formRef.value.validate();
 
+  if (!isValid) {
+    return;
+  }
 
-}
+  emit("saveStudent", form.value);
+  model.value = false;
+  resetForm();
+};
 
 const resetForm = () => {
   form.value = {
-    studentId: null,
-    discountAmount: 0,
+    student_id: null,
+    discount: 0,
   };
 };
+
+onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
