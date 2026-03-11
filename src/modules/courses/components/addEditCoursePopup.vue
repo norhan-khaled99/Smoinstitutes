@@ -50,16 +50,14 @@
                   dense
                   emit-value
                   map-options
-                  fill-input
+
                   use-input
-                  :input-value="levelSearch"
-                  @update:input-value="(val) => (levelSearch = val)"
-                  @update:model-value="() => (levelSearch = '')"
+
                   input-debounce="400"
                   class="custom-select"
                   :loading="levelLoading"
                   @filter="serachForLevels"
-                  placeholder="Select Level After Searching..."
+                  :placeholder="searchvalueOFLevel || 'Select Level After Searching...'"
                 />
               </div>
             </div>
@@ -75,13 +73,12 @@
                   dense
                   emit-value
                   map-options
-                  fill-input
                   use-input
                   input-debounce="400"
                   class="custom-select"
                   :loading="teacherLoading"
                   @filter="serachForTeacher"
-                  placeholder="Select Teacher After Searching..."
+                  :placeholder="searchvalueOFTeacher || 'Select Level After Searching...'"
                   :rules="rules.required"
                 />
               </div>
@@ -297,7 +294,7 @@ const nextCourseSerial = () => {
 const levelLoading = ref(false);
 const levelOptions = ref([]);
 const levelSearch = ref("");
-
+const searchvalueOFLevel = ref("");
 const serachForLevels = async (val, update) => {
   if (!val || val.length < 2) {
     update(() => {
@@ -313,6 +310,7 @@ const serachForLevels = async (val, update) => {
 
     update(() => {
       levelOptions.value = res.data.data;
+      searchvalueOFLevel.value = val;
     });
   } catch (e) {
      levelLoading.value = false;
@@ -333,6 +331,7 @@ const serachForLevels = async (val, update) => {
 
 const teacherOptions = ref([]);
 const teacherLoading = ref(false);
+const searchvalueOFTeacher = ref("");
 const serachForTeacher = async (val, update) => {
   if (!val || val.length < 2) {
     update(() => {
@@ -348,6 +347,7 @@ const serachForTeacher = async (val, update) => {
 
     update(() => {
       teacherOptions.value = res.data.data;
+      searchvalueOFTeacher.value = val;
     });
   } catch (e) {
       teacherLoading.value = false;
