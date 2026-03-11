@@ -30,6 +30,7 @@
   <editStaffPopup
     v-model="showEditPopup"
     :staffInfo="selectedStaff"
+    :staffActions="staffActions"
     :coursesDataValue="coursesDataValue"
     :initialEditMode="popupEditMode"
     @save="handleSaveStaff"
@@ -51,6 +52,7 @@ const valueOfFilter = ref("");
 const searchQuery = ref("");
 const showEditPopup = ref(false);
 const selectedStaff = ref(null);
+const staffActions = ref([]);
 const popupEditMode = ref(false);
 const $q = useQuasar();
 const pagination = ref({
@@ -218,6 +220,7 @@ const getStaffData = () => {
       .getStaffData(selectedStaff.value.globalid)
       .then((res) => {
         selectedStaff.value = res.data.data.staff;
+        staffActions.value = res.data.data.actions;
         coursesDataValue.value = res.data.data.courses;
         if (selectedStaff.value.gender) {
           selectedStaff.value.gender = selectedStaff.value.gender.toString();
@@ -291,7 +294,7 @@ const handleSaveStaff = (staffData) => {
     })
     .catch((error) => {
       $q.loading.hide();
-     
+
     });
 };
 

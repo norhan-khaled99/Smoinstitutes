@@ -219,33 +219,8 @@ const onFilterBookStock = (direction, level, byUser) => {
   levelFilter.value = level;
   byUserFilter.value = byUser;
 
-  if (level && !byUser) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: "Please select By user",
-    });
-    return;
-  }
+  getAllBookStock(1);
 
-  if (byUser && !level) {
-    $q.notify({
-      badgeStyle: "display:none",
-      classes: "custom-Notify",
-      textColor: "black-1",
-      icon: "img:/images/Error.png",
-      position: "bottom-right",
-      message: "Please select Level",
-    });
-    return;
-  }
-
-  if ((direction &&level && byUser)) {
-    getAllBookStock(1);
-  }
 };
 
 const clearFilters = () => {

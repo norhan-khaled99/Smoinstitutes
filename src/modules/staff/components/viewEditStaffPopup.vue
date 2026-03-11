@@ -976,13 +976,13 @@
             <q-list>
               <q-item
                 v-for="action in staffActions"
-                :key="action.label"
+                :key="action.display_name"
                 clickable
                 v-close-popup
-                @click="handleStaffAction(action)"
+                @click="handleAction(action)"
               >
                 <q-item-section>
-                  <q-item-label>{{ action.label }}</q-item-label>
+                  <q-item-label>{{ action.display_name }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -1009,17 +1009,44 @@
       </div>
     </q-card>
   </q-dialog>
+
+   <q-dialog v-model="pdfDialog" persistent>
+      <q-card class="pdf-card">
+        <q-bar class="pdf-bar">
+          <div>Preview</div>
+          <q-space />
+          <q-btn
+            dense
+            flat
+            icon="close"
+            v-close-popup
+            class="pdf-close-btn"
+            aria-label="Close preview"
+          />
+        </q-bar>
+
+        <q-card-section class="q-pa-none pdf-card-section">
+          <iframe
+            v-if="pdfUrl"
+            :src="pdfUrl"
+            style="width: 100%; height: calc(100% - 56px); border: 0"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
 import { ref, watch, markRaw, h, onMounted, computed } from "vue";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
+import CourseServices from "../../courses/services/service.js";
 import staffCoursesList from "./staffCoursesList.vue";
 
 const props = defineProps({
   modelValue: Boolean,
   staffInfo: Object,
+  staffActions: Object,
   initialEditMode: {
     type: Boolean,
     default: false,
@@ -1039,9 +1066,46 @@ const staffData = ref({});
 
 const staffActions = ref([]);
 
-const handleStaffAction = (action) => {
-  emit("staffAction", action);
+const pdfDialog = ref(false);
+const pdfUrl = ref(null);
+const handleAction = async (action) => {
+  try {
+    $q.loading.show();
+
+    const res = await CourseServices.executeAction(action, staffData.value.globalid);
+
+    $q.loading.hide();
+
+    const contentType = res.headers["content-type"];
+
+    if (contentType?.includes("application/pdf")) {
+      const blob = new Blob([res.data], { type: "application/pdf" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else if (contentType?.includes("text/html")) {
+      const blob = new Blob([res.data], { type: "text/html" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else {
+      $q.notify({
+        type: "warning",
+        message: "Unsupported file type",
+      });
+    }
+  } catch (error) {
+    $q.loading.hide();
+
+
+  }
 };
+watch(pdfDialog, (val) => {
+  if (!val && pdfUrl.value) {
+    URL.revokeObjectURL(pdfUrl.value);
+    pdfUrl.value = null;
+  }
+});
 
 const institutionOptions = ref([]);
 const getInstitution = () => {
@@ -1099,6 +1163,18 @@ watch(
   (newVal) => {
     if (newVal) {
       staffData.value = { ...staffData.value, ...newVal };
+    }
+  },
+  { deep: true },
+);
+
+
+// Watch staffActions to update form data
+watch(
+  () => props.staffActions,
+  (newVal) => {
+    if (newVal) {
+      staffActions.value = { ...staffActions.value, ...newVal };
     }
   },
   { deep: true },
@@ -1273,3 +1349,41 @@ onMounted(() => {
   getAlljob();
 });
 </script>
+<style scoped lang="scss">
+
+.pdf-card {
+  width: 90vw;
+  max-width: 1000px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+
+.pdf-card-section {
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.pdf-bar {
+  background-color: #2f5d6a;
+  color: #ffffff;
+}
+
+.pdf-bar :deep(.q-btn) {
+  min-width: 44px;
+  height: 44px;
+}
+
+.pdf-bar :deep(.q-icon) {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.pdf-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
