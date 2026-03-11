@@ -985,10 +985,18 @@
               <q-td :props="props">
                 <div class="row items-center no-wrap">
                   <q-img
+                    v-if="props.row.picture_thumb"
                     class="image"
                     :src="props.row.picture_thumb"
                     ratio="1"
                   />
+                  <q-avatar
+                    v-else
+                    :color="props.row.gender_name === 'Female' ? 'pink' : (props.row.gender_name === 'Male' ? 'blue' : 'grey')"
+                    text-color="white"
+                    class="image"  icon="account_circle">
+
+                  </q-avatar>
                   <div class="student-name-text">
                     {{ props.row.full_name }}
                   </div>
@@ -999,7 +1007,15 @@
             <template v-slot:body-cell-imageProfile="props">
               <q-td :props="props">
                 <div class="row items-center no-wrap">
-                  <q-img class="image" :src="props.row.picture" ratio="1" />
+                  <q-img v-if="props.row.picture" class="image" :src="props.row.picture" ratio="1" />
+                  <q-avatar
+                    v-else
+                    :color="props.row.gender_name === 'Female' ? 'pink' : (props.row.gender_name === 'Male' ? 'blue' : 'grey')"
+                    text-color="white"
+                    class="image"
+                  >
+                    {{ props.row.full_name ? props.row.full_name.charAt(0).toUpperCase() : '' }}
+                  </q-avatar>
                   <div class="student-name-text">
                     {{ props.row.full_name }}
                   </div>
@@ -1761,7 +1777,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    
+
     showStatusFilterInCourseFinance: {
       type: Boolean,
       default: false,
