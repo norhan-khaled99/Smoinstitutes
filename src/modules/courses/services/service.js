@@ -21,6 +21,12 @@ class CoursesServices {
     );
   }
 
+  serachForStudent(value) {
+    return axiosInstance.get(
+      `/api/v1/profiles/students/search-dropdown/?q=${value}`,
+    );
+  }
+
   getAllTeachers() {
     return axiosInstance.get(`/api/v1/courses/profile/teachers`);
   }
@@ -43,6 +49,10 @@ class CoursesServices {
 
   addCourse(value) {
     return axiosInstance.post(`/api/v1/courses/profile/`, value);
+  }
+
+  addStudentToCourse(value, courseId) {
+    return axiosInstance.post(`/api/v1/courses/profile/${courseId}/register/`, value);
   }
 
   updateCourse(value, id) {
