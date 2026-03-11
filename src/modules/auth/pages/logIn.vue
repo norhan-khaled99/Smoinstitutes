@@ -3,8 +3,8 @@
     <div class="column items-center">
       <div class="company-logo">
         <div class="logo-wrapper">
-            <img   :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" width="141" height="40"/>
-            <span > {{ site_title }}</span>
+            <img   :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" />
+            <span>{{ site_title }}</span>
         </div>
       </div>
 

@@ -2,9 +2,9 @@
   <q-layout view="lHh Lpr lFf" class="main_layout">
     <q-header class="bg-white text-grey-9 header_main" height-hint="70">
       <q-toolbar class="q-px-lg">
-        <div v-if="miniState" class="q-mr-md row items-center">
-              <img   :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" width="141" height="40"/>
-            <span > {{ site_title }}</span>
+        <div v-if="miniState" class="header-logo q-mr-md row items-center">
+              <img :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" />
+            <span>{{ site_title }}</span>
         </div>
         <q-input
           v-model="searchText"
@@ -160,7 +160,7 @@
         <div>
           <div class="logo" :class="{ 'mini-logo': miniState }">
             <div v-if="!miniState" class="logo-content">
-              <img :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" width="175" height="40" />
+              <img :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" />
               <span class="site-title-text">{{ site_title }}</span>
             </div>
             <svg

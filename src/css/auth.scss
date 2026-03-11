@@ -105,23 +105,34 @@
   }
 
   .company-logo {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2.5rem;
-    padding: 0 1rem;
-
+ display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  background-color: transparent;
     .logo-wrapper {
       width: 100%;
       max-width: 606px;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      svg {
-        width: 100%;
-        height: auto;
-      }
+     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+      span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2c3e50;
+      text-align: center;
     }
+      img {
+      width: 120px;                // control size
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;          // subtle rounding
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+
+          }
   }
 
   /*end desgin form*/
