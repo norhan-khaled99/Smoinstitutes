@@ -90,7 +90,7 @@
         .error-heading {
           font-weight: 600;
         }
-       
+
       }
     }
 
@@ -113,6 +113,9 @@
     .logo-wrapper {
       width: 100%;
       max-width: 606px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
 
       svg {
         width: 100%;
