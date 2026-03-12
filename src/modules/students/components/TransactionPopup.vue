@@ -281,9 +281,8 @@ watch(
 );
 
 const onSave = () => {
-  // You can add validation here
+  // Emit save; the parent will close the dialog only on API success
   emit("save", {...form.value, type: props.type, type_id: props.currentTransaction.type_id});
-  isOpen.value = false;
 };
 
 const searchForCourses = async (val, update) => {

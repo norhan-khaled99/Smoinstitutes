@@ -35,7 +35,7 @@
         <div class="form-group">
           <label>Cancellation Fee</label>
           <q-input
-            v-model="cancellationData.reason"
+            v-model="cancellationData.fee"
             outlined type="number" min="0"
             dense
             placeholder="Type Cancallaction Fee here..."
@@ -46,7 +46,7 @@
         <div class="form-group">
           <label>Income Voucher Number</label>
           <q-input type="number"
-            v-model="cancellationData.date"
+            v-model="cancellationData.income_paper_no"
             outlined
             dense
             placeholder="Type Income Voucher Number here..."
@@ -90,6 +90,8 @@ const emit = defineEmits(["confirm"]);
 
 const cancellationData = reactive({
   reason: "",
+  fee:"",
+  income_paper_no:"",
   date: new Date().toISOString().split("T")[0],
 });
 

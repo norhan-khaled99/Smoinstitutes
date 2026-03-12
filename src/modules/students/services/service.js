@@ -25,8 +25,8 @@ class StudentService {
     return axiosInstance.get(`/api/v1/profiles/students/${id}/profile`);
   }
 
-  getCoursesForRegistration(id) {
-    return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=Acce`);
+  getCoursesForRegistration(id,search) {
+    return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=${search}`);
   }
 
   registerCourse(id, data) {
@@ -99,6 +99,10 @@ class StudentService {
     } else if (action.method === "DELETE") {
       return axiosInstance.delete(url, config);
     }
+  }
+
+  getCourseCertificate(id) {
+    return axiosInstance.get(`/api/v1/reports/registrations/${id}/certificate/`);
   }
 }
 

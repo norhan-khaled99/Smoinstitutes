@@ -9,6 +9,7 @@
     :showBalanceFilter="true"
     :balanceOptions="balanceOptions"
     :showStatusFilter="true"
+    @certificateEvent="getCertificate"
     :statusOptions="statusOptions"
     :ShowActionsdropDown="true"
     @openDialogDeleteEvent="openDialogDeleteEvent"
@@ -237,6 +238,8 @@ const handleConfirmCancel = (data) => {
     regid: data.regid,
     reason: data.reason,
     cancellation_date: data.date,
+    fee: data.fee,
+    income_paper_no: data.income_paper_no,
   })
     .then((res) => {
       if (res.status === 200) {
@@ -316,7 +319,10 @@ const getPagFun = ([apiCall, page, paginationData]) => {
 const fireCall = ([apiCall, page, paginationData]) => {
   pagination.value.page = page;
 };
-
+const emit = defineEmits(["certificateEvent"]);
+const getCertificate = (row) => {
+  emit("certificateEvent", row);
+};
 const getAllCourses = () => {
   $q.loading.show();
   StudentService.getStudentById(route.params.id)

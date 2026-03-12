@@ -127,7 +127,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="courses">
-          <coursesList />
+          <coursesList @certificate-event="getCourseCertificate"/>
         </q-tab-panel>
 
         <q-tab-panel name="transaction">
@@ -303,14 +303,41 @@ const onSaveTransaction = (data) => {
           position: "bottom-right",
           message: response.data.result || "Payment added successfully.",
         });
+        getStudentDetails();
+        // Also refresh the overview child component (balance, stats, etc.)
+        overviewRef.value?.getStudentDetails();
         isTransactionPopupOpen.value = false;
         // Ideally reload transaction list if we were on that tab, or just refresh student details to update balance
-        getStudentDetails();
       }
     }).catch((error) => {
-       $q.loading.hide();
+      console.log(error);
+      // Extract error message from the Axios error response body
+      const responseData = error.response?.data;
+      let errorMessage = "An unexpected error occurred.";
+      if (responseData) {
+        if (responseData.message) {
+          errorMessage = responseData.message;
+        }
+        // Append field-level errors if present
+        const errors = responseData.errors;
+        if (errors) {
+          const fieldMessages = Object.values(errors)
+            .flat()
+            .map((e) => (typeof e === 'string' ? e : JSON.stringify(e)))
+            .join("; ");
+          if (fieldMessages) errorMessage = fieldMessages;
+        }
+      }
+      $q.notify({
+        badgeStyle: "display:none",
+        classes: "custom-Notify bg-white",
+        textColor: "red-5",
+        position: "bottom-right",
+        message: errorMessage,
+      });
     }).finally(() => {
       $q.loading.hide();
+      getStudentDetails();
     });
   }
 };
@@ -345,7 +372,39 @@ const handleAction = async (action) => {
   } catch (error) {
     $q.loading.hide();
 
-   
+
+  }
+};
+const getCourseCertificate = async (course) => {
+  try {
+    $q.loading.show();
+
+    const res = await StudentService.getCourseCertificate(course.regid);
+
+    $q.loading.hide();
+
+    const contentType = res.headers["content-type"];
+
+    if (contentType?.includes("application/pdf")) {
+      const blob = new Blob([res.data], { type: "application/pdf" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else if (contentType?.includes("text/html")) {
+      const blob = new Blob([res.data], { type: "text/html" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else {
+      $q.notify({
+        type: "warning",
+        message: "Unsupported file type",
+      });
+    }
+  } catch (error) {
+    $q.loading.hide();
+
+
   }
 };
 watch(pdfDialog, (val) => {
