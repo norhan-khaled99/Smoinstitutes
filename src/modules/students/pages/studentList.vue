@@ -65,7 +65,7 @@ const columns = [
     sortable: false,
   },
   {
-    name: "balance",
+    name: "balanceDisplay",
     label: "Balance",
     field: (row) => row.balance,
     align: "left",
