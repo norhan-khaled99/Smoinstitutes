@@ -18,6 +18,15 @@ const routes = [
         path: "",
         redirect: "/students",
       },
+      {
+        path: "search",
+        name: "globalSearch",
+        component: () => import("src/pages/GlobalSearchPage.vue"),
+        meta: {
+          pageTitel: "Global Search",
+          requiresAuth: true
+        }
+      },
       ...students,
       ...reports,
       ...staff,
