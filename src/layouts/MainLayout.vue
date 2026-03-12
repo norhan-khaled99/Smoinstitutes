@@ -12,6 +12,7 @@
           outlined
           dense
           class="header-search"
+          @keyup.enter="onSearch"
         >
           <template v-slot:prepend>
             <q-icon name="search" size="20px" />
@@ -239,7 +240,7 @@
     </q-drawer>
 
     <q-page-container>
-      <q-breadcrumbs class="breadcrumbs_custom">
+      <q-breadcrumbs class="breadcrumbs_custom" v-show="!isGlobalSearchActive">
         <template v-slot:separator>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -267,17 +268,34 @@
         />
         <q-breadcrumbs-el :to="pageLink" :label="pageTitel" v-if="pageTitel" />
       </q-breadcrumbs>
-      <router-view />
+      
+      <div v-show="!isGlobalSearchActive">
+        <router-view />
+      </div>
+
+      <div v-if="isGlobalSearchActive" class="q-pa-md">
+        <div class="text-h6 q-mb-md">
+          Search Results for "{{ lastSearchText }}"
+          <q-btn flat dense color="primary" label="Clear Search" class="float-right" @click="clearGlobalSearch" />
+        </div>
+        <GlobalSearchResultTable
+          :results="globalSearchData"
+          :searchKeyword="lastSearchText"
+          @viewRecord="handleViewRecord"
+        />
+      </div>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted, watch } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import GlobalSearchResultTable from "components/GlobalSearchResultTable.vue";
 import { useRoute, useRouter } from "vue-router";
 import authServices from "../modules/auth/services/service.js";
 import { useQuasar } from "quasar";
+import GeneralService from "../services/service";
 
 const linksList = [
   {
@@ -386,13 +404,17 @@ export default defineComponent({
   name: "MainLayout",
   components: {
     EssentialLink,
+    GlobalSearchResultTable,
   },
-  setup() {
+  setup( { emit }) {
     const route = useRoute();
     const router = useRouter();
     const leftDrawerOpen = ref(false);
     const miniState = ref(false);
     const searchText = ref("");
+    const lastSearchText = ref("");
+    const isGlobalSearchActive = ref(false);
+    const globalSearchData = ref([]);
     const $q = useQuasar();
     const logout = () => {
       localStorage.clear();
@@ -458,6 +480,73 @@ export default defineComponent({
         : pathParts.slice(0, -1).join("/") || "/";
     });
 
+    const onSearch = () => {
+      if (!searchText.value || searchText.value.trim() === "") {
+        clearGlobalSearch();
+        return;
+      }
+      $q.loading.show();
+      GeneralService.getGeneralSearchData(searchText.value).then((res) => {
+        $q.loading.hide();
+        console.log("Global search results:", res.data);
+        const data = res.data?.data || res.data || {};
+        
+        let combinedResults = [];
+        
+        if (data.students && Array.isArray(data.students)) {
+          combinedResults = combinedResults.concat(data.students.map(item => ({ ...item, type: 'student' })));
+        }
+        if (data.courses && Array.isArray(data.courses)) {
+          combinedResults = combinedResults.concat(data.courses.map(item => ({ ...item, type: 'course' })));
+        }
+        if (data.staff && Array.isArray(data.staff)) {
+          combinedResults = combinedResults.concat(data.staff.map(item => ({ ...item, type: 'staff' })));
+        }
+        
+        globalSearchData.value = combinedResults;
+        lastSearchText.value = searchText.value;
+        isGlobalSearchActive.value = true;
+      }).catch((error) => {
+        $q.loading.hide();
+        console.log(error);
+        $q.notify({
+          color: "negative",
+          message: "Failed to fetch search results",
+          icon: "error"
+        });
+      })
+    };
+
+    const clearGlobalSearch = () => {
+      searchText.value = "";
+      lastSearchText.value = "";
+      isGlobalSearchActive.value = false;
+      globalSearchData.value = [];
+    };
+
+    const handleViewRecord = (record) => {
+      clearGlobalSearch();
+      if (record.type === 'student') {
+        router.push({ name: "studentDetails", params: { id: record.id } });
+      } else if (record.type === 'course') {
+        router.push({ name: "courseDetails", params: { id: record.id } });
+      } else if (record.type === 'staff') {
+        router.push({ name: "staffDetails", params: { id: record.id } });
+      } else {
+        console.warn("Unknown record type for navigation:", record);
+      }
+    };
+    
+    // Watch for route changes to clear search whenever user navigates away naturally
+    watch(
+      () => route.fullPath,
+      () => {
+        if (isGlobalSearchActive.value) {
+          clearGlobalSearch();
+        }
+      }
+    );
+
     onMounted(() => {
       getUserData();
       getlogo();
@@ -468,7 +557,13 @@ export default defineComponent({
       leftDrawerOpen,
       miniState,
       searchText,
+      lastSearchText,
+      isGlobalSearchActive,
+      globalSearchData,
+      clearGlobalSearch,
+      handleViewRecord,
       pageTitel,
+      onSearch,
       logoUrl,
       userName,
       userBalance,

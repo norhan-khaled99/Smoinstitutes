@@ -37,14 +37,28 @@
         <div class="form-body">
           <div class="form-group">
             <label>Course Name <span>*</span></label>
-            <q-select outlined dense v-model="form.course" :options="courseOptions" option-label="name" :label="form.course == undefined || form.course == ''
-                ? 'Select Course'
-                : ''
-              " class="custom-select" emit-value map-options>
-              <template v-slot:append>
-                <q-icon name="keyboard_arrow_down" color="grey-6"/>
-              </template>
-            </q-select>
+            <q-select
+                v-model="form.course"
+                :options="courseOptions"
+                option-value="id"
+                option-label="name"
+                clearable
+                hide-selected
+                outlined
+                dense
+                emit-value
+                map-options
+                fill-input
+                use-input
+                :input-value="courseSearch"
+                @update:input-value="(val) => (courseSearch = val)"
+                @update:model-value="() => (courseSearch = '')"
+                input-debounce="400"
+                :loading="courseLoading"
+                @filter="searchForCourses"
+                placeholder="Select Course After Searching..."
+                class="custom-select"
+              />
           </div>
 
           <div class="form-group">
@@ -89,9 +103,39 @@ const form = ref({
   course: null,
   discount: 0,
 });
-
+const courseSearch = ref("");
+const courseLoading = ref(false);
 const courseOptions = ref([]);
 
+const searchForCourses = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      courseOptions.value = [];
+    });
+    return;
+  }
+
+  courseLoading.value = true;
+
+  try {
+    const res = await StudentService.getCoursesForRegistration(props.studentId,val);
+
+    update(() => {
+      const mapped = res.data.data.map((course) => ({
+        id: course.value,
+          name: course.label,
+      }));
+
+      courseOptions.value = [
+        ...new Map(mapped.map((item) => [item.id, item])).values(),
+      ];
+    });
+  } catch (e) {
+     $q.loading.hide();
+  } finally {
+    courseLoading.value = false;
+  }
+};
 watch(
   () => props.modelValue,
   (val) => {
@@ -105,7 +149,8 @@ const onClose = () => {
 };
 
 const saveAndAdd = () => {
-  StudentService.registerCourse(form.value.course.id, {
+  console.log(form.value.course);
+  StudentService.registerCourse(form.value.course, {
     student_id: `${props.studentId}`,
     discount: form.value.discount,
   }).then((res) => {
@@ -125,7 +170,7 @@ const saveAndAdd = () => {
 };
 
 const saveAndClose = async () => {
-   await StudentService.registerCourse(form.value.course.id, {
+   await StudentService.registerCourse(form.value.course, {
     student_id: `${props.studentId}`,
     discount: form.value.discount,
   }).then((res) => {

@@ -1451,7 +1451,8 @@
                           courses ||
                           profiles ||
                           staff ||
-                          transactions
+                          transactions ||
+                          studentTransaction
                         "
                         clickable
                         class="action-menu-item"
@@ -1734,6 +1735,10 @@ export default {
       default: false,
     },
     studentCourse: {
+      type: Boolean,
+      default: false,
+    },
+    studentTransaction: {
       type: Boolean,
       default: false,
     },

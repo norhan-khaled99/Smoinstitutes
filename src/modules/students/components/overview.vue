@@ -511,7 +511,7 @@
 
               <div class="stat-info">
                 <span class="stat-label">Notes Count</span>
-                <span class="stat-value"> {{ studentData.notes_coun }} </span>
+                <span class="stat-value"> {{ studentData.notes_count }} </span>
               </div>
             </div>
 
@@ -553,9 +553,10 @@
 
               <div class="stat-info">
                 <span class="stat-label">Balance Status</span>
-                <span class="stat-value">{{
-                  studentData.balance >= 0 ? "Paid" : "Unpaid"
-                }}</span>
+                <span class="stat-value" v-if="studentData.balance > 0">Deposit</span>
+                <span class="stat-value" v-if="studentData.balance < 0">Unpaid</span>
+                <span class="stat-value" v-if="studentData.balance === 0">Paid</span>
+
               </div>
             </div>
           </div>
@@ -793,6 +794,7 @@ const handleCancel = () => {
 defineExpose({
   handleSave,
   handleCancel,
+  getStudentDetails,
 });
 
 onMounted(() => {
