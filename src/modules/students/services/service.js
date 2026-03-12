@@ -45,8 +45,9 @@ class StudentService {
     return axiosInstance.get(`/api/v1/auth/lookups/jtypes/dropdown/?q=tr`);
   }
 
-  getAllTransactions(id, type, course, page = 1, search = "") {
-    return axiosInstance.get(`/api/v1/finance/transactions/?account=${id}&jtype=${type}&course_id=${course}&page=${page}&q=${search}`);
+  getAllTransactions(id, type, course, page = 1, search = "", pageSize = null) {
+    const pageSizeParam = pageSize ? `&page_size=${pageSize}` : "";
+    return axiosInstance.get(`/api/v1/finance/transactions/?account=${id}&jtype=${type}&course_id=${course}&page=${page}&q=${search}${pageSizeParam}`);
   }
 
   searchForService(search) {
@@ -102,7 +103,14 @@ class StudentService {
   }
 
   getCourseCertificate(id) {
-    return axiosInstance.get(`/api/v1/reports/registrations/${id}/certificate/`);
+    return axiosInstance.get(`/api/v1/reports/registrations/${id}/certificate/`, {
+      responseType: "arraybuffer",
+    });
+  }
+  getTransactionData(id, type) {
+    return axiosInstance.get(`/api/v1/reports/transactions/${type}/${id}/`, {
+      responseType: "arraybuffer",
+    });
   }
 }
 

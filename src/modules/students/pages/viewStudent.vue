@@ -131,7 +131,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="transaction">
-          <transactionList v-if="studentData" :student="studentData" :paymentOptions="paymentData" :course-options="courseData"/>
+          <transactionList v-if="studentData" :student="studentData" :paymentOptions="paymentData" :course-options="courseData" @details-event="getTransactionDetails"/>
         </q-tab-panel>
 
         <q-tab-panel name="notes">
@@ -405,6 +405,37 @@ const getCourseCertificate = async (course) => {
     $q.loading.hide();
 
 
+  }
+};
+
+const getTransactionDetails = async (transaction) => {
+  try {
+    $q.loading.show();
+
+    const res = await StudentService.getTransactionData(transaction.paper_no , transaction.jtype.id);
+    console.log(res);
+    $q.loading.hide();
+
+    const contentType = res.headers["content-type"];
+
+    if (contentType?.includes("application/pdf")) {
+      const blob = new Blob([res.data], { type: "application/pdf" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else if (contentType?.includes("text/html")) {
+      const blob = new Blob([res.data], { type: "text/html" });
+
+      pdfUrl.value = URL.createObjectURL(blob);
+      pdfDialog.value = true;
+    } else {
+      $q.notify({
+        type: "warning",
+        message: "Unsupported file type",
+      });
+    }
+  } catch (error) {
+    $q.loading.hide();
   }
 };
 watch(pdfDialog, (val) => {
