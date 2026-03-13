@@ -9,6 +9,8 @@
       :showAdd="false"
       :showAddButton="false"
       :ShowActionsdropDown="false"
+      :showViewButton="true"
+      @viewRecord="handleView"
       emptyStateTitle="No results found"
       emptyStateDescription="Try adjusting your search query."
       @updatePag="updatePag"
@@ -120,7 +122,7 @@ const columns = [
     sortable: true,
   },
   {
-    name: "actionBtn",
+    name: "actions",
     label: "Action",
     align: "right",
     sortable: false,

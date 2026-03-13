@@ -1405,6 +1405,7 @@
 
             <template v-slot:body-cell-actions="props">
               <q-td :props="props" class="actions">
+                <div v-if="showViewButton" class="view-link cursor-pointer" @click="viewRecord(props.row)">View</div>
                 <q-btn
                   flat
                   dense
@@ -1546,6 +1547,10 @@ export default {
       default: false,
     },
     ShowActionsdropDown: {
+      type: Boolean,
+      default: false,
+    },
+    showViewButton: {
       type: Boolean,
       default: false,
     },
@@ -1819,6 +1824,10 @@ export default {
     const fromNo = ref("");
     const toNo = ref("");
 
+
+    const viewRecord = (row) => {
+      emit("viewRecord", row);
+    };
     const onFilterSearch = (val) => {
       emit("filterSearch", val);
     };
@@ -2066,6 +2075,7 @@ export default {
       onFilterTransaction,
       onFilterBookStock,
       handleRowClick,
+      viewRecord
     };
   },
 };
