@@ -1497,6 +1497,22 @@
                 </q-btn>
               </q-td>
             </template>
+            <!-- <template v-slot:body-cell-id="props" v-if="$slots['body-cell-id']">
+              <slot name="body-cell-id" v-bind="props"></slot>
+            </template>
+            <template v-slot:body-cell-label="props" v-if="$slots['body-cell-label']">
+              <slot name="body-cell-label" v-bind="props"></slot>
+            </template>
+            <template v-slot:body-cell-subtitle="props" v-if="$slots['body-cell-subtitle']">
+              <slot name="body-cell-subtitle" v-bind="props"></slot>
+            </template>
+            <template v-slot:body-cell-typeBadge="props" v-if="$slots['body-cell-typeBadge']">
+              <slot name="body-cell-typeBadge" v-bind="props"></slot>
+            </template>
+            <template v-slot:body-cell-actionBtn="props" v-if="$slots['body-cell-actionBtn']">
+              <slot name="body-cell-actionBtn" v-bind="props"></slot>
+            </template> -->
+
             <!-- Empty State -->
             <template v-slot:no-data>
               <div class="full-width row flex-center q-pa-md">
