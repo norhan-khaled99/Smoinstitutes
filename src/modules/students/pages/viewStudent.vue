@@ -311,24 +311,25 @@ const onSaveTransaction = (data) => {
       }
     }).catch((error) => {
       console.log(error);
-      // Extract error message from the Axios error response body
       const responseData = error.response?.data;
       let errorMessage = "An unexpected error occurred.";
       if (responseData) {
         if (responseData.message) {
           errorMessage = responseData.message;
         }
-        // Append field-level errors if present
         const errors = responseData.errors;
         if (errors) {
           const fieldMessages = Object.values(errors)
             .flat()
-            .map((e) => (typeof e === 'string' ? e : JSON.stringify(e)))
-            .join("; ");
-          if (fieldMessages) errorMessage = fieldMessages;
+            .map((e) => `<li>${typeof e === 'string' ? e : JSON.stringify(e)}</li>`)
+            .join("");
+          if (fieldMessages) {
+            errorMessage = `<div style="font-weight: bold; margin-bottom: 5px;">${errorMessage}</div><ul style="margin: 0; padding-left: 20px;">${fieldMessages}</ul>`;
+          }
         }
       }
       $q.notify({
+        html: true,
         badgeStyle: "display:none",
         classes: "custom-Notify bg-white",
         textColor: "red-5",

@@ -1174,7 +1174,7 @@ watch(
   () => props.staffActions,
   (newVal) => {
     if (newVal) {
-      staffActions.value = { ...staffActions.value, ...newVal };
+      staffActions.value = newVal;
     }
   },
   { deep: true },

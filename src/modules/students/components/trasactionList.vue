@@ -222,25 +222,26 @@ const onSaveTransaction = (data) => {
   let promise;
   const payload = {};
 
-  if (data.type === "Income") {
+  if (data.type_id === 2) {
+    console.log(data);
     Object.assign(payload, {
       paper_no: data.voucherNumber,
       to_account: data.toAccount ? data.toAccount : props.student.globalid,
       amount: data.amount,
-      category_id: data.course ? data.courseId : null,
+      category_id: data.courseId ? data.courseId : null,
       details: data.details,
     });
     promise = StudentService.addIncomePayment(payload, random);
-  } else if (data.type === "Expense") {
+  } else if (data.type_id === 3) {
     Object.assign(payload, {
       paper_no: data.voucherNumber,
       from_account: props.student.globalid,
       amount: data.amount,
-      category_id: data.course ? data.courseId : null,
+      category_id: data.courseId ? data.courseId : null,
       details: data.details,
     });
     promise = StudentService.addExpensePayment(payload, random);
-  } else if (data.type === "Service") {
+  } else if (data.type_id === 4) {
     Object.assign(payload, {
       student: data.toAccount ? data.toAccount : props.student.globalid,
       service: data.service ? data.serviceId : null,
@@ -248,12 +249,12 @@ const onSaveTransaction = (data) => {
       details: data.details,
     });
     promise = StudentService.addServicePayment(payload, random);
-  } else if (data.type === "Funds Transfer") {
+  } else if (data.type_id === 15) {
     Object.assign(payload, {
       from_account: props.student.globalid,
       to_account: data.toAccount ? data.toAccount : null,
       amount: data.amount,
-      category_id: data.course ? data.courseId : null,
+      category_id: data.courseId ? data.courseId : null,
       details: data.details,
       jtype: data.type_id,
     });
@@ -278,8 +279,33 @@ const onSaveTransaction = (data) => {
           loadAllTransactions();
         }
       })
-      .catch(() => {
-        $q.loading.hide();
+      .catch((error) => {
+        console.log(error);
+        const responseData = error.response?.data;
+        let errorMessage = "An unexpected error occurred.";
+        if (responseData) {
+          if (responseData.message) {
+            errorMessage = responseData.message;
+          }
+          const errors = responseData.errors;
+          if (errors) {
+            const fieldMessages = Object.values(errors)
+              .flat()
+              .map((e) => `<li>${typeof e === 'string' ? e : JSON.stringify(e)}</li>`)
+              .join("");
+            if (fieldMessages) {
+              errorMessage = `<div style="font-weight: bold; margin-bottom: 5px;">${errorMessage}</div><ul style="margin: 0; padding-left: 20px;">${fieldMessages}</ul>`;
+            }
+          }
+        }
+        $q.notify({
+          html: true,
+          badgeStyle: "display:none",
+          classes: "custom-Notify bg-white",
+          textColor: "red-5",
+          position: "bottom-right",
+          message: errorMessage,
+        });
       })
       .finally(() => {
         $q.loading.hide();
