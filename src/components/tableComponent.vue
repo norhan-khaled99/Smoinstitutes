@@ -1505,11 +1505,11 @@
             </template>
             <template v-slot:body-cell-subtitle="props" v-if="$slots['body-cell-subtitle']">
               <slot name="body-cell-subtitle" v-bind="props"></slot>
-            </template>
+            </template> -->
             <template v-slot:body-cell-typeBadge="props" v-if="$slots['body-cell-typeBadge']">
               <slot name="body-cell-typeBadge" v-bind="props"></slot>
             </template>
-            <template v-slot:body-cell-actionBtn="props" v-if="$slots['body-cell-actionBtn']">
+            <!-- <template v-slot:body-cell-actionBtn="props" v-if="$slots['body-cell-actionBtn']">
               <slot name="body-cell-actionBtn" v-bind="props"></slot>
             </template> -->
 
