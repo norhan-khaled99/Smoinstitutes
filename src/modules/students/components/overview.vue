@@ -410,7 +410,7 @@
                     @click="$emit('add-payment', option)"
                   >
                     <q-item-section>
-                      <q-item-label>{{ option.name }}</q-item-label>
+                      <q-item-label>{{ option.title }}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>

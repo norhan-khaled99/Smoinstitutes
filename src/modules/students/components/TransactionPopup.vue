@@ -216,18 +216,18 @@ const title = computed(() => {
 
 // Computed properties for field visibility
 const showVoucher = computed(() =>
-  ["Income", "Expense", "Service"].includes(props.type),
+  [2, 3, 4].includes(props.currentTransaction.type_id),
 );
 const showCourse = computed(() =>
-  ["Income", "Expense", "Funds Transfer"].includes(props.type),
+  [2, 3, 15].includes(props.currentTransaction.type_id),
 );
-const showService = computed(() => props.type === "Service");
-const showToAccount = computed(() => props.type === "Funds Transfer");
-const isExpense = computed(() => props.type === "Expense");
+const showService = computed(() => props.currentTransaction.type_id === 4);
+const showToAccount = computed(() => props.currentTransaction.type_id === 15);
+const isExpense = computed(() => props.currentTransaction.type_id === 3);
 
 // Layout logic
 const courseColClass = computed(() =>
-  props.type === "Funds Transfer" ? "col-12 col-md-6" : "col-12",
+  props.currentTransaction.type_id === 15 ? "col-12 col-md-6" : "col-12",
 );
 
 const form = ref({

@@ -4,13 +4,15 @@
       :tableRows="formattedResults"
       :tableColumns="columns"
       :tablePagination="pagination"
-      :showFilters="false"
-      :displayPagination="true"
+      :showFilters="true"
+      :showSearchBox="true"
       :showAdd="false"
       :showAddButton="false"
+      searchPlaceholder="Search results..."
       :ShowActionsdropDown="false"
       :showViewButton="true"
       @viewRecord="handleView"
+      @searchEvent="handleSearch"
       :showEmptyStateButton="false"
       emptyStateTitle="No results found"
       emptyStateDescription="Try adjusting your search query."
@@ -141,18 +143,36 @@ const pagination = ref({
   rowsNumber: 0,
 });
 
+const localSearchQuery = ref("");
+
+const handleSearch = (query) => {
+  localSearchQuery.value = query;
+  pagination.value.page = 1; // Reset to first page on search
+};
+
+const filteredResults = computed(() => {
+  let filtered = props.results;
+
+  if (localSearchQuery.value) {
+    const term = localSearchQuery.value.toLowerCase();
+    filtered = filtered.filter((row) =>
+      row.label && row.label.toLowerCase().includes(term)
+    );
+  }
+
+  return filtered;
+});
+
 const formattedResults = computed(() => {
-  // Client-side pagination for the passed results
   const start = (pagination.value.page - 1) * pagination.value.rowsPerPage;
   const end = start + pagination.value.rowsPerPage;
-  return props.results.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 watch(
-  () => props.results,
+  () => filteredResults.value,
   (newVal) => {
     pagination.value.rowsNumber = newVal.length;
-    pagination.value.page = 1;
   },
   { immediate: true }
 );
