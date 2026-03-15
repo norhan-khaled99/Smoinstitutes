@@ -335,7 +335,7 @@
             <div class="balance-info">
               <span class="balance-label">Balance</span>
               <div class="row items-center no-wrap">
-                <span class="balance-amount positive"
+                <span :class="['balance-amount', studentData.balance >= 0 ? 'positive' : 'negative']"
                   >{{ isBalanceVisible ? studentData.balance : "******" }}
                   <span class="currency">{{ usercurrency }}</span></span
                 >
