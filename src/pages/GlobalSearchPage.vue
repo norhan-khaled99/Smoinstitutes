@@ -32,6 +32,7 @@ import GeneralService from "src/services/service";
 import GlobalSearchResultTable from "components/GlobalSearchResultTable.vue";
 import editStaffPopup from "src/modules/staff/components/viewEditStaffPopup.vue";
 import staffServices from "src/modules/staff/services/service.js";
+import { handleApiError } from "src/utils/errorHandler";
 
 const route = useRoute();
 const router = useRouter();
@@ -75,12 +76,7 @@ const fetchSearchResults = (query) => {
     })
     .catch((error) => {
       isLoading.value = false;
-      console.error("Error fetching search results:", error);
-      $q.notify({
-        color: "negative",
-        message: "Failed to fetch search results",
-        icon: "error"
-      });
+      handleApiError(error);
     });
 };
 
@@ -113,7 +109,7 @@ const getStaffData = (record) => {
     })
     .catch((error) => {
       $q.loading.hide();
-      console.error("Error fetching staff:", error);
+      handleApiError(error);
     });
 };
 

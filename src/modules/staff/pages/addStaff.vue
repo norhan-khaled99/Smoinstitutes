@@ -495,6 +495,7 @@ import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
 import rules from "src/config/rules.js";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const router = useRouter();
 const formRef = ref(null);
@@ -533,6 +534,7 @@ const getInstitution = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 const cityOptions = ref([]);
@@ -544,6 +546,7 @@ const getAllCites = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 const jobTypeOptions = ref([]);
@@ -555,6 +558,7 @@ const getAlljob = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 const degreeOptions = ref([
@@ -595,7 +599,7 @@ const addStaff = (data) => {
     })
     .catch((error) => {
       $q.loading.hide();
-     
+      handleApiError(error);
     });
 };
 

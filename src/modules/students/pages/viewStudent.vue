@@ -185,6 +185,7 @@ import {useQuasar} from "quasar";
 import StudentService from "../services/service";
 import TransactionPopup from "../components/TransactionPopup.vue";
 import { uid } from "quasar";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const $q = useQuasar();
 const isTransactionPopupOpen = ref(false);
@@ -233,10 +234,10 @@ const getStudentDetails = () => {
         studentActions.value = res.data.data.actions;
       }
     }).catch((err) => {
-     $q.loading.hide();
-
-  })
-}
+      $q.loading.hide();
+      handleApiError(err);
+    })
+  }
 
 const handleViewTransactions = () => {
   tab.value = 'transaction';
@@ -310,32 +311,7 @@ const onSaveTransaction = (data) => {
         // Ideally reload transaction list if we were on that tab, or just refresh student details to update balance
       }
     }).catch((error) => {
-      console.log(error);
-      const responseData = error.response?.data;
-      let errorMessage = "An unexpected error occurred.";
-      if (responseData) {
-        if (responseData.message) {
-          errorMessage = responseData.message;
-        }
-        const errors = responseData.errors;
-        if (errors) {
-          const fieldMessages = Object.values(errors)
-            .flat()
-            .map((e) => `<li>${typeof e === 'string' ? e : JSON.stringify(e)}</li>`)
-            .join("");
-          if (fieldMessages) {
-            errorMessage = `<div style="font-weight: bold; margin-bottom: 5px;">${errorMessage}</div><ul style="margin: 0; padding-left: 20px;">${fieldMessages}</ul>`;
-          }
-        }
-      }
-      $q.notify({
-        html: true,
-        badgeStyle: "display:none",
-        classes: "custom-Notify bg-white",
-        textColor: "red-5",
-        position: "bottom-right",
-        message: errorMessage,
-      });
+      handleApiError(error);
     }).finally(() => {
       $q.loading.hide();
       getStudentDetails();
@@ -372,8 +348,7 @@ const handleAction = async (action) => {
     }
   } catch (error) {
     $q.loading.hide();
-
-
+    handleApiError(error);
   }
 };
 const getCourseCertificate = async (course) => {
@@ -404,8 +379,7 @@ const getCourseCertificate = async (course) => {
     }
   } catch (error) {
     $q.loading.hide();
-
-
+    handleApiError(error);
   }
 };
 
@@ -437,6 +411,7 @@ const getTransactionDetails = async (transaction) => {
     }
   } catch (error) {
     $q.loading.hide();
+    handleApiError(error);
   }
 };
 watch(pdfDialog, (val) => {

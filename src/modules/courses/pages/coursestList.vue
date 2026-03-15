@@ -44,6 +44,7 @@ import addEditCoursePopup from "../components/addEditCoursePopup.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const showAddEditPopup = ref(false);
 const isEditMode = ref(false);
@@ -136,7 +137,7 @@ const getAllCourses = (page = 1) => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 
@@ -172,6 +173,7 @@ const getAllTeachers = () => {
     })
     .catch((error) => {
       console.error("Error fetching teachers:", error);
+      handleApiError(error);
     });
 };
 
@@ -185,6 +187,7 @@ const getAllShifts = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 
@@ -222,6 +225,7 @@ const handleSaveCourse = (courseData) => {
     })
     .catch((error) => {
       $q.loading.hide();
+      handleApiError(error);
     });
 };
 

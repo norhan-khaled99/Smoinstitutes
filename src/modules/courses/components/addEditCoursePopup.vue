@@ -208,6 +208,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
 import rules from "src/config/rules.js";
+import { handleApiError } from "src/utils/errorHandler";
 
 const $q = useQuasar();
 const router = useRouter();
@@ -288,6 +289,7 @@ const nextCourseSerial = () => {
     })
     .catch((error) => {
       console.error("Error fetching next course serial:", error);
+      handleApiError(error);
     });
 };
 
@@ -314,6 +316,7 @@ const serachForLevels = async (val, update) => {
     });
   } catch (e) {
      levelLoading.value = false;
+     handleApiError(e);
   } finally {
     levelLoading.value = false;
   }
@@ -351,6 +354,7 @@ const serachForTeacher = async (val, update) => {
     });
   } catch (e) {
       teacherLoading.value = false;
+      handleApiError(e);
   } finally {
     teacherLoading.value = false;
   }

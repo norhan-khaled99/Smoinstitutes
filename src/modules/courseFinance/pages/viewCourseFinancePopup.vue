@@ -120,6 +120,7 @@
 import { computed, ref, watch } from "vue";
 import services from "../service/service.js";
 import { useQuasar } from "quasar";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const $q = useQuasar();
 
@@ -173,6 +174,7 @@ const handleAction = async () => {
     }
   } catch (error) {
     $q.loading.hide();
+    handleApiError(error);
   }
 };
 

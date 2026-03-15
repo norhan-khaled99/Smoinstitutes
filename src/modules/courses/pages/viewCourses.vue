@@ -278,6 +278,7 @@ import { useQuasar } from "quasar";
 import services from "../services/service.js";
 import { useRoute } from "vue-router";
 import rules from "src/config/rules";
+import { handleApiError } from "src/utils/errorHandler";
 
 const router = useRouter();
 const $q = useQuasar();
@@ -334,6 +335,7 @@ const saveStudent = (studentData) => {
       })
       .catch((error) => {
           $q.loading.hide();
+          handleApiError(error);
       })
       .finally(() => {
         $q.loading.hide();
@@ -422,7 +424,7 @@ const scoreChanged = (row) => {
         message: "Scores Updated Successfully",
       });
     })
-    .catch(() => {
+    .catch((error) => {
       scoreStatuses.value = { ...scoreStatuses.value, [row.regid]: 'error' };
       setTimeout(() => {
         const updated = { ...scoreStatuses.value };
@@ -430,6 +432,7 @@ const scoreChanged = (row) => {
         scoreStatuses.value = updated;
       }, 3000);
       $q.loading.hide();
+      handleApiError(error);
     });
 };
 
@@ -484,7 +487,7 @@ const getCourceData = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-      console.error("Error fetching course data:", error);
+      handleApiError(error);
     });
 };
 
@@ -496,7 +499,7 @@ const getAllShifts = () => {
       shiftOptions.value = res.data.data.value.SHIFT_CHOICES;
     })
     .catch((error) => {
-      console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 
@@ -563,7 +566,7 @@ const editCourse = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 
@@ -597,8 +600,7 @@ const handleAction = async (action) => {
     }
   } catch (error) {
     $q.loading.hide();
-
-
+    handleApiError(error);
   }
 };
 watch(pdfDialog, (val) => {
@@ -628,6 +630,7 @@ const serachForTeacher = async (val, update) => {
     });
   } catch (e) {
      $q.loading.hide();
+     handleApiError(e);
   } finally {
     teacherLoading.value = false;
   }
