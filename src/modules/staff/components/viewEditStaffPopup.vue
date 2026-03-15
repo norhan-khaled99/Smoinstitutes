@@ -954,7 +954,7 @@
           >
             <template v-slot:label>
               <div class="row items-center no-wrap full-width justify-between">
-                <span>Actions</span>
+                <span>Reports</span>
                 <svg
                   width="20"
                   height="20"

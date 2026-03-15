@@ -60,14 +60,38 @@
               >
                 <q-menu class="logout-menu" :offset="[0, 14]">
                   <q-list>
-                    <!-- <q-item clickable v-close-popup>
-                      <q-item-section>Change Password</q-item-section>
-                    </q-item> -->
+
                     <q-item
+                      clickable
+                      v-close-popup
+                      class="logout-item-dropdown text-body2"
+                      tag="a"
+                    >
+                      <q-item-section avatar>
+                        <q-icon name="description" size="20px" class="text-grey-6" />
+                      </q-item-section>
+                      <q-item-section>Docs</q-item-section>
+                    </q-item>
+
+                    <q-item
+                      clickable
+                      v-close-popup
+                      class="logout-item-dropdown text-body2"
+                      tag="a"
+                    >
+                      <q-item-section avatar>
+                        <q-icon name="description" size="20px" class="text-grey-6" />
+                      </q-item-section>
+                      <q-item-section>Docs</q-item-section>
+                    </q-item>
+
+                  </q-list>
+
+                  <q-item
                       clickable
                       @click="logout"
                       v-close-popup
-                      class="logout-item-dropdown text-body2"
+                      class="logout-item-dropdown  text-body2"
                     >
                       <q-item-section avatar>
                         <svg
@@ -94,7 +118,6 @@
                       </q-item-section>
                       <q-item-section>Log out</q-item-section>
                     </q-item>
-                  </q-list>
                 </q-menu>
               </q-icon>
             </div>
@@ -268,7 +291,7 @@
         />
         <q-breadcrumbs-el :to="pageLink" :label="pageTitel" v-if="pageTitel" />
       </q-breadcrumbs>
-      
+
       <router-view />
     </q-page-container>
   </q-layout>

@@ -17,6 +17,7 @@
     @clearFilters="clearFilters"
     @getPagFun="getPagFun"
     @viewReport="viewReport"
+    @DetailsEvent="viewCourseReport"
     @viewCourseReport="viewCourseReport"
     @sortApi="fireSortCall"
     @callApi="fireCall"
@@ -132,6 +133,7 @@ const fromNo = ref("");
 const toNo = ref("");
 const statusFilter = ref("");
 const shiftFilter = ref("");
+
 
 const allCourseFinance = ref([]);
 const getAllCourseFinance = (page = 1) => {

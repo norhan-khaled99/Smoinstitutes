@@ -12,6 +12,7 @@
     :typeOptions="transTypeOptions"
     :transactions="true"
     :searchInput="false"
+    :viewReport="true"
     @addNew="addTransaction"
     @filterTransaction="onFilterChange"
     @clearFilters="clearFilters"
@@ -80,7 +81,7 @@ const getAllTransactions = (page = 1) => {
     })
     .catch((error) => {
       $q.loading.hide();
-      
+
     });
 };
 

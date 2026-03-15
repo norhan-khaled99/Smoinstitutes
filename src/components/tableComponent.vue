@@ -992,10 +992,51 @@
                   />
                   <q-avatar
                     v-else
-                    :color="props.row.gender_name === 'Female' ? 'pink' : (props.row.gender_name === 'Male' ? 'blue' : 'grey')"
-                    text-color="white"
-                    class="image"  icon="account_circle">
-
+                    class="image"
+                  >
+                    <svg
+                      v-if="props.row.gender_name === 'Male'"
+                      width="36"
+                      height="36"
+                      viewBox="0 0 36 36"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g clip-path="url(#clip0_3184_6750)">
+                        <rect width="36" height="36" rx="18" fill="#ADE5DA" />
+                        <rect x="11" y="6" width="14" height="14" rx="7" fill="#6B9AA6" />
+                        <rect x="-9" y="24" width="54" height="54" rx="27" fill="#6B9AA6" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_3184_6750">
+                          <rect width="36" height="36" rx="18" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    <svg
+                      v-else-if="props.row.gender_name === 'Female'"
+                      width="36"
+                      height="36"
+                      viewBox="0 0 36 36"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g clip-path="url(#clip0_3184_6752)">
+                        <rect width="36" height="36" rx="18" fill="#FFD7EE" />
+                        <rect x="11" y="6" width="14" height="14" rx="7" fill="#FF67C0" />
+                        <rect x="-9" y="24" width="54" height="54" rx="27" fill="#FF67C0" />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_3184_6752">
+                          <rect width="36" height="36" rx="18" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    <q-icon
+                      v-else
+                      name="account_circle"
+                      color="grey"
+                    />
                   </q-avatar>
                   <div class="student-name-text">
                     {{ props.row.full_name }}
