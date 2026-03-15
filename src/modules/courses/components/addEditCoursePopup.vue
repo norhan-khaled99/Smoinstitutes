@@ -50,15 +50,22 @@
                   dense
                   emit-value
                   map-options
-
                   use-input
-
                   input-debounce="400"
                   class="custom-select"
                   :loading="levelLoading"
                   @filter="serachForLevels"
-                  :placeholder="searchvalueOFLevel || 'Select Level After Searching...'"
-                />
+                  :placeholder="'Select Level After Searching...'"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="form.level"
+                      name="cancel"
+                      class="cursor-pointer"
+                      @click.stop="form.level = ''"
+                    />
+                  </template>
+                </q-select>
               </div>
             </div>
             <div class="col-12 col-md-6">
@@ -78,9 +85,18 @@
                   class="custom-select"
                   :loading="teacherLoading"
                   @filter="serachForTeacher"
-                  :placeholder="searchvalueOFTeacher || 'Select Level After Searching...'"
+                  :placeholder="'Select Teacher After Searching...'"
                   :rules="rules.required"
-                />
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="form.teacher"
+                      name="cancel"
+                      class="cursor-pointer"
+                      @click.stop="form.teacher = ''"
+                    />
+                  </template>
+                </q-select>
               </div>
             </div>
 

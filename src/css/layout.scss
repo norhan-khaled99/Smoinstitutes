@@ -11,7 +11,7 @@ body {
     align-items: center;
 
     .header-search {
-      width: 480px;
+      max-width: 480px;
       border-radius: 10px;
 
       .q-field__control {
@@ -296,7 +296,7 @@ body {
     padding: 4px;
     min-width: 150px;
   }
-  
+
 
   .logout-item-dropdown {
     border-radius: 8px;

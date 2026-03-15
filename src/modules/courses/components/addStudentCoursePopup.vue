@@ -45,7 +45,16 @@
                 searchvalueOFStudent || 'Select Student After Searching...'
               "
               :rules="rules.required"
-            />
+            >
+            <template v-slot:append>
+                    <q-icon
+                      v-if="form.student_id"
+                      name="cancel"
+                      class="cursor-pointer"
+                      @click.stop="form.student_id = ''"
+                    />
+                  </template>
+            </q-select>
           </div>
 
           <div class="form-group">

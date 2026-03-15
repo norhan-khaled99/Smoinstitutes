@@ -12,6 +12,7 @@
       :ShowActionsdropDown="false"
       :showViewButton="true"
       @viewRecord="handleView"
+      @DetailsEvent="handleView"
       @searchEvent="handleSearch"
       :showEmptyStateButton="false"
       emptyStateTitle="No results found"

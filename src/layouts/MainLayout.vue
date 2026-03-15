@@ -2,7 +2,17 @@
   <q-layout view="lHh Lpr lFf" class="main_layout">
     <q-header class="bg-white text-grey-9 header_main" height-hint="70">
       <q-toolbar class="q-px-lg">
-        <div v-if="miniState" class="header-logo q-mr-md row items-center">
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+          class="q-mr-sm"
+          v-if="$q.screen.lt.sm"
+        />
+        <div v-if="miniState || $q.screen.lt.sm" class="header-logo q-mr-md row items-center">
               <img :src="'https://test.caiaden.com/' + logoUrl" alt="Logo" />
             <span>{{ site_title }}</span>
         </div>
@@ -178,6 +188,7 @@
       bordered
       :width="264"
       :mini="miniState"
+      :breakpoint="599"
       class="main_sidebar"
     >
       <div class="column justify-between full-height no-wrap">
@@ -420,6 +431,19 @@ export default defineComponent({
     const miniState = ref(false);
     const searchText = ref("");
     const $q = useQuasar();
+
+    watch(
+      () => $q.screen.width,
+      (width) => {
+        if (width < 1024 && width > 599) {
+          miniState.value = true;
+        } else {
+          miniState.value = false;
+        }
+      },
+      { immediate: true }
+    );
+
     const logout = () => {
       localStorage.clear();
       router.push("/login");
