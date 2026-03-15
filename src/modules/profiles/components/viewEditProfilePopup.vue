@@ -361,6 +361,7 @@ import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -393,7 +394,7 @@ const getAllAccountType = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-      
+      handleApiError(error);
     });
 };
 
@@ -406,7 +407,7 @@ const getAllCites = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 

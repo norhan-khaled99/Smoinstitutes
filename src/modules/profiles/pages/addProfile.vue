@@ -369,6 +369,7 @@ import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
 import rules from "src/config/rules.js";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const router = useRouter();
 const $q = useQuasar();
@@ -436,7 +437,7 @@ const addProfile = (data) => {
     })
     .catch((error) => {
       $q.loading.hide();
-      
+      handleApiError(error);
     });
 }
 
@@ -459,7 +460,7 @@ const getAllAccountType = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 
@@ -472,7 +473,7 @@ const getAllCites = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 

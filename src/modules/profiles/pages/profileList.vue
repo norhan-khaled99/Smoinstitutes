@@ -69,6 +69,7 @@ import viewEditProfilePopup from "../components/viewEditProfilePopup.vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
+import { handleApiError } from "../../../utils/errorHandler";
 
 // Mock Data
 const loading = ref(false);
@@ -98,7 +99,7 @@ const getAllAccountType = () => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 
@@ -162,7 +163,7 @@ const getAllProfiles = (page = 1) => {
     })
     .catch((error) => {
       $q.loading.hide();
-
+      handleApiError(error);
     });
 };
 
@@ -296,7 +297,7 @@ const handleSaveProfile = (profileData) => {
     })
     .catch((error) => {
       $q.loading.hide();
-      
+      handleApiError(error);
     });
 };
 

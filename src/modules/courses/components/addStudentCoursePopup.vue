@@ -89,6 +89,7 @@ import services from "../services/service.js";
 import rules from "src/config/rules.js";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+import { handleApiError } from "src/utils/errorHandler";
 
 const model = defineModel();
 const $q = useQuasar();
@@ -121,6 +122,7 @@ const serachForStudent = async (val, update) => {
     });
   } catch (e) {
       studentLoading.value = false;
+      handleApiError(e);
   } finally {
     studentLoading.value = false;
   }

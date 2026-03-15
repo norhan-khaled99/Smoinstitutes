@@ -30,6 +30,7 @@
 import { ref, watch } from "vue";
 import services from "../services/service.js";
 import { useQuasar } from "quasar";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const $q = useQuasar();
 
@@ -62,7 +63,7 @@ const loadReport = async () => {
     }
   } catch (error) {
     $q.loading.hide();
-
+    handleApiError(error);
   }
 };
 

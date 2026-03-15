@@ -48,6 +48,7 @@ import tableComp from "src/components/tableComponent.vue";
 import TransactionPopup from "./TransactionPopup.vue";
 import StudentService from "../services/service";
 import { uid, useQuasar } from "quasar";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const $q = useQuasar();
 const isTransactionPopupOpen = ref(false);
@@ -280,32 +281,7 @@ const onSaveTransaction = (data) => {
         }
       })
       .catch((error) => {
-        console.log(error);
-        const responseData = error.response?.data;
-        let errorMessage = "An unexpected error occurred.";
-        if (responseData) {
-          if (responseData.message) {
-            errorMessage = responseData.message;
-          }
-          const errors = responseData.errors;
-          if (errors) {
-            const fieldMessages = Object.values(errors)
-              .flat()
-              .map((e) => `<li>${typeof e === 'string' ? e : JSON.stringify(e)}</li>`)
-              .join("");
-            if (fieldMessages) {
-              errorMessage = `<div style="font-weight: bold; margin-bottom: 5px;">${errorMessage}</div><ul style="margin: 0; padding-left: 20px;">${fieldMessages}</ul>`;
-            }
-          }
-        }
-        $q.notify({
-          html: true,
-          badgeStyle: "display:none",
-          classes: "custom-Notify bg-white",
-          textColor: "red-5",
-          position: "bottom-right",
-          message: errorMessage,
-        });
+        handleApiError(error);
       })
       .finally(() => {
         $q.loading.hide();
@@ -383,10 +359,11 @@ const loadAllTransactions = () => {
               allRows.value = res2.data.results || firstResults;
               pagination.value.rowsNumber = allRows.value.length;
             })
-            .catch(() => {
+            .catch((error) => {
               // Fall back to first page only
               allRows.value = firstResults;
               pagination.value.rowsNumber = firstResults.length;
+              handleApiError(error);
             })
             .finally(() => {
               $q.loading.hide();
@@ -394,8 +371,9 @@ const loadAllTransactions = () => {
         }
       }
     })
-    .catch(() => {
+    .catch((error) => {
       $q.loading.hide();
+      handleApiError(error);
     });
 };
 

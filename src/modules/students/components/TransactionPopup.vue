@@ -138,7 +138,7 @@
                 @filter="searchForService"
                 placeholder="Select Account After Searching..."
                 class="custom-select"
-                :disable="!!props.currentTransaction.service_id"
+                :disable="!!props.currentTransaction.service_account_id"
               />
             </div>
           </div>
@@ -235,8 +235,8 @@ const form = ref({
   voucherNumber: props.currentTransaction.paper_no || "",
   course: props.currentTransaction.category_name || null,
   courseId: props.currentTransaction.category_id || null,
-  service: props.currentTransaction.service || null,
-  serviceId: props.currentTransaction.service_id || null,
+  service: props.currentTransaction.service_account_name || null,
+  serviceId: props.currentTransaction.service_account_id || null,
   toAccount: props.currentTransaction.to_account || null,
   details: props.currentTransaction.details || "",
 });
@@ -251,8 +251,8 @@ watch(
         voucherNumber: props.currentTransaction.paper_no || "",
         course: props.currentTransaction.category_name || null,
         courseId: props.currentTransaction.category_id || null,
-        service: props.currentTransaction.service || null,
-        serviceId: props.currentTransaction.service_id || null,
+        service: props.currentTransaction.service_account_name || null,
+        serviceId: props.currentTransaction.service_account_id || null,
         toAccount: props.currentTransaction.to_account || null,
         details: props.currentTransaction.details || "",
       };
@@ -269,10 +269,10 @@ watch(
         }];
       }
 
-      if (props.currentTransaction.service_id && props.currentTransaction.service) { // Assuming service name is in 'service' prop
+      if (props.currentTransaction.service_account_id && props.currentTransaction.service_account_name) { // Assuming service name is in 'service' prop
         serviceOptions.value = [{
-          id: props.currentTransaction.service_id,
-          name: props.currentTransaction.service
+          id: props.currentTransaction.service_account_id,
+          name: props.currentTransaction.service_account_name
         }];
       }
 
@@ -407,8 +407,8 @@ onMounted(() => {
   form.value.voucherNumber = props.currentTransaction.paper_no || "";
   form.value.course = props.currentTransaction.category_name || null;
   form.value.courseId = props.currentTransaction.category_id || null;
-  form.value.service = props.currentTransaction.service || null;
-  form.value.serviceId = props.currentTransaction.service_id || null;
+  form.value.service = props.currentTransaction.service_account_name || null;
+  form.value.serviceId = props.currentTransaction.service_account_id || null;
   form.value.toAccount = props.currentTransaction.to_account || null;
   form.value.details = props.currentTransaction.details || "";
 
@@ -420,10 +420,10 @@ onMounted(() => {
     }];
   }
 
-  if (props.currentTransaction.service_id && props.currentTransaction.service) { // Assuming service name is in 'service' prop
+  if (props.currentTransaction.service_account_id && props.currentTransaction.service_account_name) { // Assuming service name is in 'service' prop
     serviceOptions.value = [{
-      id: props.currentTransaction.service_id,
-      name: props.currentTransaction.service
+      id: props.currentTransaction.service_account_id,
+      name: props.currentTransaction.service_account_name
     }];
   }
 

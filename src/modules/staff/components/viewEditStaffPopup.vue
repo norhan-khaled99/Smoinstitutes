@@ -1042,6 +1042,7 @@ import { useQuasar } from "quasar";
 import services from "../services/service.js";
 import CourseServices from "../../courses/services/service.js";
 import staffCoursesList from "./staffCoursesList.vue";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -1096,8 +1097,7 @@ const handleAction = async (action) => {
     }
   } catch (error) {
     $q.loading.hide();
-
-
+    handleApiError(error);
   }
 };
 watch(pdfDialog, (val) => {
@@ -1116,6 +1116,7 @@ const getInstitution = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 const cityOptions = ref([]);
@@ -1127,6 +1128,7 @@ const getAllCites = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 const jobTypeOptions = ref([]);
@@ -1138,6 +1140,7 @@ const getAlljob = () => {
     })
     .catch((error) => {
       console.error("Error fetching shifts:", error);
+      handleApiError(error);
     });
 };
 const degreeOptions = ref([
