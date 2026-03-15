@@ -69,30 +69,22 @@
                 class="q-ml-xs text-grey-7 cursor-pointer"
               >
                 <q-menu class="logout-menu" :offset="[0, 14]">
+
                   <q-list>
 
                     <q-item
+                      v-for="link in extraLinks"
+                      :key="link.id"
                       clickable
                       v-close-popup
                       class="logout-item-dropdown text-body2"
-                      tag="a"
+                      @click="openLink(link.link)"
+                      target="_blank"
                     >
                       <q-item-section avatar>
                         <q-icon name="description" size="20px" class="text-grey-6" />
                       </q-item-section>
-                      <q-item-section>Docs</q-item-section>
-                    </q-item>
-
-                    <q-item
-                      clickable
-                      v-close-popup
-                      class="logout-item-dropdown text-body2"
-                      tag="a"
-                    >
-                      <q-item-section avatar>
-                        <q-icon name="description" size="20px" class="text-grey-6" />
-                      </q-item-section>
-                      <q-item-section>Docs</q-item-section>
+                      <q-item-section>{{ link.title }}</q-item-section>
                     </q-item>
 
                   </q-list>
@@ -269,6 +261,11 @@
           <div class="copyright-text q-px-lg" v-if="!miniState">
             ©2026 SMO Solutions LLC
           </div>
+
+          <div class="copyright-text q-px-lg" v-if="!miniState">
+            {{ systemversion }} | {{ systemEnvironment }}
+          </div>
+
         </div>
       </div>
     </q-drawer>
@@ -470,12 +467,22 @@ export default defineComponent({
     };
 
     const usercurrency = ref("");
+    const site_name = ref("");
+    const systemversion = ref("");
+    const systemEnvironment = ref("");
+    const extraLinks = ref([]);
 
     const getlogo = () => {
       authServices.getLogo().then((res) => {
         logoUrl.value = res.data?.data?.company.logo;
         site_title.value = res.data?.data?.company.site_title;
+        site_name.value = res.data?.data?.company.site_title;
         usercurrency.value = res.data?.data?.company.currency || "";
+
+        systemversion.value = res.data?.data?.system.version || "";
+        systemEnvironment.value = res.data?.data?.system.environment || "";
+        extraLinks.value = res.data?.data?.extra_links || [];
+
         })
         .catch((error) => {
           console.error("Error fetching logo:", error);
@@ -538,6 +545,10 @@ export default defineComponent({
       }
     );
 
+    const openLink = (url) => {
+       window.open(url, '_blank')
+    }
+
     onMounted(() => {
       getUserData();
       getlogo();
@@ -546,14 +557,19 @@ export default defineComponent({
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
+      openLink,
       miniState,
       searchText,
+      extraLinks,
       pageTitel,
       onSearch,
       logoUrl,
       userName,
+      site_name,
       userBalance,
       isBalanceVisible,
+      systemversion,
+      systemEnvironment,
       site_title,
       pageLink,
       cramp,

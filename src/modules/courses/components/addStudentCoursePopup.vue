@@ -61,7 +61,6 @@
             <label>Discount Amount</label>
             <q-input
               v-model.number="form.discount"
-              :rules="rules.required"
               type="number"
               outlined
               dense
