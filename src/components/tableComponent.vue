@@ -1453,6 +1453,7 @@
                   round
                   class="action-menu-btn"
                   v-if="ShowActionsdropDown"
+                  @click.stop
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1510,6 +1511,15 @@
                         @click="openDialogDelete(props.row)"
                       >
                         <q-item-section>Delete</q-item-section>
+                      </q-item>
+
+                      <q-item
+                        v-if="studentTransaction"
+                        clickable
+                        class="action-menu-item"
+                        @click="openDialogReverse(props.row)"
+                      >
+                        <q-item-section>Reverse</q-item-section>
                       </q-item>
 
                       <q-item
@@ -1966,6 +1976,10 @@ export default {
       emit("openDialogDeleteEvent", row);
     };
 
+    const openDialogReverse = (row) => {
+      emit("openDialogReverseEvent", row);
+    };
+
     const CertificateEvent = (row) => {
       emit("certificateEvent", row);
     };
@@ -2132,7 +2146,8 @@ export default {
       onFilterTransaction,
       onFilterBookStock,
       handleRowClick,
-      viewRecord
+      viewRecord,
+      openDialogReverse
     };
   },
 };

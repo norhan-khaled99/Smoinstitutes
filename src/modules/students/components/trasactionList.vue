@@ -12,9 +12,9 @@
     :typeOptions="typeOptions"
     :ShowActionsdropDown="true"
     :studentTransaction="true"
+    @openDialogReverseEvent="ReverseTranaction"
     @DetailsEvent="getTransactionDetails"
     :showFilters="true"
-    :viewReport="true"
     searchPlaceholder="Search Transaction..."
     @addDropdownAction="handleAddPayment"
     @searchEvent="onSearchEvent"
@@ -40,6 +40,9 @@
     v-if="currentTransactionData"
     @save="onSaveTransaction"
   />
+  <reverseTranactionPopuo
+     v-model="isReverseTranactionPopuoOpen"
+  />
 </template>
 
 <script setup>
@@ -49,7 +52,7 @@ import TransactionPopup from "./TransactionPopup.vue";
 import StudentService from "../services/service";
 import { uid, useQuasar } from "quasar";
 import { handleApiError } from "../../../utils/errorHandler";
-
+import reverseTranactionPopuo from "./reverseTranactionPopup.vue";
 const $q = useQuasar();
 const isTransactionPopupOpen = ref(false);
 const currentTransactionType = ref("Income");
@@ -122,6 +125,13 @@ const pagination = ref({
   rowsPerPage: 10,
   rowsNumber: 0,
 });
+
+const isReverseTranactionPopuoOpen = ref(false);
+const selectedRowForReverse = ref(null);
+const ReverseTranaction = (row) => {
+  selectedRowForReverse.value = row;
+  isReverseTranactionPopuoOpen.value = true;
+};
 
 // All raw rows loaded from the API (never mutated by filters)
 const allRows = ref([]);
