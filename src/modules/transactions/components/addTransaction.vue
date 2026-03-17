@@ -57,7 +57,6 @@
                 <label class="form-label">Category id</label>
                 <q-select
                   v-model="form.category_id"
-                  :rules="rules.required"
                   :options="categoryOptions"
                   dense
                   outlined
@@ -355,7 +354,6 @@
                 <label class="form-label">Details</label>
                 <q-input
                   v-model="form.details"
-                  :rules="rules.required"
                   dense
                   outlined
                   type="textarea"

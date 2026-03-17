@@ -55,7 +55,9 @@
                   class="custom-select"
                   :loading="levelLoading"
                   @filter="serachForLevels"
-                  :placeholder="'Select Level After Searching...'"
+                  :placeholder="
+                    !form.level ? 'Select Level After Searching...' : ''
+                  "
                 >
                   <template v-slot:append>
                     <q-icon
@@ -85,7 +87,9 @@
                   class="custom-select"
                   :loading="teacherLoading"
                   @filter="serachForTeacher"
-                  :placeholder="'Select Teacher After Searching...'"
+                  :placeholder="
+                    !form.teacher ? 'Select Teacher After Searching...' : ''
+                  "
                   :rules="rules.required"
                 >
                   <template v-slot:append>
@@ -121,7 +125,11 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-date v-model="form.startdate" color="grey-6" mask="YYYY-MM-DD">
+                        <q-date
+                          v-model="form.startdate"
+                          color="grey-6"
+                          mask="YYYY-MM-DD"
+                        >
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
@@ -331,8 +339,8 @@ const serachForLevels = async (val, update) => {
       searchvalueOFLevel.value = val;
     });
   } catch (e) {
-     levelLoading.value = false;
-     handleApiError(e);
+    levelLoading.value = false;
+    handleApiError(e);
   } finally {
     levelLoading.value = false;
   }
@@ -369,8 +377,8 @@ const serachForTeacher = async (val, update) => {
       searchvalueOFTeacher.value = val;
     });
   } catch (e) {
-      teacherLoading.value = false;
-      handleApiError(e);
+    teacherLoading.value = false;
+    handleApiError(e);
   } finally {
     teacherLoading.value = false;
   }
@@ -382,6 +390,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+
 .course-popup {
   width: 45rem !important;
   .form-group {
@@ -397,4 +406,7 @@ onMounted(() => {
     max-width: 10.625rem;
   }
 }
+
+
+
 </style>
