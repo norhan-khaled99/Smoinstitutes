@@ -1308,7 +1308,10 @@
             <template v-slot:body-cell-stu_transaction_type="props">
               <q-td :props="props">
                 <div
-                  :class="props.row.jtype.name"
+                  :class="[
+                    props.row.jtype.name,
+                    { 'transaction-reversal': props.row.is_reversed === true }
+                  ]"
                   class="type-cell row items-center no-wrap"
                 >
                   <svg
@@ -2173,5 +2176,9 @@ export default {
 }
 .score-input.score-error :deep(.q-field__control::before) {
   border-color: #ef4444 !important;
+}
+
+.transaction-reversal {
+  color: #ef4444 !important;
 }
 </style>

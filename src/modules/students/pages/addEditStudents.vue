@@ -326,10 +326,10 @@
                   outlined
                   v-model="form.city"
                   :options="cityOptions"
-                  :label="
-                  form.city == undefined || form.city == '' ? 'Select City' : ''
-                "
+                  emit-value
+                  map-options
                   dense
+                  :placeholder="'Select City'"
                 />
               </div>
             </div>
@@ -342,6 +342,59 @@
                   v-model="form.address"
                   placeholder="Building no., Street name, Area ..."
                   dense
+                />
+              </div>
+            </div>
+
+            <!-- Row 6: Nationality, Education Level, and Info Verified -->
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <p class="field-label">Nationality</p>
+                <q-select
+                  outlined
+                  v-model="form.nationality"
+                  :options="nationalityOptions"
+                  option-label="nationality_name"
+                  option-value="nationality"
+                  emit-value
+                  map-options
+                  dense
+                  placeholder="Select Nationality"
+                />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <p class="field-label">Education Level</p>
+                <q-select
+                  outlined
+                  v-model="form.education_level"
+                  :options="educationLevelOptions"
+                  option-label="education_level_name"
+                  option-value="education_level"
+                  emit-value
+                  map-options
+                  dense
+                  placeholder="Select Education Level"
+                />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <p class="field-label">Info Verified</p>
+                <q-select
+                  outlined
+                  v-model="form.info_verified"
+                  :options="[
+                    { label: 'Yes', value: true },
+                    { label: 'No', value: false }
+                  ]"
+                  emit-value
+                  map-options
+                  dense
+                  placeholder="Is Info Verified?"
                 />
               </div>
             </div>
@@ -380,6 +433,9 @@ const form = ref({
   parentphone2: "",
   city: null,
   address: "",
+  nationality: "",
+  education_level: "",
+  info_verified: false,
 });
 
 const formRef = ref(null);
@@ -417,6 +473,8 @@ const rules = {
 };
 
 const cityOptions = ref([]);
+const nationalityOptions = ref([]);
+const educationLevelOptions = ref([]);
 
 const uploadPhoto = () => {
   // Handle photo upload
@@ -540,6 +598,9 @@ const saveAndAddAnother = async () => {
             parentphone2: "",
             city: null,
             address: "",
+            nationality: "",
+            education_level: "",
+            info_verified: false,
           };
              isEditable.value = false;
         }
@@ -653,16 +714,43 @@ const saveAndContinueEditing = async () => {
 
 const getAllCities = () => {
   $q.loading.show();
-  // Fetch city options from API if needed
   StudentService.getAllCities()
     .then((res) => {
-      cityOptions.value = res.data.data.value.CITY_CHOICES;
+      const cities = res.data.data?.value?.CITY_CHOICES || res.data.data?.CITY_CHOICES || [];
+      cityOptions.value = cities.map(city => ({ label: city, value: city }));
       $q.loading.hide();
     }).catch((error) => {
     $q.loading.hide();
-    
   });
 }
+
+const getNationalities = () => {
+  StudentService.getNationalities().then(res => {
+    const data = res.data.data;
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      nationalityOptions.value = Object.entries(data).map(([id, item]) => ({
+        nationality: isNaN(id) ? id : Number(id),
+        nationality_name: item.country_name_en || item.name_en || item.name
+      }));
+    } else {
+      nationalityOptions.value = Array.isArray(data) ? data : [];
+    }
+  });
+};
+
+const getEducationLevels = () => {
+  StudentService.getEducationLevels().then(res => {
+    const data = res.data.data;
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      educationLevelOptions.value = Object.entries(data).map(([id, item]) => ({
+        education_level: isNaN(id) ? id : Number(id),
+        education_level_name: item.name_en || item.name
+      }));
+    } else {
+      educationLevelOptions.value = Array.isArray(data) ? data : [];
+    }
+  });
+};
 
 const formatDateToAPI = (dateString) => {
   if (!dateString) return '';
@@ -695,8 +783,11 @@ const handleFormData = () => {
   formData.append('phone', form.value.phone);
   formData.append('parentphone1', form.value.parentphone1);
   formData.append('parentphone2', form.value.parentphone2);
-  formData.append('city', form.value.city);
+  formData.append('city', form.value.city || '');
   formData.append('address', form.value.address);
+  formData.append('nationality', form.value.nationality);
+  formData.append('education_level', form.value.education_level);
+  formData.append('info_verified', form.value.info_verified);
 
   // Add photo with different key name
   if (photo.value) {
@@ -710,5 +801,7 @@ const cancel = () => {
 
 onMounted(() => {
   getAllCities();
+  getNationalities();
+  getEducationLevels();
 })
 </script>

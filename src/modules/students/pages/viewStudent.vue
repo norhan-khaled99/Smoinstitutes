@@ -157,8 +157,18 @@
   <q-dialog v-model="pdfDialog" persistent>
       <q-card class="pdf-card">
         <q-bar class="pdf-bar">
-          <div>Preview</div>
+          <div>Preview : {{ currentDocName }}</div>
           <q-space />
+          <q-btn
+            dense
+            flat
+            icon="download"
+            @click="downloadPDF"
+            class="q-mr-sm"
+            aria-label="Download PDF"
+          >
+            <q-tooltip>Download PDF</q-tooltip>
+          </q-btn>
           <q-btn dense flat icon="close" v-close-popup class="pdf-close-btn" aria-label="Close preview" />
         </q-bar>
 
@@ -191,6 +201,7 @@ const $q = useQuasar();
 const isTransactionPopupOpen = ref(false);
 const currentTransactionType = ref("Income");
 const currentTransactionData = ref({});
+const currentDocName = ref("");
 
 const route = useRoute();
 const tab = ref("overview");
@@ -254,38 +265,39 @@ const onSaveTransaction = (data) => {
   let promise;
   const payload = {};
 
-  if (data.type === 'Income') {
+  if (data.type_id === 2) {
+    console.log(data);
     Object.assign(payload, {
       paper_no: data.voucherNumber,
       to_account: data.toAccount ? data.toAccount : studentData.value.globalid,
       amount: data.amount,
-      category_id: data.course ? data.courseId : null,
+      category_id: data.courseId ? data.courseId : null,
       details: data.details,
     });
     promise = StudentService.addIncomePayment(payload, random);
-  } else if (data.type === 'Expense') {
+  } else if (data.type_id === 3) {
     Object.assign(payload, {
       paper_no: data.voucherNumber,
       from_account: studentData.value.globalid,
       amount: data.amount,
-      category_id: data.course ? data.courseId : null,
+      category_id: data.courseId ? data.courseId : null,
       details: data.details,
     });
     promise = StudentService.addExpensePayment(payload, random);
-  } else if (data.type === 'Service') {
+  } else if (data.type_id === 4) {
     Object.assign(payload, {
       student: data.toAccount ? data.toAccount : studentData.value.globalid,
-      service: data.service ? data.serviceId : null,
+      service_account: data.serviceId ? data.serviceId : null,
       amount: data.amount,
       details: data.details,
     });
     promise = StudentService.addServicePayment(payload, random);
-  } else if (data.type === 'Funds Transfer') {
+  } else if (data.type_id === 15) {
     Object.assign(payload, {
       from_account: studentData.value.globalid,
       to_account: data.toAccount ? data.toAccount : null,
       amount: data.amount,
-      category_id: data.course ? data.courseId : null,
+      category_id: data.courseId ? data.courseId : null,
       details: data.details,
       jtype: data.type_id,
     });
@@ -294,36 +306,49 @@ const onSaveTransaction = (data) => {
 
   if (promise) {
     $q.loading.show();
-    promise.then((response) => {
-      if (response.status === 200 || response.status === 201) {
-        $q.notify({
-          badgeStyle: "display:none",
-          classes: "custom-Notify",
-          textColor: "black-1",
-          icon: "img:/images/SuccessIcon.png",
-          position: "bottom-right",
-          message: response.data.result || "Payment added successfully.",
-        });
-        getStudentDetails();
-        // Also refresh the overview child component (balance, stats, etc.)
-        overviewRef.value?.getStudentDetails();
-        isTransactionPopupOpen.value = false;
-        // Ideally reload transaction list if we were on that tab, or just refresh student details to update balance
-      }
-    }).catch((error) => {
-      handleApiError(error);
-    }).finally(() => {
-      $q.loading.hide();
-      getStudentDetails();
-    });
+    promise
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          $q.notify({
+            badgeStyle: "display:none",
+            classes: "custom-Notify",
+            textColor: "black-1",
+            icon: "img:/images/SuccessIcon.png",
+            position: "bottom-right",
+            message: response.data.result || "Payment added successfully.",
+          });
+          isTransactionPopupOpen.value = false;
+          // Reload all transactions to refresh the data and re-derive options
+          getStudentDetails();
+        }
+      })
+      .catch((error) => {
+        handleApiError(error);
+      })
+      .finally(() => {
+        $q.loading.hide();
+      });
   }
 };
 const pdfDialog = ref(false);
 const pdfUrl = ref(null);
+const currentBlob = ref(null);
+
+const downloadPDF = () => {
+  if (!pdfUrl.value || !currentDocName.value) return;
+  
+  const link = document.createElement('a');
+  link.href = pdfUrl.value;
+  link.download = `${currentDocName.value}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 const handleAction = async (action) => {
   try {
     $q.loading.show();
-
+    currentDocName.value = action.display_name || "document";
     const res = await StudentService.executeAction(action, studentData.value);
 
     $q.loading.hide();
@@ -354,7 +379,7 @@ const handleAction = async (action) => {
 const getCourseCertificate = async (course) => {
   try {
     $q.loading.show();
-
+    currentDocName.value = `Certificate - ${course.course_name || 'Course'}`;
     const res = await StudentService.getCourseCertificate(course.regid);
 
     $q.loading.hide();
@@ -386,7 +411,7 @@ const getCourseCertificate = async (course) => {
 const getTransactionDetails = async (transaction) => {
   try {
     $q.loading.show();
-
+    currentDocName.value = `Transaction - ${transaction.paper_no || 'Document'}`;
     const res = await StudentService.getTransactionData(transaction.paper_no , transaction.jtype.id);
     console.log(res);
     $q.loading.hide();
