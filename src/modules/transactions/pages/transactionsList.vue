@@ -47,6 +47,7 @@ import AddTransaction from "../components/addTransaction.vue";
 import viewTransactionReportPopup from "../components/viewTransactionReportPopup.vue";
 import { useQuasar } from "quasar";
 import services from "../service/service.js";
+import { handleApiError } from "../../../utils/errorHandler";
 
 const pagination = ref({
   page: 1,
@@ -275,8 +276,8 @@ const handleSaveTransaction = (data) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
-      ;
     });
 };
 
