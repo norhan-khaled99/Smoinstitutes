@@ -58,18 +58,24 @@
                 <q-select
                   v-model="form.category_id"
                   :options="categoryOptions"
-                  dense
-                  outlined
-                  :label="
-                    form.category_id == undefined || form.category_id == ''
-                      ? 'Select Category'
-                      : ''
-                  "
-                  class="custom-select"
-                  option-label="label"
                   option-value="value"
+                  option-label="label"
+                  clearable
+                  hide-selected
+                  outlined
+                  dense
                   emit-value
                   map-options
+                  fill-input
+                  use-input
+                  :input-value="categorySearch"
+                  @update:input-value="(val) => (categorySearch = val)"
+                  @update:model-value="() => (categorySearch = '')"
+                  input-debounce="400"
+                  :loading="categoryLoading"
+                  @filter="searchForCategory"
+                  placeholder="Select Category After Searching..."
+                  class="custom-select"
                 />
               </div>
             </div>
@@ -188,11 +194,13 @@
 
                       <q-item-section>
                         <q-item-label class="text-weight-bold text-dark">{{
-                          scope.opt.label
-                        }}</q-item-label>
+                            scope.opt.label
+                          }}
+                        </q-item-label>
                         <q-item-label caption class="text-grey-7">{{
-                          scope.opt.mainaccountname
-                        }}</q-item-label>
+                            scope.opt.mainaccountname
+                          }}
+                        </q-item-label>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -279,14 +287,16 @@
                       </q-item-section>
                       <q-item-section>
                         <q-item-label class="text-weight-bold text-dark">{{
-                          scope.opt.label
-                        }}</q-item-label>
+                            scope.opt.label
+                          }}
+                        </q-item-label>
                         <q-item-label caption class="text-grey-7">{{
-                          scope.opt.mainaccountname
-                        }}</q-item-label>
+                            scope.opt.mainaccountname
+                          }}
+                        </q-item-label>
                       </q-item-section>
                       <q-item-section side v-if="scope.selected">
-                        <q-icon name="check" color="primary" size="xs" />
+                        <q-icon name="check" color="primary" size="xs"/>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -397,8 +407,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
-import { useQuasar } from "quasar";
+import {ref, computed, onMounted, watch} from "vue";
+import {useQuasar} from "quasar";
 import services from "../service/service";
 import rules from "src/config/rules.js";
 
@@ -432,15 +442,30 @@ const form = ref({
 });
 
 const categoryOptions = ref([]);
-const getAllCategoryOptions = () => {
-  services
-    .getAllCategoryOptions()
-    .then((res) => {
-      categoryOptions.value = res.data.data;
-    })
-    .catch((error) => {
-      console.error("Error fetching shifts:", error);
+const categorySearch = ref("");
+const categoryLoading = ref(false);
+
+const searchForCategory = async (val, update) => {
+  if (!val || val.length < 2) {
+    update(() => {
+      categoryOptions.value = [];
     });
+    return;
+  }
+
+  categoryLoading.value = true;
+
+  try {
+    const res = await services.getAllCategoryOptions(val);
+
+    update(() => {
+      categoryOptions.value = res.data.data;
+    });
+  } catch (e) {
+     $q.loading.hide();
+  } finally {
+    categoryLoading.value = false;
+  }
 };
 
 const fromAccountLoading = ref(false);
@@ -490,7 +515,7 @@ const filterFromAccounts = async (val, update) => {
         applyFromAccountFilter();
       });
     } catch (e) {
-       $q.loading.hide();
+      $q.loading.hide();
     } finally {
       fromAccountLoading.value = false;
     }
@@ -541,7 +566,7 @@ const filterToAccounts = async (val, update) => {
         applyToAccountFilter();
       });
     } catch (e) {
-       $q.loading.hide();
+      $q.loading.hide();
     } finally {
       toAccountLoading.value = false;
     }
@@ -680,7 +705,6 @@ const resetForm = () => {
 };
 
 onMounted(() => {
-  getAllCategoryOptions();
   getAllTransactionTypeOptions();
 });
 </script>
@@ -708,12 +732,14 @@ onMounted(() => {
     justify-content: center;
     color: $grey-6 !important;
   }
+
   .sticky-top {
     position: sticky;
     top: 0;
     z-index: 10;
   }
 }
+
 .filter-tabs-container {
   border-radius: 8px;
 }
