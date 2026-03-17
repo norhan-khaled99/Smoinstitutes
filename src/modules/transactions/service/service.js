@@ -20,8 +20,8 @@ class TransactionService {
     return axiosInstance.get(`/api/v1/profiles/accounts/search-dropdown?q=${value}`);
   }
 
-  getAllCategoryOptions() {
-    return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=Acce`);
+  getAllCategoryOptions(search) {
+    return axiosInstance.get(`/api/v1/courses/profile/lookup/?q=${search}`);
   }
 
   getAllTransTypeOptions() {
