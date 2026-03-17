@@ -55,6 +55,26 @@
                 </div>
               </div>
             </div>
+            <div class="col-12 col-md-12">
+              <div class="form-group">
+                <p class="field-label">Arabic Full Name</p>
+                <div class="row q-col-gutter-sm">
+                  <div class="col-12 col-md-12">
+                    <q-input
+                      v-if="isEditing"
+                      v-model="studentData.arabic_full_name"
+                      outlined
+                      dense
+                      placeholder="First Name"
+                      class="edit-input"
+                    />
+                    <p v-else class="field-value">
+                      {{ studentData.arabic_full_name }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Gender -->
             <div class="col-12 col-md-6">
@@ -78,13 +98,12 @@
                 <p class="field-label">Year Of Birth</p>
                 <q-input
                   v-if="isEditing"
-                  v-model="studentData.d_o_b"
+                  v-model="studentData.year_of_birth"
                   outlined
                   dense
                   class="edit-input"
-                  mask="##/##/####"
                 />
-                <p v-else class="field-value">{{ studentData.d_o_b }}</p>
+                <p v-else class="field-value">{{ studentData.year_of_birth }}</p>
               </div>
             </div>
 
@@ -168,9 +187,12 @@
             <div class="col-12 col-md-6">
               <div class="form-group">
                 <p class="field-label">City</p>
-                <q-input
+                <q-select
                   v-if="isEditing"
                   v-model="studentData.city"
+                  :options="cityOptions"
+                  emit-value
+                  map-options
                   outlined
                   dense
                   class="edit-input"
@@ -198,42 +220,56 @@
               <div class="form-group">
                 <p class="field-label">Nationality</p>
 
-                <q-input
+                <q-select
                   v-if="isEditing"
-                  v-model="studentData.first_name"
+                  v-model="studentData.nationality"
+                  :options="nationalityOptions"
+                  option-label="nationality_name"
+                  option-value="nationality"
+                  emit-value
+                  map-options
                   outlined
                   dense
-                  placeholder="First Name"
                   class="edit-input"
                 />
-                <p v-else class="field-value">{{ studentData.first_name }}</p>
+                <p v-else class="field-value">{{ studentData.nationality_name }}</p>
               </div>
             </div>
             <div class="col-md-6">
               <div class="col-12 col-md-4 form-group">
                 <p class="field-label">Education Level</p>
-                <q-input
+                <q-select
                   v-if="isEditing"
-                  v-model="studentData.middle_names"
+                  v-model="studentData.education_level"
+                  :options="educationLevelOptions"
+                  option-label="education_level_name"
+                  option-value="education_level"
+                  emit-value
+                  map-options
                   outlined
-                  placeholder="Middle Name"
                   dense
                   class="edit-input"
                 />
-                <p v-else class="field-value">{{ studentData.middle_names }}</p>
+                <p v-else class="field-value">{{ studentData.education_level_name }}</p>
               </div>
             </div>
 
             <div class="col-12 col-md-6 form-group">
               <p class="field-label">Verfied Information</p>
-              <q-input
+              <q-select
                 v-if="isEditing"
-                v-model="studentData.last_name"
+                v-model="studentData.info_verified"
+                :options="[
+                  { label: 'Yes', value: true },
+                  { label: 'No', value: false }
+                ]"
+                emit-value
+                map-options
                 outlined
                 dense
                 class="edit-input"
               />
-              <p v-else class="field-value">{{ studentData.last_name }}</p>
+              <p v-else class="field-value">{{ studentData.info_verified ? 'Yes' : 'No' }}</p>
             </div>
           </div>
         </div>
@@ -336,7 +372,7 @@
               <span class="balance-label">Balance</span>
               <div class="row items-center no-wrap">
                 <span :class="['balance-amount', studentData.balance >= 0 ? 'positive' : 'negative']"
-                  >{{ isBalanceVisible ? studentData.balance : "******" }}
+                >{{ isBalanceVisible ? studentData.balance : "******" }}
                   <span class="currency">{{ usercurrency }}</span></span
                 >
                 <q-btn
@@ -480,7 +516,7 @@
                 </g>
                 <defs>
                   <clipPath id="clip0_2677_13396">
-                    <rect width="16" height="16" fill="white" />
+                    <rect width="16" height="16" fill="white"/>
                   </clipPath>
                 </defs>
               </svg>
@@ -488,7 +524,7 @@
               <div class="stat-info">
                 <span class="stat-label">Attendance Rate</span>
                 <span class="stat-value"
-                  >{{ studentData.attendance_rate }}%</span
+                >{{ studentData.attendance_rate }}%</span
                 >
               </div>
             </div>
@@ -567,11 +603,11 @@
 </template>
 
 <script setup>
-import { watch, onMounted, ref } from "vue";
+import {watch, onMounted, ref} from "vue";
 import StudentService from "../services/service";
 import authServices from "../../auth/services/service.js";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
+import {useRoute} from "vue-router";
+import {useQuasar} from "quasar";
 
 const $q = useQuasar();
 const route = useRoute();
@@ -601,6 +637,9 @@ const getlogo = () => {
 const emit = defineEmits(["view-transactions", "add-payment"]);
 
 const addDropdownOptions = ref([]);
+const cityOptions = ref([]);
+const nationalityOptions = ref([]);
+const educationLevelOptions = ref([]);
 
 watch(
   () => props.paymentOptions,
@@ -614,7 +653,7 @@ watch(
       id: item.type_id,
     }));
   },
-  { immediate: true },
+  {immediate: true},
 );
 
 const studentData = ref({
@@ -622,8 +661,9 @@ const studentData = ref({
   first_name: "",
   middle_names: "",
   last_name: "",
+  arabic_full_name:"",
   gender_name: "",
-  d_o_b: "",
+  year_of_birth: "",
   email: "",
   mobile: "",
   phone: "",
@@ -640,6 +680,11 @@ const studentData = ref({
   coursesLength: 0,
   attendance_rate: 0,
   notes_count: 0,
+  nationality:"",
+  nationality_name:"",
+  education_level:"",
+  education_level_name:"",
+  info_verified:"",
 });
 
 const isBalanceVisible = ref(false);
@@ -704,6 +749,41 @@ const getStudentDetails = () => {
     });
 };
 
+const getAllCities = () => {
+  StudentService.getAllCities().then(res => {
+    const cities = res.data.data?.value?.CITY_CHOICES || res.data.data?.CITY_CHOICES || [];
+    cityOptions.value = cities.map(city => ({ label: city, value: city }));
+  });
+};
+
+const getNationalities = () => {
+  StudentService.getNationalities().then(res => {
+    const data = res.data.data;
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      nationalityOptions.value = Object.entries(data).map(([id, item]) => ({
+        nationality: isNaN(id) ? id : Number(id),
+        nationality_name: item.country_name_en || item.name_en || item.name
+      }));
+    } else {
+      nationalityOptions.value = Array.isArray(data) ? data : [];
+    }
+  });
+};
+
+const getEducationLevels = () => {
+  StudentService.getEducationLevels().then(res => {
+    const data = res.data.data;
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      educationLevelOptions.value = Object.entries(data).map(([id, item]) => ({
+        education_level: isNaN(id) ? id : Number(id),
+        education_level_name: item.name_en || item.name
+      }));
+    } else {
+      educationLevelOptions.value = Array.isArray(data) ? data : [];
+    }
+  });
+};
+
 const formatDateToAPI = (dateString) => {
   if (!dateString) return "";
 
@@ -731,6 +811,7 @@ const formatDateToAPI = (dateString) => {
 };
 
 const handleFormData = () => {
+  console.log(studentData.value);
   const formData = new FormData();
 
   // Add all form fields
@@ -747,6 +828,18 @@ const handleFormData = () => {
     const formattedDate = formatDateToAPI(studentData.value.d_o_b);
     if (formattedDate) formData.append("d_o_b", formattedDate);
   }
+  if (studentData.value.year_of_birth) {
+    formData.append("year_of_birth", studentData.value.year_of_birth);
+  }
+  if (studentData.value.gender_name) {
+    if (studentData.value.gender_name==='Male'){
+      formData.append("gender", 1);
+      formData.append("gender_name", studentData.value.gender_name);
+    }else {
+      formData.append("gender", 2);
+      formData.append("gender_name", studentData.value.gender_name);
+    }
+  }
   if (studentData.value.email)
     formData.append("email", studentData.value.email);
   if (studentData.value.mobile)
@@ -760,6 +853,9 @@ const handleFormData = () => {
   if (studentData.value.city) formData.append("city", studentData.value.city);
   if (studentData.value.address)
     formData.append("address", studentData.value.address);
+  formData.append("nationality", studentData.value.nationality);
+  formData.append("education_level", studentData.value.education_level);
+  formData.append("info_verified", studentData.value.info_verified);
 
   // Add new photo if changed (only if it's a File object)
   if (pictureFile.value instanceof File) {
@@ -799,6 +895,9 @@ defineExpose({
 
 onMounted(() => {
   getStudentDetails();
-  getlogo()
+  getlogo();
+  getAllCities();
+  getNationalities();
+  getEducationLevels();
 });
 </script>

@@ -13,6 +13,14 @@ class StudentService {
     return axiosInstance.get(`/api/v1/auth/lookups/?key=person.city_choices`);
   }
 
+  getNationalities() {
+    return axiosInstance.get(`/api/v1/profiles/nationalities/`);
+  }
+
+  getEducationLevels() {
+    return axiosInstance.get(`/api/v1/profiles/education-levels/`);
+  }
+
   addStudent(data) {
     return axiosInstance.post(`/api/v1/profiles/students/`, data);
   }
@@ -111,6 +119,9 @@ class StudentService {
     return axiosInstance.get(`/api/v1/reports/transactions/${type}/${id}/`, {
       responseType: "arraybuffer",
     });
+  }
+  reverseTransaction(data){
+    return axiosInstance.post(`/api/v1/finance/transaction-reversal/`, data);
   }
 }
 

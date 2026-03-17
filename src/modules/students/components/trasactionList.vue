@@ -42,6 +42,7 @@
   />
   <reverseTranactionPopuo
      v-model="isReverseTranactionPopuoOpen"
+     @confirm="reverseTransaction"
   />
 </template>
 
@@ -255,7 +256,7 @@ const onSaveTransaction = (data) => {
   } else if (data.type_id === 4) {
     Object.assign(payload, {
       student: data.toAccount ? data.toAccount : props.student.globalid,
-      service: data.service ? data.serviceId : null,
+      service_account: data.serviceId ? data.serviceId : null,
       amount: data.amount,
       details: data.details,
     });
@@ -400,6 +401,32 @@ const initializeData = () => {
 };
 
 const emit = defineEmits(["DetailsEvent"]);
+const reverseTransaction = ()=>{
+  if(selectedRowForReverse.value){
+    // Call the API to reverse the transaction using selectedRowForReverse.value.id
+    StudentService.reverseTransaction({jtype:selectedRowForReverse.value.jtype.id , paper_no: selectedRowForReverse.value.paper_no})
+      .then((response) => {
+        if (response.status === 200) {
+          $q.notify({
+            badgeStyle: "display:none",
+            classes: "custom-Notify",
+            textColor: "black-1",
+            icon: "img:/images/SuccessIcon.png",
+            position: "bottom-right",
+            message: response.data.result || "Transaction reversed successfully.",
+          });
+          // Refresh the transaction list after reversal
+          loadAllTransactions();
+        }
+      })
+      .catch((error) => {
+        handleApiError(error);
+      })
+      .finally(() => {
+        isReverseTranactionPopuoOpen.value = false;
+      });
+  }
+}
 const getTransactionDetails = (row) => {
   emit("DetailsEvent", row);
 }
