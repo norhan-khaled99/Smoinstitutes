@@ -81,7 +81,8 @@
 import {onMounted, ref, watch} from "vue";
 import StudentService from "../services/service";
 import {useQuasar} from "quasar";
-
+import CourseService from "../services/service";
+import {handleApiError} from "src/utils/errorHandler";
 const $q = useQuasar();
 const props = defineProps({
   modelValue: Boolean,
@@ -131,6 +132,7 @@ const searchForCourses = async (val, update) => {
       ];
     });
   } catch (e) {
+    handleApiError(e);
      $q.loading.hide();
   } finally {
     courseLoading.value = false;
@@ -157,6 +159,7 @@ const saveAndAdd = () => {
     showSuccess.value = true;
     getCourses();
   }).catch((err) => {
+      handleApiError(err);
    $q.loading.hide();
   });
 
@@ -176,6 +179,7 @@ const saveAndClose = async () => {
   }).then((res) => {
     show.value = false;
   }).catch((err) => {
+      handleApiError(err);
      $q.loading.hide();
   });
    emit("save", form.value);
@@ -191,6 +195,7 @@ const getCourses = ()=>{
         }));
       }
     }).catch((err) => {
+      handleApiError(err);
     $q.loading.hide();
   });
 }

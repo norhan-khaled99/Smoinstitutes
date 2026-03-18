@@ -608,7 +608,7 @@ import StudentService from "../services/service";
 import authServices from "../../auth/services/service.js";
 import {useRoute} from "vue-router";
 import {useQuasar} from "quasar";
-
+import {handleApiError} from "src/utils/errorHandler";
 const $q = useQuasar();
 const route = useRoute();
 const props = defineProps({
@@ -745,6 +745,7 @@ const getStudentDetails = () => {
       $q.loading.hide();
     })
     .catch((err) => {
+        handleApiError(err);
       $q.loading.hide();
     });
 };
@@ -880,6 +881,7 @@ const handleSave = () => {
       }
     })
     .catch((err) => {
+        handleApiError(err);
       $q.loading.hide();
     });
 };

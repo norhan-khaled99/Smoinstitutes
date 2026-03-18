@@ -411,6 +411,7 @@ import {ref, computed, onMounted, watch} from "vue";
 import {useQuasar} from "quasar";
 import services from "../service/service";
 import rules from "src/config/rules.js";
+import {handleApiError} from "src/utils/errorHandler";
 
 const model = defineModel();
 const $q = useQuasar();
@@ -462,6 +463,7 @@ const searchForCategory = async (val, update) => {
       categoryOptions.value = res.data.data;
     });
   } catch (e) {
+    handleApiError(e);
      $q.loading.hide();
   } finally {
     categoryLoading.value = false;
@@ -515,6 +517,7 @@ const filterFromAccounts = async (val, update) => {
         applyFromAccountFilter();
       });
     } catch (e) {
+        handleApiError(e);
       $q.loading.hide();
     } finally {
       fromAccountLoading.value = false;
@@ -566,6 +569,7 @@ const filterToAccounts = async (val, update) => {
         applyToAccountFilter();
       });
     } catch (e) {
+      handleApiError(e);
       $q.loading.hide();
     } finally {
       toAccountLoading.value = false;
@@ -671,6 +675,7 @@ const getAllTransactionTypeOptions = () => {
       transactionTypeOptions.value = res.data.data;
     })
     .catch((error) => {
+        handleApiError(error);
       console.error("Error fetching shifts:", error);
     });
 };

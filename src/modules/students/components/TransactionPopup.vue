@@ -172,6 +172,7 @@
 <script setup>
 import {computed, onMounted, ref, watch} from "vue";
 import Service from "../services/service";
+import {handleApiError} from "../../../utils/errorHandler";
 
 const props = defineProps({
   modelValue: {
@@ -309,6 +310,7 @@ const searchForCourses = async (val, update) => {
       ];
     });
   } catch (e) {
+    handleApiError(e);
      $q.loading.hide();
   } finally {
     courseLoading.value = false;
@@ -339,6 +341,7 @@ const searchForAccount = async (val, update) => {
       ];
     });
   } catch (e) {
+    handleApiError(e);
      $q.loading.hide();
   } finally {
     accountLoading.value = false;
@@ -369,6 +372,7 @@ const searchForService = async (val, update) => {
       ];
     });
   } catch (e) {
+    handleApiError(e);
    $q.loading.hide();
   } finally {
     serviceLoading.value = false;

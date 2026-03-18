@@ -192,6 +192,7 @@ import addNotePopup from "./addNotePopup.vue";
 import Service from "../services/service";
 import {useQuasar} from "quasar";
 import {useRoute} from "vue-router";
+import {handleApiError} from "src/utils/errorHandler";
 
 const $q = useQuasar();
 const showAddPopup = ref(false);
@@ -234,6 +235,7 @@ const handleSaveNote = (newNote) => {
       }
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
     });
 };
@@ -250,7 +252,7 @@ const getAllNotes = (page = 1) => {
       $q.loading.hide();
     })
     .catch((error) => {
-      
+      handleApiError(error);
       $q.loading.hide();
     });
 };

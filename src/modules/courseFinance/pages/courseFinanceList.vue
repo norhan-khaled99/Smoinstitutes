@@ -46,7 +46,7 @@ import CourseFinancePopup from "./viewCourseFinancePopup.vue";
 import { useQuasar } from "quasar";
 import services from "../service/service.js";
 import CourseFinanceReportPopup from "../components/viewCourseFinanceReportPopup.vue";
-
+import {handleApiError} from "../../../utils/errorHandler";
 const $q = useQuasar();
 const searchQuery = ref("");
 
@@ -157,6 +157,7 @@ const getAllCourseFinance = (page = 1) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
     });
 };
@@ -179,6 +180,7 @@ const getAllShifts = () => {
       shiftOptions.value = res.data.data.value.SHIFT_CHOICES;
     })
     .catch((error) => {
+      handleApiError(error);
       console.error("Error fetching shifts:", error);
     });
 };

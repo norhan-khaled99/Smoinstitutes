@@ -117,7 +117,7 @@ import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../../notes/services/service.js";
 import rules from "src/config/rules.js";
-
+import {handleApiError} from "../../../utils/errorHandler";
 const $q = useQuasar();
 const router = useRouter();
 const personOptions = ref([]);
@@ -190,6 +190,7 @@ const serachForPerson = async (val, update) => {
     });
   } catch (e) {
      $q.loading.hide();
+     handleApiError(e);
   } finally {
     personLoading.value = false;
   }
