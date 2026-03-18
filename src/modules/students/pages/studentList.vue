@@ -37,7 +37,7 @@ import StudentService from "../services/service";
 import {useRouter} from "vue-router";
 import {useRoute} from "vue-router";
 import {useQuasar} from "quasar";
-
+import {handleApiError} from "src/utils/errorHandler";
 const router = useRouter();
 const route = useRoute();
 const $q = useQuasar();
@@ -165,6 +165,7 @@ const performSearch = () => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
 
     });
@@ -209,6 +210,7 @@ const getAllStudents = (page = 1) => {
     pagination.value.page = page;
     $q.loading.hide();
   }).catch((error) => {
+    handleApiError(error);
     $q.loading.hide();
 
   })

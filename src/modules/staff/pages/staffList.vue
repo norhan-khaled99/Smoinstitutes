@@ -45,7 +45,7 @@ import editStaffPopup from "../components/viewEditStaffPopup.vue";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
-
+import {handleApiError} from "../../../utils/errorHandler";
 const router = useRouter();
 const typeOfFilter = ref("");
 const valueOfFilter = ref("");
@@ -146,6 +146,7 @@ const getAllStaff = (page = 1) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
 
     });
@@ -159,6 +160,7 @@ const getAlljob = () => {
       jobTypeOptions.value = res.data.data;
     })
     .catch((error) => {
+      handleApiError(error);
       console.error("Error fetching shifts:", error);
     });
 };
@@ -229,6 +231,7 @@ const getStaffData = () => {
         $q.loading.hide();
       })
       .catch((error) => {
+        handleApiError(error);
         $q.loading.hide();
         console.error("Error fetching shifts:", error);
       });
@@ -293,6 +296,7 @@ const handleSaveStaff = (staffData) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
 
     });

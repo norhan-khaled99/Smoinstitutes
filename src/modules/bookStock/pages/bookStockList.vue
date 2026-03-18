@@ -55,6 +55,7 @@ import bookStockDetailsPopup from "../components/bookStockDetailsPopup.vue";
 import { useQuasar } from "quasar";
 import services from "../services/service.js";
 import viewBookStockReportPopup from "../components/viewBookStockReportPopup.vue";
+import {handleApiError} from "../../../utils/errorHandler";
 
 const showAddBookPopup = ref(false);
 const showDetailsPopup = ref(false);
@@ -151,6 +152,7 @@ const getAllBookStock = (page = 1) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
     });
 };
@@ -168,6 +170,7 @@ const getlevelOptions = () => {
       levelOptions.value = res.data.data;
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
     });
 };
@@ -181,6 +184,7 @@ const getByUserOptions = () => {
       byUserOptions.value = res.data.data;
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
     });
 };
@@ -212,6 +216,7 @@ const handleSaveBook = (bookData) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
     });
 };

@@ -81,6 +81,7 @@ const getAllTransactions = (page = 1) => {
       $q.loading.hide();
     })
     .catch((error) => {
+      handleApiError(error);
       $q.loading.hide();
 
     });
@@ -94,6 +95,7 @@ const getAllTransTypeOptions = () => {
       transTypeOptions.value = res.data.data;
     })
     .catch((error) => {
+      handleApiError(error);
       console.error("Error fetching shifts:", error);
     });
 };

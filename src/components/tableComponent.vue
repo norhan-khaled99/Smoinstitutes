@@ -1589,6 +1589,7 @@
 import { ref, onMounted, computed } from "vue";
 import emptyState from "./emptyState.vue";
 import authServices from "../modules/auth/services/service.js";
+import {handleApiError} from "src/utils/errorHandler";
 
 export default {
   name: "tableComp",
@@ -2076,6 +2077,7 @@ export default {
           usercurrency.value = res.data?.data?.company.currency || "";
         })
         .catch((error) => {
+          handleApiError(error);
           console.error("Error fetching logo:", error);
         });
     };

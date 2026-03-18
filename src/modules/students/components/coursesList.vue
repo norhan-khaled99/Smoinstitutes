@@ -60,7 +60,7 @@ import StudentService from "../services/service";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
-
+import {handleApiError} from "src/utils/errorHandler";
 const showAddCoursePopup = ref(false);
 const showAddDiscountPopup = ref(false);
 const showCancelPopup = ref(false);
@@ -253,6 +253,7 @@ const handleConfirmCancel = (data) => {
       $q.loading.hide();
     })
     .catch((err) => {
+        handleApiError(err);
       $q.loading.hide();
 
     });
@@ -282,6 +283,7 @@ const handleSaveDiscount = (data) => {
       }
     })
     .catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     });
   // Add save discount logic here
@@ -335,6 +337,7 @@ const getAllCourses = () => {
       $q.loading.hide();
     })
     .catch((err) => {
+        handleApiError(err);
       $q.loading.hide();
     });
 };

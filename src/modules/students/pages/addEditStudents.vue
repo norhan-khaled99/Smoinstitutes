@@ -353,7 +353,7 @@ import {onMounted, ref} from "vue";
 import {useRouter,useRoute} from "vue-router";
 import StudentService from "../services/service";
 import {useQuasar} from "quasar";
-
+import {handleApiError} from "src/utils/errorHandler";
 const router = useRouter();
 const route = useRoute();
 
@@ -452,6 +452,7 @@ const saveStudent = async () => {
           router.push({name: "students"});
         }
       }).catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     })
   }else {
@@ -469,6 +470,7 @@ const saveStudent = async () => {
           router.push({name: "students"});
         }
       }).catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     })
   }
@@ -515,6 +517,7 @@ const saveAndAddAnother = async () => {
              isEditable.value = false;
         }
       }).catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     })
   }else {
@@ -549,6 +552,7 @@ const saveAndAddAnother = async () => {
              isEditable.value = false;
         }
       }).catch((err) => {
+        handleApiError(err);
       $q.loading.hide();
     })
   }
@@ -582,6 +586,7 @@ const saveAndAddCourses = async () => {
           router.push({name: "studentDetails" , params:{id:studentId.value} , query: { addCourses: 'true' }});
         }
       }).catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     })
   } else {
@@ -600,6 +605,7 @@ const saveAndAddCourses = async () => {
            router.push({name: "studentDetails", params:{id:studentId.value} , query: { addCourses: 'true' }});
         }
       }).catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     })
   }
@@ -633,6 +639,7 @@ const saveAndContinueEditing = async () => {
           studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
+        handleApiError(err);
       $q.loading.hide();
     })
   } else {
@@ -650,6 +657,7 @@ const saveAndContinueEditing = async () => {
           studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
+        handleApiError(err);
        $q.loading.hide();
     })
   }
@@ -664,6 +672,7 @@ const getAllCities = () => {
       cityOptions.value = cities.map(city => ({ label: city, value: city }));
       $q.loading.hide();
     }).catch((error) => {
+      handleApiError(error);
     $q.loading.hide();
   });
 }
