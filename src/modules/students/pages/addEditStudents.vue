@@ -177,14 +177,14 @@
             <div class="col-12 col-md-6">
               <div class="form-group">
                 <p class="field-label">Year Of Birth</p>
-                 <q-input
-                      outlined
-                      v-model="form.year_of_birth"
-                      placeholder="Year of birth"
-                      dense
-                      class="name-input"
-                      lazy-rules
-                    />
+                <q-input
+                  outlined
+                  v-model="form.year_of_birth"
+                  placeholder="Year of birth"
+                  dense
+                  class="name-input"
+                  lazy-rules
+                />
               </div>
             </div>
 
@@ -350,10 +350,11 @@
 
 <script setup>
 import {onMounted, ref} from "vue";
-import {useRouter,useRoute} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 import StudentService from "../services/service";
 import {useQuasar} from "quasar";
 import {handleApiError} from "src/utils/errorHandler";
+
 const router = useRouter();
 const route = useRoute();
 
@@ -426,6 +427,7 @@ const uploadPhoto = () => {
 };
 
 const saveStudent = async () => {
+  $q.loading.show();
   const valid = await formRef.value.validate();
 
   if (!valid) {
@@ -449,13 +451,14 @@ const saveStudent = async () => {
             position: "bottom-right",
             message: "Student Updated successfully.",
           });
+          $q.loading.hide();
           router.push({name: "students"});
         }
       }).catch((err) => {
-        handleApiError(err);
-       $q.loading.hide();
+      handleApiError(err);
+      $q.loading.hide();
     })
-  }else {
+  } else {
     StudentService.addStudent(data)
       .then((res) => {
         if (res.status === 201) {
@@ -467,16 +470,18 @@ const saveStudent = async () => {
             position: "bottom-right",
             message: "Student added successfully.",
           });
+          $q.loading.hide();
           router.push({name: "students"});
         }
       }).catch((err) => {
-        handleApiError(err);
-       $q.loading.hide();
+      handleApiError(err);
+      $q.loading.hide();
     })
   }
 };
 
 const saveAndAddAnother = async () => {
+  $q.loading.show();
   const valid = await formRef.value.validate();
 
   if (!valid) {
@@ -500,6 +505,7 @@ const saveAndAddAnother = async () => {
             position: "bottom-right",
             message: "Student Updated successfully.",
           });
+          $q.loading.hide();
           form.value = {
             first_name: "",
             middle_names: "",
@@ -514,13 +520,13 @@ const saveAndAddAnother = async () => {
             city: null,
             address: "",
           };
-             isEditable.value = false;
+          isEditable.value = false;
         }
       }).catch((err) => {
-        handleApiError(err);
-       $q.loading.hide();
+      handleApiError(err);
+      $q.loading.hide();
     })
-  }else {
+  } else {
     StudentService.addStudent(data)
       .then((res) => {
         if (res.status === 201) {
@@ -532,6 +538,7 @@ const saveAndAddAnother = async () => {
             position: "bottom-right",
             message: "Student added successfully.",
           });
+          $q.loading.hide();
           form.value = {
             first_name: "",
             middle_names: "",
@@ -549,16 +556,17 @@ const saveAndAddAnother = async () => {
             education_level: "",
             info_verified: false,
           };
-             isEditable.value = false;
+          isEditable.value = false;
         }
       }).catch((err) => {
-        handleApiError(err);
+      handleApiError(err);
       $q.loading.hide();
     })
   }
 };
 
 const saveAndAddCourses = async () => {
+  $q.loading.show();
   const valid = await formRef.value.validate();
 
   if (!valid) {
@@ -583,11 +591,12 @@ const saveAndAddCourses = async () => {
             message: "Student Updated successfully.",
           });
           studentId.value = res.data.data.globalid;
-          router.push({name: "studentDetails" , params:{id:studentId.value} , query: { addCourses: 'true' }});
+          $q.loading.hide();
+          router.push({name: "studentDetails", params: {id: studentId.value}, query: {addCourses: 'true'}});
         }
       }).catch((err) => {
-        handleApiError(err);
-       $q.loading.hide();
+      handleApiError(err);
+      $q.loading.hide();
     })
   } else {
     StudentService.addStudent(data)
@@ -602,17 +611,19 @@ const saveAndAddCourses = async () => {
             message: "Student added successfully.",
           });
           studentId.value = res.data.data.globalid;
-           router.push({name: "studentDetails", params:{id:studentId.value} , query: { addCourses: 'true' }});
+          $q.loading.hide();
+          router.push({name: "studentDetails", params: {id: studentId.value}, query: {addCourses: 'true'}});
         }
       }).catch((err) => {
-        handleApiError(err);
-       $q.loading.hide();
+      handleApiError(err);
+      $q.loading.hide();
     })
   }
   // Navigate to courses page or show course modal
 };
 
 const saveAndContinueEditing = async () => {
+  $q.loading.show();
   const valid = await formRef.value.validate();
 
   if (!valid) {
@@ -636,10 +647,11 @@ const saveAndContinueEditing = async () => {
             position: "bottom-right",
             message: "Student Updated successfully.",
           });
+          $q.loading.hide();
           studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
-        handleApiError(err);
+      handleApiError(err);
       $q.loading.hide();
     })
   } else {
@@ -654,11 +666,12 @@ const saveAndContinueEditing = async () => {
             position: "bottom-right",
             message: "Student added successfully.",
           });
+          $q.loading.hide();
           studentId.value = res.data.data.globalid;
         }
       }).catch((err) => {
-        handleApiError(err);
-       $q.loading.hide();
+      handleApiError(err);
+      $q.loading.hide();
     })
   }
 };
@@ -669,10 +682,10 @@ const getAllCities = () => {
   StudentService.getAllCities()
     .then((res) => {
       const cities = res.data.data?.value?.CITY_CHOICES || res.data.data?.CITY_CHOICES || [];
-      cityOptions.value = cities.map(city => ({ label: city, value: city }));
+      cityOptions.value = cities.map(city => ({label: city, value: city}));
       $q.loading.hide();
     }).catch((error) => {
-      handleApiError(error);
+    handleApiError(error);
     $q.loading.hide();
   });
 }
