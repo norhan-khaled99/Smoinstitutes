@@ -1112,12 +1112,13 @@
                 <div class="row items-center no-wrap">
                   <span>
                     {{
-                      (isBalanceVisible(props.row)
+                      (student || isBalanceVisible(props.row)
                         ? props.row.balance
                         : "******") + usercurrency
                     }}
                   </span>
                   <q-btn
+                    v-if="!student"
                     flat
                     round
                     dense
@@ -1173,12 +1174,13 @@
                 <div class="row items-center no-wrap">
                   <span>
                     {{
-                      (isBalanceVisible(props.row)
+                      (student || isBalanceVisible(props.row)
                         ? props.row.course_balance
                         : "******") + usercurrency
                     }}
                   </span>
                   <q-btn
+                    v-if="!student"
                     flat
                     round
                     dense
